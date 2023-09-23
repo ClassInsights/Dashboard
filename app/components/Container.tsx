@@ -8,11 +8,11 @@ interface ContainerWidgetProps {
 const Container: React.FC<ContainerWidgetProps> = ({ title, label, fullHeight, children }) => {
   return (
     <div
-      className={`w-full shadow-sm shadow-secondary bg-secondary rounded-lg px-5 py-3 
+      className={`w-full bg-secondary dark:bg-dark-secondary rounded-lg px-5 py-3
     ${fullHeight ? 'h-full' : ''}`}
     >
-      <p className='text-tertiary'>{label}</p>
-      <h3>{title}</h3>
+      <p className='text-tertiary dark:text-dark-primary'>{label}</p>
+      <h3 className='text-onBackground dark:text-dark-onBackground'>{title}</h3>
       {children}
     </div>
   );

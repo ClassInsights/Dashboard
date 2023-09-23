@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const initializeToken = async () => {
     console.log('Token initialized');
     setToken('test');
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
   };
 

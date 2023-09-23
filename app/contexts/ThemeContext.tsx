@@ -12,13 +12,10 @@ export type ThemeContextType = {
   setTheme: (theme: ThemeMode) => void;
 };
 
-export const ThemeContext = createContext<ThemeContextType>({
-  themeMode: ThemeMode.Light,
-  setTheme: () => {},
-});
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [themeMode, setTheme] = useState<ThemeMode>(ThemeMode.Light);
+  const [themeMode, setTheme] = useState<ThemeMode | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => initializeTheme(), []);
@@ -50,7 +47,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeContext.Provider
       value={{
-        themeMode,
+        themeMode: themeMode!,
         setTheme: setThemeMode,
       }}
     >

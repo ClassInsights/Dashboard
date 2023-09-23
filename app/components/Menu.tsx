@@ -2,22 +2,24 @@
 
 import { ThemeMode, useTheme } from '../contexts/ThemeContext';
 
-const Menu = () => {
+const Menu = ({ onClose }: { onClose: () => void }) => {
   const themeData = useTheme();
 
   const menuItems = [
     {
-      name: 'Dunkler Modus',
-      handleClick: () =>
+      name: themeData.themeMode === ThemeMode.Light ? 'Dunkeler Modus' : 'Heller Modus',
+      handleClick: () => {
         themeData.setTheme(
           themeData.themeMode === ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light
-        ),
+        );
+        onClose();
+      },
     },
     { name: 'Abmelden', handleClick: () => console.log('logout') },
   ];
 
   return (
-    <div className='absolute right-0 bg-secondary dark:bg-dark-secondary rounded-lg overflow-hidden drop-shadow-lg'>
+    <div className='absolute right-0 w-40 bg-secondary dark:bg-dark-secondary rounded-lg overflow-hidden drop-shadow-lg'>
       {menuItems.map((item, index) => (
         <div
           onClick={item.handleClick}
@@ -29,7 +31,15 @@ const Menu = () => {
               : ''
           }`}
         >
-          <p>{item.name}</p>
+          <p
+            className={
+              index == menuItems.length - 1
+                ? 'text-error dark:text-dark-error'
+                : 'text-onBackground dark:text-dark-onBackground'
+            }
+          >
+            {item.name}
+          </p>
         </div>
       ))}
     </div>

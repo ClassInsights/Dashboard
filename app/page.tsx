@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <div className='w-full h-screen'>
       <Navbar />
-      <h1 className='mt-20'>Willkommen, Jakob.</h1>
-      <p className='sm:w-[60%] mt-3'>
+      <h1 className='mt-20 text-onBackground dark:text-dark-onBackground'>Willkommen, Jakob.</h1>
+      <p className='sm:w-[60%] mt-3 text-onBackground dark:text-dark-onBackground'>
         Hier kannst du alle nötigen Einstellungen für eine reibungslose Funktionalität der App
         ClassInsights und den damit verbundenen Diensten tätigen.
       </p>
