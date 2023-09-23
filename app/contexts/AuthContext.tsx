@@ -1,6 +1,5 @@
 'use client';
 
-import { initialize } from 'next/dist/server/lib/render-server';
 import { createContext, useEffect, useState } from 'react';
 
 export type AuthContextType = {
