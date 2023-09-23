@@ -1,10 +1,21 @@
 'use client';
 
+import { ThemeMode, useTheme } from '../contexts/ThemeContext';
+
 const Menu = () => {
+  const themeData = useTheme();
+
   const menuItems = [
-    { name: 'Dunkler Modus', handleClick: () => console.log('darkMode') },
+    {
+      name: 'Dunkler Modus',
+      handleClick: () =>
+        themeData.setTheme(
+          themeData.themeMode === ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light
+        ),
+    },
     { name: 'Abmelden', handleClick: () => console.log('logout') },
   ];
+
   return (
     <div className='absolute right-0 bg-secondary dark:bg-dark-secondary rounded-lg overflow-hidden drop-shadow-lg'>
       {menuItems.map((item, index) => (

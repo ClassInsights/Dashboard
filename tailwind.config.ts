@@ -15,14 +15,14 @@ const config: Config = {
     },
     colors: {
       background: '#F5F5F5',
-      text: '#0A0A0A',
+      onBackground: '#0A0A0A',
       primary: '#2C63F1',
       secondary: '#C5D2F4',
       tertiary: '#94abeb',
       error: '#F56565',
       dark: {
         background: '#02050e',
-        text: '#e9eaee',
+        onBackground: '#e9eaee',
         primary: '#477cfe',
         secondary: '#070c20',
         tertiary: '#293252',
