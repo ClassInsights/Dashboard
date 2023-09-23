@@ -19,7 +19,7 @@ const config: Config = {
       primary: '#2C63F1',
       secondary: '#C5D2F4',
       tertiary: '#94abeb',
-      error: '#F56565',
+      error: '#f12727',
       dark: {
         background: '#02050e',
         onBackground: '#e9eaee',
