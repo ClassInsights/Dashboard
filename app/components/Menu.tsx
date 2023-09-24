@@ -15,7 +15,13 @@ const Menu = ({ onClose }: { onClose: () => void }) => {
         onClose();
       },
     },
-    { name: 'Abmelden', handleClick: () => console.log('logout') },
+    {
+      name: 'Abmelden',
+      handleClick: () => {
+        localStorage.removeItem('token');
+        onClose();
+      },
+    },
   ];
 
   return (
