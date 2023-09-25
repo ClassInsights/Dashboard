@@ -6,6 +6,9 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'ClassInsights',
   description: 'Admin Dashboard for ClassInsights',
+  publisher: 'HAK/HLW/HAS Landeck',
+  applicationName: 'ClassInsights',
+  keywords: ['ClassInsights', 'Admin', 'Dashboard', 'HAK Landeck', 'Landeck', 'HAK'],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
