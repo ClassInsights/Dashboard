@@ -55,6 +55,12 @@
   input {
     user-select: none;
   }
+  .onBackground-light {
+    filter: invert(0%) sepia(2%) saturate(1799%) hue-rotate(42deg) brightness(89%) contrast(92%);
+  }
+  .onBackground-dark {
+    filter: invert(93%) sepia(4%) saturate(173%) hue-rotate(191deg) brightness(103%) contrast(88%);
+  }
   * {
     @apply transition-colors duration-300 ease-in-out;
   }
