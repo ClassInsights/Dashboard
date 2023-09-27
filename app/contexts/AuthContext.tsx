@@ -16,8 +16,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const initializeToken = async () => {
-    const response = await axiosInstance.get('/login/pc');
-    console.log('Response', response);
+    // const response = await axiosInstance.get('/login/pc');
+    // console.log('Response', response);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setToken('testToken');
     setLoading(false);
   };
 
