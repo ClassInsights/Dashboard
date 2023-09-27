@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const NotFound = () => {
   const router = useRouter();
-  useEffect(() => router.replace('/'), []);
+  useEffect(() => router.replace('/'), [router]);
   return null;
 };
 

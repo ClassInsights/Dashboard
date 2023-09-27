@@ -18,8 +18,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [themeMode, setTheme] = useState<ThemeMode | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => initializeTheme(), []);
-
   const initializeTheme = useCallback(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === ThemeMode.Dark || savedTheme === ThemeMode.Light) {
@@ -36,6 +34,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => initializeTheme(), [initializeTheme]);
 
   const setThemeMode = useCallback((theme: ThemeMode) => {
     localStorage.setItem('theme', theme);
