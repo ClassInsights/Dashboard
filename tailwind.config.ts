@@ -12,6 +12,9 @@ const config: Config = {
       borderWidth: {
         1: '1px',
       },
+      screens: {
+        xs: '500px',
+      },
     },
     colors: {
       background: '#F5F5F5',
