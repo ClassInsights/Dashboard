@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <LinkGroupModal />
-      <div className="h-screen w-full">
+      <div className="min-h-screen w-full">
         <Navbar />
         <h1
           className={`mt-20 text-onBackground dark:text-dark-onBackground
@@ -49,6 +49,7 @@ export default function Home() {
           action={groupModal.toggle}
           actionLabel="Einstellungen"
         />
+        <div className="h-20 w-full"></div>
         <Footer />
       </div>
     </>
