@@ -13,7 +13,13 @@ const Navbar = () => {
   return (
     <nav className='w-full flex justify-between items-center py-4 bg-background dark:bg-dark-background'>
       <div className='flex items-center'>
-        <Image src='/logo.svg' alt='ClassInsights Logo' width={40} height={40} />
+        <Image
+          src='/logo.svg'
+          alt='ClassInsights Logo'
+          width={25}
+          height={25}
+          className='w-8 h-8'
+        />
         <h3 className='text-xl ml-4 text-onBackground dark:text-dark-onBackground select-none'>
           ClassInsights
         </h3>
