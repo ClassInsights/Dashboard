@@ -16,19 +16,11 @@ const ConfigSection: React.FC<ConfigSectionType> = ({
   const theme = useTheme();
   return (
     <section className="mt-10 flex-col xs:flex-row">
-      <h2
-        className={`text-onBackground dark:text-dark-onBackground
-          ${
-            theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"
-          }`}
-      >
+      <h2 className="select-light dark:select-dark text-onBackground dark:text-dark-onBackground">
         {title}
       </h2>
       <div className="flex flex-col justify-between xs:flex-row xs:items-center">
-        <p
-          className={`text-onBackground dark:text-dark-onBackground
-        ${theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"}`}
-        >
+        <p className="select-light dark:select-dark text-onBackground dark:text-dark-onBackground">
           {description}
         </p>
         <button

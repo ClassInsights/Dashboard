@@ -18,16 +18,10 @@ export default function Home() {
       <LinkGroupModal />
       <div className="min-h-screen w-full">
         <Navbar />
-        <h1
-          className={`mt-20 text-onBackground dark:text-dark-onBackground
-        ${theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"}`}
-        >
+        <h1 className="select-light dark:select-dark mt-20 text-onBackground dark:text-dark-onBackground">
           Willkommen, Jakob.
         </h1>
-        <p
-          className={`mt-3 text-onBackground dark:text-dark-onBackground sm:w-[60%]
-        ${theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"}`}
-        >
+        <p className="select-light dark:select-dark mt-3 text-onBackground dark:text-dark-onBackground sm:w-[60%]">
           Hier kannst du alle nötigen Einstellungen für eine reibungslose
           Funktionalität der App ClassInsights und den damit verbundenen
           Diensten tätigen.
