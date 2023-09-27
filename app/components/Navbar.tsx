@@ -1,19 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import Menu from './Menu';
-import { useCallback, useState } from 'react';
+import { ThemeMode, useTheme } from '../contexts/ThemeContext';
+import { useCallback } from 'react';
 
 const Navbar = () => {
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-
-  const handleHover = useCallback(() => setShowMenu(true), []);
-
-  const handleLeave = useCallback(async () => {
-    // await new Promise((resolve) => setTimeout(resolve, 300));
-    setShowMenu(false);
-  }, []);
-
+  const theme = useTheme();
+  const switchTheme = useCallback(
+    () => theme.setTheme(theme.themeMode == ThemeMode.Dark ? ThemeMode.Light : ThemeMode.Dark),
+    [theme]
+  );
   return (
     <nav className='w-full flex justify-between items-center py-3 bg-background dark:bg-dark-background'>
       <div className='flex items-center'>
@@ -28,15 +24,19 @@ const Navbar = () => {
             Jakob Wassertheurer
           </p>
         </div>
-        <div onMouseEnter={handleHover} onMouseLeave={handleLeave} className='group'>
-          <div className='rounded-full overflow-x-clip overflow-y-hidden h-12 w-12 flex items-center justify-center'>
-            <Image src='/avatar.jpg' alt='Avatar' width={50} height={50} />
-          </div>
-          {showMenu && (
-            <div className='transition-opacity'>
-              <Menu onClose={() => setShowMenu(false)} />
-            </div>
-          )}
+        <div onClick={switchTheme}>
+          <Image
+            src='/brightness.svg'
+            alt='Brightness Switch'
+            width={25}
+            height={25}
+            className={`transition-transform cursor-pointer
+            ${
+              theme.themeMode == ThemeMode.Dark
+                ? 'rotate-180 onBackground-dark'
+                : 'onBackground-light'
+            }`}
+          />
         </div>
       </div>
     </nav>
