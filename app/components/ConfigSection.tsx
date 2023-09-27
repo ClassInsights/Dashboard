@@ -15,24 +15,24 @@ const ConfigSection: React.FC<ConfigSectionType> = ({
 }) => {
   const theme = useTheme();
   return (
-    <section className='mt-10 flex md:items-center justify-between flex-col md:flex-row'>
-      <div className='flex-shrink'>
-        <h2
-          className={`text-onBackground dark:text-dark-onBackground
+    <section className='mt-10 flex-col xs:flex-row'>
+      <h2
+        className={`text-onBackground dark:text-dark-onBackground
           ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
-        >
-          {title}
-        </h2>
+      >
+        {title}
+      </h2>
+      <div className='flex flex-col xs:flex-row xs:items-center justify-between'>
         <p
           className={`text-onBackground dark:text-dark-onBackground
         ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
         >
           {description}
         </p>
+        <button onClick={action} className='mt-4 xs:mt-0 bg-primary py-3 px-4 rounded-lg xs:ml-20'>
+          <span className='text-background dark:text-dark-background'>{actionLabel}</span>
+        </button>
       </div>
-      <button onClick={action} className='mt-2 md:mt-0 bg-primary py-3 px-4 rounded-lg md:ml-3'>
-        <span className='text-background dark:text-dark-background'>{actionLabel}</span>
-      </button>
     </section>
   );
 };
