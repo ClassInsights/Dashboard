@@ -5,6 +5,7 @@ import Container from './components/Container';
 import LinkGroupModal, { useLinkGroupModal } from './components/modals/LinkGroupModal';
 import ConfigSection from './components/ConfigSection';
 import { ThemeMode, useTheme } from './contexts/ThemeContext';
+import Footer from './components/Footer';
 
 export default function Home() {
   const theme = useTheme();
@@ -45,6 +46,7 @@ export default function Home() {
           action={groupModal.toggle}
           actionLabel='Einstellungen'
         />
+        <Footer />
       </div>
     </>
   );
