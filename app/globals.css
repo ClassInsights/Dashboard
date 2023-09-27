@@ -61,6 +61,14 @@
   .onBackground-dark {
     filter: invert(93%) sepia(4%) saturate(173%) hue-rotate(191deg) brightness(103%) contrast(88%);
   }
+  .select-light::selection {
+    background-color: #2c63f1;
+    color: #f5f5f5;
+  }
+  .select-dark::selection {
+    background-color: #477cfe;
+    color: #02050e;
+  }
   * {
     @apply transition-colors duration-300 ease-in-out;
   }

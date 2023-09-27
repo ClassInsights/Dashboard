@@ -4,8 +4,10 @@ import Navbar from './components/Navbar';
 import Container from './components/Container';
 import LinkGroupModal, { useLinkGroupModal } from './components/modals/LinkGroupModal';
 import ConfigSection from './components/ConfigSection';
+import { ThemeMode, useTheme } from './contexts/ThemeContext';
 
 export default function Home() {
+  const theme = useTheme();
   const groupModal = useLinkGroupModal();
 
   return (
@@ -13,8 +15,16 @@ export default function Home() {
       <LinkGroupModal />
       <div className='w-full h-screen'>
         <Navbar />
-        <h1 className='mt-20 text-onBackground dark:text-dark-onBackground'>Willkommen, Jakob.</h1>
-        <p className='sm:w-[60%] mt-3 text-onBackground dark:text-dark-onBackground'>
+        <h1
+          className={`mt-20 text-onBackground dark:text-dark-onBackground
+        ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
+        >
+          Willkommen, Jakob.
+        </h1>
+        <p
+          className={`sm:w-[60%] mt-3 text-onBackground dark:text-dark-onBackground
+        ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
+        >
           Hier kannst du alle nötigen Einstellungen für eine reibungslose Funktionalität der App
           ClassInsights und den damit verbundenen Diensten tätigen.
         </p>
