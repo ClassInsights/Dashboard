@@ -1,4 +1,4 @@
-import { ThemeMode, useTheme } from '../contexts/ThemeContext';
+import { ThemeMode, useTheme } from "../contexts/ThemeContext";
 
 type ConfigSectionType = {
   title: string;
@@ -15,22 +15,29 @@ const ConfigSection: React.FC<ConfigSectionType> = ({
 }) => {
   const theme = useTheme();
   return (
-    <section className='mt-10 flex-col xs:flex-row'>
+    <section className="mt-10 flex-col xs:flex-row">
       <h2
         className={`text-onBackground dark:text-dark-onBackground
-          ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
+          ${
+            theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"
+          }`}
       >
         {title}
       </h2>
-      <div className='flex flex-col xs:flex-row xs:items-center justify-between'>
+      <div className="flex flex-col justify-between xs:flex-row xs:items-center">
         <p
           className={`text-onBackground dark:text-dark-onBackground
-        ${theme.themeMode == ThemeMode.Dark ? 'select-dark' : 'select-light'}`}
+        ${theme.themeMode == ThemeMode.Dark ? "select-dark" : "select-light"}`}
         >
           {description}
         </p>
-        <button onClick={action} className='mt-4 xs:mt-0 bg-primary py-3 px-4 rounded-lg xs:ml-20'>
-          <span className='text-background dark:text-dark-background'>{actionLabel}</span>
+        <button
+          onClick={action}
+          className="mt-4 rounded-lg bg-primary px-4 py-3 xs:ml-20 xs:mt-0"
+        >
+          <span className="text-background dark:text-dark-background">
+            {actionLabel}
+          </span>
         </button>
       </div>
     </section>

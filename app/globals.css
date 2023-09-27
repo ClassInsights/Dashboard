@@ -4,25 +4,25 @@
 
 @layer base {
   @font-face {
-    font-family: 'Roboto-Regular';
-    src: url('./fonts/Roboto-Regular.ttf');
+    font-family: "Roboto-Regular";
+    src: url("./fonts/Roboto-Regular.ttf");
   }
 
   @font-face {
-    font-family: 'Roboto-Medium';
-    src: url('./fonts/Roboto-Medium.ttf');
+    font-family: "Roboto-Medium";
+    src: url("./fonts/Roboto-Medium.ttf");
   }
 
   @font-face {
-    font-family: 'Roboto-Bold';
-    src: url('./fonts/Roboto-Bold.ttf');
+    font-family: "Roboto-Bold";
+    src: url("./fonts/Roboto-Bold.ttf");
   }
   html {
-    font-family: 'Roboto-Regular', 'sans-serif';
+    font-family: "Roboto-Regular", "sans-serif";
   }
   h1,
   h2 {
-    font-family: 'Roboto-Bold', 'sans-serif';
+    font-family: "Roboto-Bold", "sans-serif";
     letter-spacing: 1%;
   }
   h1 {
@@ -34,7 +34,7 @@
   h3 {
     font-size: 1.4rem;
     letter-spacing: 1%;
-    font-family: 'Roboto-Medium', 'sans-serif';
+    font-family: "Roboto-Medium", "sans-serif";
   }
   p,
   span,
@@ -48,7 +48,7 @@
     font-size: 0.75rem;
   }
   b {
-    font-family: 'Roboto-Medium', 'sans-serif';
+    font-family: "Roboto-Medium", "sans-serif";
   }
   img,
   button,
@@ -56,10 +56,12 @@
     @apply select-none;
   }
   .onBackground-light {
-    filter: invert(0%) sepia(2%) saturate(1799%) hue-rotate(42deg) brightness(89%) contrast(92%);
+    filter: invert(0%) sepia(2%) saturate(1799%) hue-rotate(42deg)
+      brightness(89%) contrast(92%);
   }
   .onBackground-dark {
-    filter: invert(93%) sepia(4%) saturate(173%) hue-rotate(191deg) brightness(103%) contrast(88%);
+    filter: invert(93%) sepia(4%) saturate(173%) hue-rotate(191deg)
+      brightness(103%) contrast(88%);
   }
   .select-light::selection {
     background-color: #2c63f1;

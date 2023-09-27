@@ -5,14 +5,23 @@ interface ContainerWidgetProps {
   children: React.ReactNode;
 }
 
-const Container: React.FC<ContainerWidgetProps> = ({ title, label, fullHeight, children }) => {
+const Container: React.FC<ContainerWidgetProps> = ({
+  title,
+  label,
+  fullHeight,
+  children,
+}) => {
   return (
     <div
-      className={`w-full bg-secondary dark:bg-dark-secondary rounded-lg px-5 py-3
-    ${fullHeight ? 'h-full' : ''}`}
+      className={`w-full rounded-lg bg-secondary px-5 py-3 dark:bg-dark-secondary
+    ${fullHeight ? "h-full" : ""}`}
     >
-      <p className='text-tertiary dark:text-dark-primary select-none'>{label}</p>
-      <h3 className='text-onBackground dark:text-dark-onBackground select-none'>{title}</h3>
+      <p className="select-none text-tertiary dark:text-dark-primary">
+        {label}
+      </p>
+      <h3 className="select-none text-onBackground dark:text-dark-onBackground">
+        {title}
+      </h3>
       {children}
     </div>
   );

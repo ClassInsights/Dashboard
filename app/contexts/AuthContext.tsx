@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { Console } from 'console';
-import { createContext, useEffect, useState } from 'react';
-import axiosInstance from '../utils/axios';
+import { createContext, useEffect, useState } from "react";
 
 export type AuthContextType = {
   token: String | undefined;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<String | undefined>();
@@ -19,7 +18,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // const response = await axiosInstance.get('/login/pc');
     // console.log('Response', response);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setToken('testToken');
+    setToken("testToken");
     setLoading(false);
   };
 
