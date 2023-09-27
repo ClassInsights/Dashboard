@@ -19,6 +19,7 @@ const Navbar = () => {
           width={25}
           height={25}
           className='w-8 h-8'
+          draggable={false}
         />
         <h3 className='text-xl ml-4 text-onBackground dark:text-dark-onBackground select-none'>
           ClassInsights
@@ -42,6 +43,7 @@ const Navbar = () => {
                 ? 'rotate-180 onBackground-dark'
                 : 'onBackground-light'
             }`}
+            draggable={false}
           />
         </div>
       </div>
