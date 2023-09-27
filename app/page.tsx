@@ -18,7 +18,7 @@ export default function Home() {
           Hier kannst du alle nötigen Einstellungen für eine reibungslose Funktionalität der App
           ClassInsights und den damit verbundenen Diensten tätigen.
         </p>
-        <div className='grid grid-cols-3 gap-4 mt-10'>
+        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10'>
           <Container title='Test' label='Registrierte Nutzer' fullHeight>
             <div className='w-full h-20'></div>
           </Container>
