@@ -9,11 +9,8 @@ import { useAuth } from "./AuthContext";
 
 export type DataContextType = {
   rooms?: Room[];
-  setRooms?: React.Dispatch<React.SetStateAction<Room[]>>;
   computers?: Computer[];
-  setComputers?: React.Dispatch<React.SetStateAction<Computer[]>>;
   classes?: SchoolClass[];
-  setClasses?: React.Dispatch<React.SetStateAction<SchoolClass[]>>;
 };
 
 export const DataContext = createContext<DataContextType>({});
@@ -44,9 +41,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   if (loading || parentLoading) return <h1>WE WAITNG</h1>;
 
   return (
-    <DataContext.Provider
-      value={{ rooms, setRooms, computers, setComputers, classes, setClasses }}
-    >
+    <DataContext.Provider value={{ rooms, computers, classes }}>
       {children}
     </DataContext.Provider>
   );
