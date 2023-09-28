@@ -7,6 +7,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { DataProvider } from "./contexts/DataContext";
 
 export const metadata: Metadata = {
   title: "ClassInsights",
@@ -34,15 +35,17 @@ export default function RootLayout({
         <main className="relative mx-4 min-h-screen md:mx-auto md:w-5/6 xl:w-[65%] 2xl:w-3/5">
           <ThemeProvider>
             <AuthProvider>
-              <LinkGroupProvider>
-                <LinkGroupModal />
-                <div className="h-full min-h-screen">
-                  <Navbar />
-                  <div className="h-20 w-full" />
-                  {children}
-                  <Footer />
-                </div>
-              </LinkGroupProvider>
+              <DataProvider>
+                <LinkGroupProvider>
+                  <LinkGroupModal />
+                  <div className="h-full min-h-screen">
+                    <Navbar />
+                    <div className="h-20 w-full" />
+                    {children}
+                    <Footer />
+                  </div>
+                </LinkGroupProvider>
+              </DataProvider>
             </AuthProvider>
           </ThemeProvider>
         </main>

@@ -14,8 +14,9 @@ export enum ThemeMode {
 }
 
 export type ThemeContextType = {
-  themeMode: ThemeMode;
+  themeMode?: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
+  loading: boolean;
 };
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(
@@ -55,11 +56,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeContext.Provider
       value={{
-        themeMode: themeMode!,
+        themeMode,
         setTheme: setThemeMode,
+        loading,
       }}
     >
-      {loading ? null : children}
+      {children}
     </ThemeContext.Provider>
   );
 };

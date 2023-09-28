@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 
 export type AuthContextType = {
   token: String | undefined;
+  loading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -26,16 +27,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initializeToken();
   }, []);
 
-  if (loading) return <h1>LOADING</h1>;
-  if (token == null) return <h1>NO TOKEN</h1>;
-
   return (
     <AuthContext.Provider
       value={{
         token,
+        loading,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within a AuthContextProvider");
+  }
+  return context;
 };
