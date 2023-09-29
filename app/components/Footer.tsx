@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { ThemeMode, useTheme } from "../contexts/ThemeContext";
-import { useRouter } from "next/navigation";
 
 const Footer = () => {
   return (
