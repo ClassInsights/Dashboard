@@ -3,7 +3,6 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import AuthData from "../types/authData";
 import { decode } from "jsonwebtoken";
-import NotFound from "../not-found";
 
 export type AuthContextType = {
   token: String | undefined;
