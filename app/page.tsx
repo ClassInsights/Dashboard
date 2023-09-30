@@ -1,22 +1,18 @@
 "use client";
 
-import Navbar from "./components/Navbar";
 import Container from "./components/Container";
-import LinkGroupModal, {
-  useLinkGroupModal,
-} from "./components/modals/LinkGroupModal";
+import { useLinkGroupModal } from "./components/modals/LinkGroupModal";
 import ConfigSection from "./components/ConfigSection";
-import { ThemeMode, useTheme } from "./contexts/ThemeContext";
-import Footer from "./components/Footer";
+import { useAuth } from "./contexts/AuthContext";
 
 export default function Home() {
-  const theme = useTheme();
+  const auth = useAuth();
   const groupModal = useLinkGroupModal();
 
   return (
     <>
       <h1 className="select-light dark:select-dark text-onBackground dark:text-dark-onBackground">
-        Willkommen, Jakob.
+        Willkommen, {auth.data?.name.split(" ")[0] ?? "Unbekannt"}.
       </h1>
       <p className="select-light dark:select-dark mt-3 text-onBackground dark:text-dark-onBackground sm:w-[60%]">
         Hier kannst du alle nötigen Einstellungen für eine reibungslose

@@ -3,8 +3,10 @@
 import Image from "next/image";
 import { ThemeMode, useTheme } from "../contexts/ThemeContext";
 import { useCallback } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
+  const auth = useAuth();
   const theme = useTheme();
   const switchTheme = useCallback(
     () =>
@@ -31,7 +33,7 @@ const Navbar = () => {
       <div className="flex items-center">
         <div className="mr-4 hidden items-center sm:flex">
           <p className="select-none text-onBackground dark:text-dark-onBackground">
-            Jakob Wassertheurer
+            {auth.data?.name ?? "Unbekannt"}
           </p>
         </div>
         <div onClick={switchTheme}>
