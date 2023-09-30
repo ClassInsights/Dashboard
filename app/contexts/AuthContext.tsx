@@ -1,9 +1,13 @@
 "use client";
 
 import { createContext, useEffect, useState, useContext } from "react";
+import AuthData from "../types/authData";
+import { decode } from "jsonwebtoken";
+import NotFound from "../not-found";
 
 export type AuthContextType = {
   token: String | undefined;
+  data: AuthData | undefined;
   loading: boolean;
 };
 
@@ -13,13 +17,22 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<String | undefined>();
+  const [data, setData] = useState<AuthData | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
 
   const initializeToken = async () => {
-    // const response = await axiosInstance.get('/login/pc');
-    // console.log('Response', response);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setToken("testToken");
+    const token = localStorage.getItem("accessToken");
+    if (token == null) return;
+    setToken(token);
+    const result = decode(token, { json: true });
+    if (result == null) return;
+    setData({
+      id: result["sub"] as string,
+      name: result["name"] as string,
+      email: result["email"] as string,
+      expirationDate: new Date((result["exp"] as number) * 1000),
+    });
     setLoading(false);
   };
 
@@ -31,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         token,
+        data,
         loading,
       }}
     >
