@@ -25,8 +25,19 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const auth = useAuth();
 
+  const fetchRooms = async () => {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
+      headers: {
+        Authorization: "Bearer " + auth.token,
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    console.log(response);
+    setRooms(rooms);
+  };
+
   const initializeData = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await fetchRooms();
     setLoading(false);
   };
 
