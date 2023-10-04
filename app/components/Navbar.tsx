@@ -5,9 +5,10 @@ import { ThemeMode, useTheme } from "../contexts/ThemeContext";
 import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
+import { Page, useNavigation } from "../contexts/NavigationContext";
 
 const Navbar = () => {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const auth = useAuth();
   const theme = useTheme();
@@ -22,7 +23,7 @@ const Navbar = () => {
     <nav className="flex w-full items-center justify-between bg-background py-4 dark:bg-dark-background">
       <div
         className="flex cursor-pointer items-center"
-        onClick={() => router.push("/")}
+        onClick={() => navigation.setPage(Page.HOME)}
       >
         <Image
           src="/logo.svg"
