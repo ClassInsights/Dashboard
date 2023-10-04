@@ -32,15 +32,11 @@ const Navbar = () => {
           className="h-8 w-8"
           draggable={false}
         />
-        <h3 className="ml-4 select-none text-xl text-onBackground dark:text-dark-onBackground">
-          ClassInsights
-        </h3>
+        <h3 className="ml-4 select-none text-xl">ClassInsights</h3>
       </div>
       <div className="flex items-center">
         <div className="mr-4 hidden items-center sm:flex">
-          <p className="select-none text-onBackground dark:text-dark-onBackground">
-            {auth.data?.name ?? "Unbekannt"}
-          </p>
+          <p className="select-none">{auth.data?.name ?? "Unbekannt"}</p>
         </div>
         <div onClick={switchTheme}>
           <Image

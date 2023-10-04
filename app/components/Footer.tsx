@@ -13,9 +13,7 @@ const Footer = () => {
           draggable={false}
         >
           <div className="flex items-center">
-            <p className="mr-2 text-onBackground dark:text-dark-onBackground">
-              GitHub
-            </p>
+            <p className="mr-2">GitHub</p>
             <Image
               src="/github.svg"
               alt="GitHub"

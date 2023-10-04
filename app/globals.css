@@ -63,6 +63,10 @@
     filter: invert(93%) sepia(4%) saturate(173%) hue-rotate(191deg)
       brightness(103%) contrast(88%);
   }
+  .tertiary-dark {
+    filter: brightness(0) saturate(100%) invert(44%) sepia(65%) saturate(4103%)
+      hue-rotate(211deg) brightness(93%) contrast(92%);
+  }
   .select-light::selection {
     background-color: #2c63f1;
     color: #f5f5f5;
@@ -72,6 +76,6 @@
     color: #02050e;
   }
   * {
-    @apply transition-colors duration-300 ease-in-out;
+    @apply select-light dark:select-dark text-onBackground transition-colors duration-300 ease-in-out dark:text-dark-onBackground;
   }
 }

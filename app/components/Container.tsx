@@ -20,26 +20,25 @@ const Container: React.FC<ContainerWidgetProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`w-full rounded-lg bg-secondary px-5 py-3 shadow-sm shadow-secondary dark:bg-dark-secondary
+      className={`w-full rounded-lg bg-secondary px-5 py-3 dark:bg-dark-secondary
     ${fullHeight ? "h-full" : ""}
     ${showArrow ? "flex items-center justify-between" : ""}
     ${onClick ? "cursor-pointer" : ""}`}
     >
       <div>
-        <p className="select-none text-tertiary dark:text-dark-primary">
+        <p className="select-none text-sm text-tertiary dark:text-dark-primary">
           {label}
         </p>
-        <h3 className="select-none text-onBackground dark:text-dark-onBackground">
-          {title}
-        </h3>
+        <h3 className="mt-1 select-none">{title}</h3>
       </div>
       {showArrow ? (
         <Image
           src="./arrow_right.svg"
-          height={20}
-          width={20}
+          height={25}
+          width={25}
           alt="Go forward"
           draggable={false}
+          className="onBackground-light dark:tertiary-dark"
         />
       ) : (
         children

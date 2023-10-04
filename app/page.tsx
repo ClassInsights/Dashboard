@@ -6,9 +6,16 @@ import ConfigSection from "./components/ConfigSection";
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { useData } from "./contexts/DataContext";
+import { useRouter } from "next/navigation";
+import Header from "./components/Header";
 
 export default function Home() {
+  const router = useRouter();
+
   const auth = useAuth();
+  const data = useData();
+
   const groupModal = useLinkGroupModal();
 
   if (auth.didFail && !auth.loading) {
@@ -33,24 +40,19 @@ export default function Home() {
     <>
       <Navbar />
       <div className="h-20 w-full" />
-      <h1 className="select-light dark:select-dark text-onBackground dark:text-dark-onBackground">
-        Willkommen, {auth.data?.name.split(" ")[0] ?? "Unbekannt"}.
-      </h1>
-      <p className="select-light dark:select-dark mt-3 text-onBackground dark:text-dark-onBackground sm:w-[60%]">
-        Hier kannst du alle nötigen Einstellungen für eine reibungslose
+      <Header
+        title={`Willkommen, ${auth.data?.name.split(" ")[0] ?? "Unbekannt"}.`}
+        subtitle="Hier kannst du alle nötigen Einstellungen für eine reibungslose
         Funktionalität der App ClassInsights und den damit verbundenen Diensten
-        tätigen.
-      </p>
+        tätigen."
+      />
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Container title="Test" label="Registrierte Nutzer" fullHeight>
-          <div className="h-20 w-full"></div>
-        </Container>
-        <Container title="Test" label="Registrierte Nutzer">
-          <div className="h-20 w-full"></div>
-        </Container>
-        <Container title="Test" label="Registrierte Nutzer">
-          <div className="h-20 w-full"></div>
-        </Container>
+        <Container
+          label="Registrierte Räume"
+          title={`${data.rooms?.length ?? 0}`}
+          showArrow
+          onClick={() => router.push("/rooms")}
+        />
       </div>
       <ConfigSection
         title="Verknüpfe Gruppen"
