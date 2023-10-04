@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { DataProvider } from "./contexts/DataContext";
+import { NavigationProvider } from "./contexts/NavigationContext";
 
 export const metadata: Metadata = {
   title: "ClassInsights",
@@ -37,8 +38,10 @@ export default function RootLayout({
             <AuthProvider>
               <DataProvider>
                 <LinkGroupProvider>
-                  <LinkGroupModal />
-                  <div className="h-full min-h-screen">{children}</div>
+                  <NavigationProvider>
+                    <LinkGroupModal />
+                    <div className="h-full min-h-screen">{children}</div>
+                  </NavigationProvider>
                 </LinkGroupProvider>
               </DataProvider>
             </AuthProvider>
