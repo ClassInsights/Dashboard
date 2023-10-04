@@ -39,6 +39,7 @@ const Container: React.FC<ContainerWidgetProps> = ({
           height={20}
           width={20}
           alt="Go forward"
+          draggable={false}
         />
       ) : (
         children
