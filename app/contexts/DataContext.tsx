@@ -1,12 +1,10 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import Computer from "../types/computer";
 import Room from "../types/room";
 import SchoolClass from "../types/schoolclass";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
-import axios from "axios";
 
 export type DataContextType = {
   rooms?: Room[];
@@ -28,32 +26,20 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setRooms([
       {
-        id: 1,
+        id: 102,
         name: "OG2-DV3",
         longName: "Obergeschoss 2 - DV3",
         deviceCount: 30,
       },
       {
-        id: 2,
-        name: "OG2-DV4",
+        id: 103,
+        name: "OG3-DV6",
         longName: "Obergeschoss 2 - DV4",
         deviceCount: 26,
       },
     ]);
 
-    // const response = axios.get(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
-    //   headers: {
-    //     Authorization: "Bearer " + auth.token,
-    //   },
-    // });
-
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
-      headers: {
-        Authorization: "Bearer " + auth.token,
-      },
-    });
-    console.log(response);
-    setRooms(rooms);
+    // TODO: Fetch rooms from API
   };
 
   const initializeData = async () => {

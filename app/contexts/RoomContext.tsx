@@ -30,8 +30,22 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
     // TODO: Fetch computers from API
     // const response = await fetch();
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    setComputers([
+      {
+        id: 1,
+        roomId: roomId.current,
+        name: "PC-01",
+        macAddress: "00-D6-62-A4-3C-BE",
+      },
+      {
+        id: 2,
+        roomId: roomId.current,
+        name: "PC-02",
+        macAddress: "11-D5-62-A4-3C-BE",
+      },
+    ]);
     setLoading(false);
-  }, []);
+  }, [roomId.current]);
 
   const setRoom = useCallback(async (id: number) => {
     setLoading(true);
