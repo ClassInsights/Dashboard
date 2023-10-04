@@ -4,7 +4,6 @@ import Image from "next/image";
 import { ThemeMode, useTheme } from "../contexts/ThemeContext";
 import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { usePathname, useRouter } from "next/navigation";
 import { Page, useNavigation } from "../contexts/NavigationContext";
 
 const Navbar = () => {

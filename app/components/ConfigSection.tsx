@@ -1,4 +1,4 @@
-import { ThemeMode, useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 type ConfigSectionType = {
   title: string;

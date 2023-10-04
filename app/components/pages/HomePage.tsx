@@ -3,7 +3,6 @@ import ConfigSection from "../ConfigSection";
 import Container from "../Container";
 import Header from "../Header";
 import { useData } from "@/app/contexts/DataContext";
-import { useRouter } from "next/navigation";
 import { useLinkGroupModal } from "../modals/LinkGroupModal";
 import { useNavigation, Page } from "@/app/contexts/NavigationContext";
 
