@@ -1,8 +1,8 @@
 import Image from "next/image";
 
 interface ContainerWidgetProps {
-  title: String;
   label: String;
+  title: String;
   fullHeight?: boolean;
   showArrow?: boolean;
   onClick?: () => void;
@@ -10,8 +10,8 @@ interface ContainerWidgetProps {
 }
 
 const Container: React.FC<ContainerWidgetProps> = ({
-  title,
   label,
+  title,
   fullHeight,
   showArrow,
   onClick,
