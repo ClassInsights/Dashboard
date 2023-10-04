@@ -6,6 +6,7 @@ import { decode } from "jsonwebtoken";
 
 export type AuthContextType = {
   token: String | undefined;
+  didFail: boolean;
   data: AuthData | undefined;
   loading: boolean;
 };
@@ -16,16 +17,25 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<String | undefined>();
+  const [didFail, setDidFail] = useState<boolean>(false);
   const [data, setData] = useState<AuthData | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
 
   const initializeToken = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const token = localStorage.getItem("accessToken");
-    if (token == null) return;
+    if (token == null) {
+      setDidFail(true);
+      setLoading(false);
+      return;
+    }
     setToken(token);
     const result = decode(token, { json: true });
-    if (result == null) return;
+    if (result == null) {
+      setDidFail(true);
+      setLoading(false);
+      return;
+    }
     setData({
       id: result["sub"] as string,
       name: result["name"] as string,
@@ -43,6 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         token,
+        didFail,
         data,
         loading,
       }}

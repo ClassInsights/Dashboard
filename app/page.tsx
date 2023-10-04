@@ -4,13 +4,35 @@ import Container from "./components/Container";
 import { useLinkGroupModal } from "./components/modals/LinkGroupModal";
 import ConfigSection from "./components/ConfigSection";
 import { useAuth } from "./contexts/AuthContext";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export default function Home() {
   const auth = useAuth();
   const groupModal = useLinkGroupModal();
 
+  if (auth.didFail && !auth.loading) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full select-none items-center justify-center md:w-2/4 xl:w-2/5 2xl:w-2/6">
+        <div className="text-center text-onBackground dark:text-dark-onBackground">
+          <h1 className="mb-3">Authentifizieren fehlgeschlagen.</h1>
+          <p>
+            Nur{" "}
+            <b className="text-primary dark:text-dark-primary">
+              Administratoren haben Zugriff
+            </b>{" "}
+            auf dieses Dashboard. Wenn du denkst, dass du Zugriff haben
+            solltest, versuche es später erneut!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
+      <Navbar />
+      <div className="h-20 w-full" />
       <h1 className="select-light dark:select-dark text-onBackground dark:text-dark-onBackground">
         Willkommen, {auth.data?.name.split(" ")[0] ?? "Unbekannt"}.
       </h1>
@@ -37,6 +59,7 @@ export default function Home() {
         actionLabel="Einstellungen"
       />
       <div className="h-20 w-full"></div>
+      <Footer />
     </>
   );
 }
