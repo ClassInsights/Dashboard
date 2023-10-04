@@ -26,14 +26,30 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
 
   const fetchRooms = async () => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
-      headers: {
-        Authorization: "Bearer " + auth.token,
-        "Access-Control-Allow-Origin": "*",
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setRooms([
+      {
+        id: 1,
+        name: "OG2-DV3",
+        longName: "Obergeschoss 2 - DV3",
+        deviceCount: 30,
       },
-    });
-    console.log(response);
-    setRooms(rooms);
+      {
+        id: 2,
+        name: "OG2-DV4",
+        longName: "Obergeschoss 2 - DV4",
+        deviceCount: 26,
+      },
+    ]);
+
+    // const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
+    //   headers: {
+    //     Authorization: "Bearer " + auth.token,
+    //     "Access-Control-Allow-Origin": "*",
+    //   },
+    // });
+    // console.log(response);
+    // setRooms(rooms);
   };
 
   const initializeData = async () => {
