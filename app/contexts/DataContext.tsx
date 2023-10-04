@@ -6,10 +6,10 @@ import Room from "../types/room";
 import SchoolClass from "../types/schoolclass";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
+import axios from "axios";
 
 export type DataContextType = {
   rooms?: Room[];
-  computers?: Computer[];
   classes?: SchoolClass[];
 };
 
@@ -19,7 +19,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [computers, setComputers] = useState<Computer[]>([]);
   const [classes, setClasses] = useState<SchoolClass[]>([]);
 
   const theme = useTheme();
@@ -42,14 +41,19 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       },
     ]);
 
-    // const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
+    // const response = axios.get(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
     //   headers: {
     //     Authorization: "Bearer " + auth.token,
-    //     "Access-Control-Allow-Origin": "*",
     //   },
     // });
-    // console.log(response);
-    // setRooms(rooms);
+
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/rooms", {
+      headers: {
+        Authorization: "Bearer " + auth.token,
+      },
+    });
+    console.log(response);
+    setRooms(rooms);
   };
 
   const initializeData = async () => {
@@ -68,7 +72,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   if (loading || parentLoading) return <h1>WE WAITNG</h1>;
 
   return (
-    <DataContext.Provider value={{ rooms, computers, classes }}>
+    <DataContext.Provider value={{ rooms, classes }}>
       {children}
     </DataContext.Provider>
   );
