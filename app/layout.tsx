@@ -38,12 +38,7 @@ export default function RootLayout({
               <DataProvider>
                 <LinkGroupProvider>
                   <LinkGroupModal />
-                  <div className="h-full min-h-screen">
-                    <Navbar />
-                    <div className="h-20 w-full" />
-                    {children}
-                    <Footer />
-                  </div>
+                  <div className="h-full min-h-screen">{children}</div>
                 </LinkGroupProvider>
               </DataProvider>
             </AuthProvider>
