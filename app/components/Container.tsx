@@ -1,28 +1,48 @@
+import Image from "next/image";
+
 interface ContainerWidgetProps {
   title: String;
   label: String;
   fullHeight?: boolean;
-  children: React.ReactNode;
+  showArrow?: boolean;
+  onClick?: () => void;
+  children?: React.ReactNode;
 }
 
 const Container: React.FC<ContainerWidgetProps> = ({
   title,
   label,
   fullHeight,
+  showArrow,
+  onClick,
   children,
 }) => {
   return (
     <div
-      className={`w-full rounded-lg bg-secondary px-5 py-3 dark:bg-dark-secondary
-    ${fullHeight ? "h-full" : ""}`}
+      onClick={onClick}
+      className={`w-full rounded-lg bg-secondary px-5 py-3 shadow-sm shadow-secondary dark:bg-dark-secondary
+    ${fullHeight ? "h-full" : ""}
+    ${showArrow ? "flex items-center justify-between" : ""}
+    ${onClick ? "cursor-pointer" : ""}`}
     >
-      <p className="select-none text-tertiary dark:text-dark-primary">
-        {label}
-      </p>
-      <h3 className="select-none text-onBackground dark:text-dark-onBackground">
-        {title}
-      </h3>
-      {children}
+      <div>
+        <p className="select-none text-tertiary dark:text-dark-primary">
+          {label}
+        </p>
+        <h3 className="select-none text-onBackground dark:text-dark-onBackground">
+          {title}
+        </h3>
+      </div>
+      {showArrow ? (
+        <Image
+          src="./arrow_right.svg"
+          height={20}
+          width={20}
+          alt="Go forward"
+        />
+      ) : (
+        children
+      )}
     </div>
   );
 };
