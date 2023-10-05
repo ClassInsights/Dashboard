@@ -33,7 +33,7 @@ const Container: React.FC<ContainerWidgetProps> = ({
       </div>
       {showArrow ? (
         <Image
-          src="./arrow_right.svg"
+          src="/arrow_right.svg"
           height={25}
           width={25}
           alt="Go forward"
