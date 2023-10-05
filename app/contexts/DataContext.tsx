@@ -85,7 +85,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     initializeData();
-  }, []);
+  }, [initializeData]);
 
   useEffect(() => {
     setParentLoading(theme.loading || auth.loading);

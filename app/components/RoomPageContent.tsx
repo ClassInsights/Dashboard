@@ -20,13 +20,8 @@ const PageContent = () => {
     [data.rooms, query],
   );
 
-  if (!room) {
-    query.delete();
-    return;
-  }
-
   const computers = useMemo(
-    () => data.computers?.filter((computer) => computer.roomId === room.id),
+    () => data.computers?.filter((computer) => computer.roomId === room?.id),
     [data.computers, room],
   );
 
@@ -39,29 +34,6 @@ const PageContent = () => {
     const weight = details.filter((detail) => detail != null).length + 1;
     return weight;
   }, []);
-
-  var sortedComputers = computers?.sort(
-    (first, second) => weightOfComputer(second) - weightOfComputer(first),
-  );
-
-  useEffect(() => {
-    var leftWeight = 0;
-    var rightWeight = 0;
-    const newLeftComputers: Computer[] = [];
-    const newRightComputers: Computer[] = [];
-
-    sortedComputers.forEach((computer) => {
-      if (leftWeight <= rightWeight) {
-        newLeftComputers.push(computer);
-        leftWeight += weightOfComputer(computer);
-      } else {
-        newRightComputers.push(computer);
-        rightWeight += weightOfComputer(computer);
-      }
-    });
-    setLeftComputers(newLeftComputers);
-    setRightComputers(newRightComputers);
-  }, [computers]);
 
   const getComputerWidget = useCallback(
     (computer: Computer, key: string) => (
@@ -92,6 +64,38 @@ const PageContent = () => {
     ),
     [],
   );
+
+  var sortedComputers = useMemo(
+    () =>
+      computers?.sort(
+        (first, second) => weightOfComputer(second) - weightOfComputer(first),
+      ),
+    [computers, weightOfComputer],
+  );
+
+  useEffect(() => {
+    var leftWeight = 0;
+    var rightWeight = 0;
+    const newLeftComputers: Computer[] = [];
+    const newRightComputers: Computer[] = [];
+
+    sortedComputers.forEach((computer) => {
+      if (leftWeight <= rightWeight) {
+        newLeftComputers.push(computer);
+        leftWeight += weightOfComputer(computer);
+      } else {
+        newRightComputers.push(computer);
+        rightWeight += weightOfComputer(computer);
+      }
+    });
+    setLeftComputers(newLeftComputers);
+    setRightComputers(newRightComputers);
+  }, [computers, sortedComputers, weightOfComputer]);
+
+  if (!room) {
+    query.delete();
+    return;
+  }
 
   return (
     <>
