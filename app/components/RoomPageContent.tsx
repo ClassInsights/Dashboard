@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Container from "./containers/Container";
 import Computer from "../types/computer";
 import ComputerDetail from "./ComputerDetail";
+import Image from "next/image";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -17,7 +18,7 @@ const PageContent = () => {
   const room = useMemo(
     () =>
       data.rooms?.find((room) => room.id === parseInt(query.get("id") ?? "")),
-    [data.rooms, query],
+    [query],
   );
 
   const computers = useMemo(
@@ -31,14 +32,28 @@ const PageContent = () => {
       computer.macAddress,
       computer.lastUser,
     ];
-    const weight = details.filter((detail) => detail != null).length + 1;
+    const weight = details.filter((detail) => detail != null).length + 5;
     return weight;
   }, []);
 
   const getComputerWidget = useCallback(
     (computer: Computer, key: string) => (
       <Container key={key}>
-        <h3 className="mb-1">{computer.name}</h3>
+        <div className="mb-1.5 flex justify-between">
+          <h3>{computer.name}</h3>
+          {computer.online ? (
+            <div className="flex gap-2">
+              <p>Online</p>
+            </div>
+          ) : (
+            <div>Offline</div>
+          )}
+        </div>
+        <ComputerDetail
+          value={computer.online ? "Online" : "Offline"}
+          iconPath="/status.svg"
+          altText="Status Icon"
+        />
         {computer.lastUser && (
           <ComputerDetail
             value={computer.lastUser}
@@ -90,7 +105,8 @@ const PageContent = () => {
     });
     setLeftComputers(newLeftComputers);
     setRightComputers(newRightComputers);
-  }, [computers, sortedComputers, weightOfComputer]);
+    console.log(leftWeight, rightWeight);
+  }, [sortedComputers, weightOfComputer]);
 
   if (!room) {
     query.delete();
