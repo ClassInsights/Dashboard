@@ -6,6 +6,7 @@ import Container from "./containers/Container";
 import Computer from "../types/computer";
 import ComputerDetail from "./ComputerDetail";
 import Image from "next/image";
+import ComputerAction from "./ComputerAction";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -36,14 +37,67 @@ const PageContent = () => {
     return weight;
   }, []);
 
+  const shutdownAction = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      computerId: number,
+    ) => {
+      console.log("computerId", computerId);
+      if (event.ctrlKey) console.log("instant shutdown");
+      else console.log("shutdown");
+    },
+    [],
+  );
+
+  const restartAction = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      computerId: number,
+    ) => {
+      console.log("computerId", computerId);
+      if (event.ctrlKey) console.log("instant restart");
+      else console.log("restart");
+    },
+    [],
+  );
+
+  const logoutAction = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      computerId: number,
+    ) => {
+      console.log("computerId", computerId);
+      if (event.ctrlKey) console.log("instant logout");
+      else console.log("logout");
+    },
+    [],
+  );
+
   const getComputerWidget = useCallback(
     (computer: Computer, key: string) => (
       <Container key={key}>
         <div className="mb-1.5 flex justify-between">
           <h3>{computer.name}</h3>
           {computer.online ? (
-            <div className="flex gap-2">
-              <p>Online</p>
+            <div className="flex gap-1.5">
+              <ComputerAction
+                computerId={computer.id}
+                iconPath="/shutdown.svg"
+                action={shutdownAction}
+                altText="Shutdown Computer"
+              />
+              <ComputerAction
+                computerId={computer.id}
+                iconPath="/restart.svg"
+                action={restartAction}
+                altText="Restart Computer"
+              />
+              <ComputerAction
+                computerId={computer.id}
+                iconPath="/logout.svg"
+                action={logoutAction}
+                altText="Logout Computer"
+              />
             </div>
           ) : (
             <div>Offline</div>
