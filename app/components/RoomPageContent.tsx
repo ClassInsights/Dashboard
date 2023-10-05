@@ -99,7 +99,12 @@ const PageContent = () => {
 
   return (
     <>
-      <Header title={room.longName} previousPath="/rooms" />
+      <div className="hidden md:block">
+        <Header title={room.longName} previousPath="/rooms" />
+      </div>
+      <div className="block md:hidden">
+        <Header title={room.name} previousPath="/rooms" />
+      </div>
       {computers.length == 0 ? (
         <h3>Keine Computer gefunden!</h3>
       ) : (
