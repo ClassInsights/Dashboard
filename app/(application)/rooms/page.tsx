@@ -2,10 +2,9 @@
 
 import { useData } from "@/app/contexts/DataContext";
 import Header from "../../components/Header";
-import Container from "@/app/components/Container";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import PageContent from "@/app/components/room/PageContent";
+import PageContent from "@/app/components/RoomPageContent";
+import ContainerPreset from "@/app/components/containers/ContainerPreset";
 
 export default function RoomOverviewPage() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function RoomOverviewPage() {
       />
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         {data.rooms?.map((room, index) => (
-          <Container
+          <ContainerPreset
             key={index}
             label={`${room.deviceCount} ${
               room.deviceCount <= 1 ? "Gerät" : "Geräte"

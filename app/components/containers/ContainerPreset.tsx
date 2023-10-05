@@ -1,30 +1,23 @@
 import Image from "next/image";
+import Container from "./Container";
 
-interface ContainerWidgetProps {
+type ContainerPresetProps = {
   label: String;
   title: String;
-  fullHeight?: boolean;
   showArrow?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
-}
+};
 
-const Container: React.FC<ContainerWidgetProps> = ({
+const ContainerPreset: React.FC<ContainerPresetProps> = ({
   label,
   title,
-  fullHeight,
   showArrow,
   onClick,
   children,
 }) => {
   return (
-    <div
-      onClick={onClick}
-      className={`w-full rounded-lg bg-secondary px-5 py-3 dark:bg-dark-secondary
-    ${fullHeight ? "h-full" : ""}
-    ${showArrow ? "flex items-center justify-between" : ""}
-    ${onClick ? "cursor-pointer" : ""}`}
-    >
+    <Container onClick={onClick} showArrow={showArrow}>
       <div>
         <p className="select-none text-sm text-tertiary dark:text-dark-primary">
           {label}
@@ -43,8 +36,8 @@ const Container: React.FC<ContainerWidgetProps> = ({
       ) : (
         children
       )}
-    </div>
+    </Container>
   );
 };
 
-export default Container;
+export default ContainerPreset;

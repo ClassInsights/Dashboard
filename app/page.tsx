@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Container from "./components/Container";
 import ConfigSection from "./components/ConfigSection";
 import Header from "./components/Header";
 import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
 import { useLinkGroupModal } from "./components/modals/LinkGroupModal";
+import ContainerPreset from "./components/containers/ContainerPreset";
 
 export default function Home() {
   const router = useRouter();
@@ -47,7 +46,7 @@ export default function Home() {
   tätigen."
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Container
+        <ContainerPreset
           label="Registrierte Räume"
           title={`${data.rooms?.length ?? 0}`}
           showArrow
