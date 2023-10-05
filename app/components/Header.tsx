@@ -1,26 +1,27 @@
+"use client";
+
 import Image from "next/image";
-import { Page, useNavigation } from "../contexts/NavigationContext";
+import { useRouter } from "next/navigation";
 
 type HeaderProps = {
   title: string;
   subtitle?: string;
-  previousPage?: Page;
+  previousPath?: string;
 };
 
-const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPage }) => {
-  const navigation = useNavigation();
-
+const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
+  const router = useRouter();
   return (
     <div
       onClick={() =>
-        previousPage !== undefined ? navigation.setPage(previousPage) : null
+        previousPath !== undefined ? router.push(previousPath) : null
       }
     >
       <div
         className={`flex items-center
-    ${previousPage !== undefined ? "cursor-pointer" : ""}`}
+    ${previousPath !== undefined ? "cursor-pointer" : ""}`}
       >
-        {previousPage !== undefined && (
+        {previousPath !== undefined && (
           <Image
             src="/arrow_left.svg"
             alt="Go back"
