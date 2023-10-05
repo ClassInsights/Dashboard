@@ -2,11 +2,10 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import Room from "../types/room";
-import SchoolClass from "../types/schoolclass";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
-import Loading from "../loading";
+import Loading from "../components/Loading";
 
 export type DataContextType = {
   rooms: Room[];
