@@ -2,10 +2,10 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className="absolute bottom-0 flex w-full select-none flex-col items-center justify-between pb-5 md:flex-row">
-      <p className="text-onBackground dark:text-dark-onBackground">
+    <footer className="absolute bottom-0 flex w-full select-none flex-col items-center justify-between pb-3 md:flex-row">
+      <small className="text-onBackground dark:text-dark-onBackground">
         © {new Date().getFullYear()} HAK/HAS/HLW Landeck
-      </p>
+      </small>
       <div>
         <a
           href="https://github.com/ClassInsights"
@@ -13,7 +13,7 @@ const Footer = () => {
           draggable={false}
         >
           <div className="flex items-center">
-            <p className="mr-2">GitHub</p>
+            <small className="mr-2">GitHub</small>
             <Image
               src="/github.svg"
               alt="GitHub"
