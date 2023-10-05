@@ -44,8 +44,6 @@ const PageContent = () => {
     (first, second) => weightOfComputer(second) - weightOfComputer(first),
   );
 
-  console.log(leftComputers.length, rightComputers.length);
-
   useEffect(() => {
     var leftWeight = 0;
     var rightWeight = 0;
@@ -102,7 +100,11 @@ const PageContent = () => {
         <h3>Keine Computer gefunden!</h3>
       ) : (
         <div className="w-full">
-          <div className="block sm:hidden"></div>
+          <div className="flex w-full flex-col gap-4 sm:hidden">
+            {computers.map((computer, index) =>
+              getComputerWidget(computer, `s-${index}`),
+            )}
+          </div>
           <div className="hidden w-full gap-4 sm:flex">
             <div className="flex w-full flex-col gap-4">
               {leftComputers.map((computer, index) =>
