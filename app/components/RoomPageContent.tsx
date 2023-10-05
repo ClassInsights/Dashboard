@@ -80,19 +80,20 @@ const PageContent = () => {
     [],
   );
 
-  var sortedComputers = useMemo(
-    () =>
-      computers?.sort(
-        (first, second) => weightOfComputer(second) - weightOfComputer(first),
-      ),
-    [computers, weightOfComputer],
-  );
+  const fetchComputers = useCallback(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     var leftWeight = 0;
     var rightWeight = 0;
     const newLeftComputers: Computer[] = [];
     const newRightComputers: Computer[] = [];
+
+    const sortedComputers = computers?.sort(
+      (first, second) => weightOfComputer(second) - weightOfComputer(first),
+    );
 
     sortedComputers.forEach((computer) => {
       if (leftWeight <= rightWeight) {
@@ -105,8 +106,8 @@ const PageContent = () => {
     });
     setLeftComputers(newLeftComputers);
     setRightComputers(newRightComputers);
-    console.log(leftWeight, rightWeight);
-  }, [sortedComputers, weightOfComputer]);
+    fetchComputers();
+  }, [weightOfComputer, fetchComputers]);
 
   if (!room) {
     query.delete();
@@ -121,29 +122,43 @@ const PageContent = () => {
       <div className="block md:hidden">
         <Header title={room.name} previousPath="/rooms" />
       </div>
-      {computers.length == 0 ? (
-        <h3>Keine Computer gefunden!</h3>
-      ) : (
-        <div className="w-full">
-          <div className="flex w-full flex-col gap-4 sm:hidden">
-            {computers.map((computer, index) =>
-              getComputerWidget(computer, `s-${index}`),
-            )}
+      <h2 className="mb-2">Registrierte Computer</h2>
+      <div className="w-full">
+        {loading ? (
+          <div className="flex h-32 w-full items-center justify-center">
+            <Image
+              src="/progress.svg"
+              height={20}
+              width={20}
+              alt="progess indicator"
+              draggable={false}
+              className="h-10 w-10 animate-spin"
+            />
           </div>
-          <div className="hidden w-full gap-4 sm:flex">
-            <div className="flex w-full flex-col gap-4">
-              {leftComputers.map((computer, index) =>
-                getComputerWidget(computer, `l-${index}`),
+        ) : computers.length == 0 ? (
+          <h3>Keine Computer gefunden!</h3>
+        ) : (
+          <div className="w-full">
+            <div className="flex w-full flex-col gap-4 sm:hidden">
+              {computers.map((computer, index) =>
+                getComputerWidget(computer, `s-${index}`),
               )}
             </div>
-            <div className="flex w-full flex-col gap-4">
-              {rightComputers.map((computer, index) =>
-                getComputerWidget(computer, `r-${index}`),
-              )}
+            <div className="hidden w-full gap-4 sm:flex">
+              <div className="flex w-full flex-col gap-4">
+                {leftComputers.map((computer, index) =>
+                  getComputerWidget(computer, `l-${index}`),
+                )}
+              </div>
+              <div className="flex w-full flex-col gap-4">
+                {rightComputers.map((computer, index) =>
+                  getComputerWidget(computer, `r-${index}`),
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };
