@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="h-20 w-full" />
+      <div className="h-16 w-full" />
       <Header
         title={`Willkommen, ${auth.data?.name.split(" ")[0] ?? "Unbekannt"}.`}
         subtitle="Hier kannst du alle nötigen Einstellungen für eine reibungslose
