@@ -6,6 +6,7 @@ import SchoolClass from "../types/schoolclass";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
+import Loading from "../loading";
 
 export type DataContextType = {
   rooms: Room[];
@@ -114,7 +115,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     setParentLoading(theme.loading || auth.loading);
   }, [loading, theme.loading, auth.loading]);
 
-  if (loading || parentLoading) return <h1>WE WAITNG</h1>;
+  if (loading || parentLoading) return <Loading />;
 
   return (
     <DataContext.Provider value={{ rooms, computers, setComputers }}>
