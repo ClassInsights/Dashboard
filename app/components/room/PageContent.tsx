@@ -20,7 +20,7 @@ const PageContent = () => {
 
   return (
     <>
-      <Header title={room.longName} previousPath="/" />
+      <Header title={room.longName} previousPath="/rooms" />
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3"></div>
     </>
   );
