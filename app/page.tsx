@@ -46,7 +46,7 @@ export default function Home() {
   Funktionalität der App ClassInsights und den damit verbundenen Diensten
   tätigen."
       />
-      <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Container
           label="Registrierte Räume"
           title={`${data.rooms?.length ?? 0}`}

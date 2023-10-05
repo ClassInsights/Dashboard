@@ -13,6 +13,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
   const router = useRouter();
   return (
     <div
+      className="mb-10"
       onClick={() =>
         previousPath !== undefined ? router.push(previousPath) : null
       }
