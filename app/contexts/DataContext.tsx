@@ -34,11 +34,24 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       id: 2,
       roomId: 102,
       name: "PC2",
+      ipAddress: "192.168.58.65",
     },
     {
       id: 3,
-      roomId: 103,
+      roomId: 102,
       name: "PC3",
+      lastUser: "Maria Musterfrau",
+    },
+    {
+      id: 4,
+      roomId: 102,
+      name: "PC4",
+      macAddress: "00:00:00:00:00:00",
+    },
+    {
+      id: 5,
+      roomId: 103,
+      name: "PC5",
     },
   ]);
 
