@@ -12,13 +12,14 @@ const ComputerDetail: React.FC<ComputerDetailProps> = ({
   altText,
 }) => {
   return (
-    <div className="flex">
+    <div className="flex items-center">
       <Image
         src={iconPath}
         height={15}
         width={15}
         alt={altText}
-        className="onBackground-light dark:onBackground-dark"
+        draggable={false}
+        className="onBackground-light dark:onBackground-dark h-4 w-4"
       />
       <p className="ml-2">{value}</p>
     </div>
