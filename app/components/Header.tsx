@@ -12,7 +12,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
   const router = useRouter();
   return (
-    <div className="mb-10 flex">
+    <div className="mb-10 flex flex-col">
       <div
         className={`flex flex-shrink items-center ${
           previousPath !== undefined ? "cursor-pointer" : ""
