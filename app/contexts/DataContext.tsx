@@ -54,6 +54,24 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     },
     {
       id: 5,
+      roomId: 102,
+      name: "PC5",
+      online: true,
+    },
+    {
+      id: 5,
+      roomId: 102,
+      name: "PC6",
+      online: true,
+    },
+    {
+      id: 5,
+      roomId: 102,
+      name: "PC7",
+      online: true,
+    },
+    {
+      id: 6,
       roomId: 103,
       name: "PC5",
       online: false,
