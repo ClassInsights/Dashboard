@@ -5,19 +5,42 @@ import Room from "../types/room";
 import SchoolClass from "../types/schoolclass";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
+import Computer from "../types/computer";
 
 export type DataContextType = {
-  rooms?: Room[];
-  classes?: SchoolClass[];
+  rooms: Room[];
+  computers: Computer[];
+  setComputers: React.Dispatch<React.SetStateAction<Computer[]>>;
 };
 
-export const DataContext = createContext<DataContextType>({});
+export const DataContext = createContext<DataContextType | undefined>(
+  undefined,
+);
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [classes, setClasses] = useState<SchoolClass[]>([]);
+  const [computers, setComputers] = useState<Computer[]>([
+    {
+      id: 1,
+      roomId: 102,
+      name: "PC1",
+      ipAddress: "192.168.58.62",
+      macAddress: "00:00:00:00:00:00",
+      lastUser: "Max Mustermann",
+    },
+    {
+      id: 2,
+      roomId: 102,
+      name: "PC2",
+    },
+    {
+      id: 3,
+      roomId: 103,
+      name: "PC3",
+    },
+  ]);
 
   const theme = useTheme();
   const auth = useAuth();
@@ -58,7 +81,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   if (loading || parentLoading) return <h1>WE WAITNG</h1>;
 
   return (
-    <DataContext.Provider value={{ rooms, classes }}>
+    <DataContext.Provider value={{ rooms, computers, setComputers }}>
       {children}
     </DataContext.Provider>
   );

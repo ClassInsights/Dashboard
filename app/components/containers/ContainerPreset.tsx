@@ -2,8 +2,8 @@ import Image from "next/image";
 import Container from "./Container";
 
 type ContainerPresetProps = {
-  label: String;
-  title: String;
+  label?: String;
+  title?: String;
   showArrow?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
@@ -22,7 +22,7 @@ const ContainerPreset: React.FC<ContainerPresetProps> = ({
         <p className="select-none text-sm text-tertiary dark:text-dark-primary">
           {label}
         </p>
-        <h3 className="mt-1 select-none">{title}</h3>
+        <h3 className={`select-none ${label ? "mt-1" : ""}`}>{title}</h3>
       </div>
       {showArrow ? (
         <Image
