@@ -78,7 +78,7 @@ const PageContent = () => {
       <Container key={key}>
         <div className="mb-1.5 flex justify-between">
           <h3>{computer.name}</h3>
-          {computer.online ? (
+          {computer.online && (
             <div className="flex gap-1.5">
               <ComputerAction
                 computerId={computer.id}
@@ -99,8 +99,6 @@ const PageContent = () => {
                 altText="Logout Computer"
               />
             </div>
-          ) : (
-            <div>Offline</div>
           )}
         </div>
         <ComputerDetail
