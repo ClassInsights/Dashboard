@@ -12,15 +12,13 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
   const router = useRouter();
   return (
-    <div
-      className="mb-10"
-      onClick={() =>
-        previousPath !== undefined ? router.push(previousPath) : null
-      }
-    >
+    <div className="mb-10">
       <div
-        className={`flex items-center
+        className={`flex w-max items-center
     ${previousPath !== undefined ? "cursor-pointer" : ""}`}
+        onClick={() =>
+          previousPath !== undefined ? router.push(previousPath) : null
+        }
       >
         {previousPath !== undefined && (
           <Image
