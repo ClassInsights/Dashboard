@@ -85,18 +85,21 @@ const PageContent = () => {
                 iconPath="/shutdown.svg"
                 action={shutdownAction}
                 altText="Shutdown Computer"
+                hintText="Herunterfahren"
               />
               <ComputerAction
                 computerId={computer.id}
                 iconPath="/restart.svg"
                 action={restartAction}
                 altText="Restart Computer"
+                hintText="Neustarten"
               />
               <ComputerAction
                 computerId={computer.id}
                 iconPath="/logout.svg"
                 action={logoutAction}
                 altText="Logout Computer"
+                hintText="Abmelden"
               />
             </div>
           )}
@@ -184,7 +187,7 @@ const PageContent = () => {
               width={20}
               alt="progess indicator"
               draggable={false}
-              className="h-10 w-10 animate-spin"
+              className="onBackground-light dark:onBackground-dark h-10 w-10 animate-spin"
             />
           </div>
         ) : computers.length == 0 ? (
