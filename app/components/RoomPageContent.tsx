@@ -4,9 +4,9 @@ import { useData } from "@/app/contexts/DataContext";
 import { useSearchParams } from "next/navigation";
 import Container from "./containers/Container";
 import Computer from "../types/computer";
-import ComputerDetail from "./ComputerDetail";
+import ComputerDetail from "./computer/ComputerDetail";
 import Image from "next/image";
-import ComputerAction from "./ComputerAction";
+import ComputerAction from "./computer/ComputerAction";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
