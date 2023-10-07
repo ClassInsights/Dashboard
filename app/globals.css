@@ -75,6 +75,28 @@
     background-color: #477cfe;
     color: #02050e;
   }
+  @keyframes alert {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(25%);
+    }
+  }
+  .alert-animation {
+    animation: alert 0.2s ease-in-out;
+  }
+  @keyframes alert-close {
+    0% {
+      transform: translateY(25%);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+  .alert-close-animation {
+    animation: alert-close 0.1s ease-in-out;
+  }
   * {
     @apply select-light dark:select-dark text-onBackground transition-colors duration-300 ease-in-out dark:text-dark-onBackground;
   }

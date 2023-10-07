@@ -6,6 +6,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import "./globals.css";
 import type { Metadata } from "next";
 import { DataProvider } from "./contexts/DataContext";
+import Alert from "./components/Alert";
+import { AlertProvider } from "./contexts/AlertContext";
 
 export const metadata: Metadata = {
   title: "ClassInsights",
@@ -35,8 +37,11 @@ export default function RootLayout({
             <AuthProvider>
               <DataProvider>
                 <LinkGroupProvider>
-                  <LinkGroupModal />
-                  <div className="h-full min-h-screen">{children}</div>
+                  <AlertProvider>
+                    <Alert />
+                    <LinkGroupModal />
+                    <div className="h-full min-h-screen">{children}</div>
+                  </AlertProvider>
                 </LinkGroupProvider>
               </DataProvider>
             </AuthProvider>

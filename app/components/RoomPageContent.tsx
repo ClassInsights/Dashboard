@@ -7,6 +7,7 @@ import Computer from "../types/computer";
 import ComputerDetail from "./computer/ComputerDetail";
 import Image from "next/image";
 import ComputerAction from "./computer/ComputerAction";
+import { useAlert } from "../contexts/AlertContext";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -15,6 +16,7 @@ const PageContent = () => {
 
   const query = useSearchParams();
   const data = useData();
+  const alert = useAlert();
 
   const room = useMemo(
     () =>
@@ -42,9 +44,23 @@ const PageContent = () => {
       event: React.MouseEvent<HTMLDivElement, MouseEvent>,
       computerId: number,
     ) => {
-      console.log("computerId", computerId);
       if (event.ctrlKey) console.log("instant shutdown");
-      else console.log("shutdown");
+      else
+        alert.show(
+          `Möchtest du den Computer ${computers.find(
+            (computer) => computer.id === computerId,
+          )?.name} wirklich herunterfahren?`,
+          [
+            {
+              value: "Ja",
+              onClick: () => console.log("shutdown"),
+            },
+            {
+              value: "Nein",
+              onClick: () => console.log("no shutdown"),
+            },
+          ],
+        );
     },
     [],
   );
