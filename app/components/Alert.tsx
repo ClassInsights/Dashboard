@@ -39,8 +39,9 @@ const Alert = () => {
               key={index}
               className="rounded-md bg-tertiary px-3 py-0.5 dark:bg-dark-tertiary"
               onClick={() => {
-                alert.hide();
+                setIsVisible(false);
                 action.onClick();
+                alert.hide();
               }}
             >
               {action.value}
