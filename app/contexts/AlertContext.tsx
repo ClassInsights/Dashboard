@@ -19,10 +19,13 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const show = useCallback((message: string, actions?: Action[]) => {
-    hide();
-    setMessage(message);
-    setActions(actions || []);
-    setIsVisible(true);
+    setIsVisible(false);
+    const timeout = setTimeout(() => {
+      setMessage(message);
+      setActions(actions || []);
+      setIsVisible(true);
+      clearTimeout(timeout);
+    }, 100);
   }, []);
 
   const hide = useCallback(() => setIsVisible(false), []);

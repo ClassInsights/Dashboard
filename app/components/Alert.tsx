@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAlert } from "../contexts/AlertContext";
 
 const Alert = () => {
@@ -8,21 +8,25 @@ const Alert = () => {
 
   const alert = useAlert();
 
+  const startCloseAnimation = useCallback(() => {
+    const timeout = setTimeout(() => {
+      setIsVisible(false);
+      clearTimeout(timeout);
+    }, 100);
+  }, []);
+
   useEffect(() => {
-    if (!alert.isVisible) return;
+    if (alert.isVisible) setIsVisible(true);
+    else return;
     const timeout = setTimeout(
-      () => alert.hide(),
+      () => {
+        startCloseAnimation();
+        alert.hide();
+      },
       alert.actions.length > 0 ? 6000 : 2500,
     );
     return () => clearTimeout(timeout);
   }, [alert]);
-
-  useEffect(() => {
-    var timeout: NodeJS.Timeout;
-    if (alert.isVisible) setIsVisible(true);
-    else timeout = setTimeout(() => setIsVisible(false), 100);
-    return () => clearTimeout(timeout);
-  }, [alert.isVisible]);
 
   if (!isVisible) return null;
 
