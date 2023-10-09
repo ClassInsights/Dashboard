@@ -70,9 +70,23 @@ const PageContent = () => {
       event: React.MouseEvent<HTMLDivElement, MouseEvent>,
       computerId: number,
     ) => {
-      console.log("computerId", computerId);
       if (event.ctrlKey) console.log("instant restart");
-      else console.log("restart");
+      else
+        alert.show(
+          `Möchtest du den Computer ${computers.find(
+            (computer) => computer.id === computerId,
+          )?.name} wirklich neustarten?`,
+          [
+            {
+              value: "Ja",
+              onClick: () => console.log("restart"),
+            },
+            {
+              value: "Nein",
+              onClick: () => console.log("no restart"),
+            },
+          ],
+        );
     },
     [],
   );
@@ -82,9 +96,23 @@ const PageContent = () => {
       event: React.MouseEvent<HTMLDivElement, MouseEvent>,
       computerId: number,
     ) => {
-      console.log("computerId", computerId);
       if (event.ctrlKey) console.log("instant logout");
-      else console.log("logout");
+      else
+        alert.show(
+          `Möchtest du den Computer ${computers.find(
+            (computer) => computer.id === computerId,
+          )?.name} wirklich abmelden?`,
+          [
+            {
+              value: "Ja",
+              onClick: () => console.log("logout"),
+            },
+            {
+              value: "Nein",
+              onClick: () => console.log("no logout"),
+            },
+          ],
+        );
     },
     [],
   );
