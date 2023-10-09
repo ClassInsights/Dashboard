@@ -12,7 +12,7 @@ const Alert = () => {
     const timeout = setTimeout(() => {
       setIsVisible(false);
       clearTimeout(timeout);
-    }, 100);
+    }, 200);
   }, []);
 
   useEffect(() => {
