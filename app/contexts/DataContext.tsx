@@ -98,7 +98,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       },
     ]);
 
-    // TODO: Fetch rooms from API
+    // TODO: Fetch rooms from API; auth.failAuth() on error while fetching
   };
 
   const initializeData = async () => {
