@@ -33,8 +33,8 @@ export default function RootLayout({
     <html lang="de">
       <body className="overflow-x-hidden bg-background dark:bg-dark-background">
         <main className="relative mx-4 min-h-screen md:mx-auto md:w-5/6 xl:w-[65%] 2xl:w-3/5">
-          <ThemeProvider>
-            <AuthProvider>
+          <AuthProvider>
+            <ThemeProvider>
               <DataProvider>
                 <LinkGroupProvider>
                   <AlertProvider>
@@ -44,8 +44,8 @@ export default function RootLayout({
                   </AlertProvider>
                 </LinkGroupProvider>
               </DataProvider>
-            </AuthProvider>
-          </ThemeProvider>
+            </ThemeProvider>
+          </AuthProvider>
         </main>
       </body>
     </html>
