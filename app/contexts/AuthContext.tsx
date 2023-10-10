@@ -1,12 +1,19 @@
 "use client";
 
-import { createContext, useEffect, useState, useContext } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from "react";
 import AuthData from "../types/authData";
 import { decode } from "jsonwebtoken";
 
 export type AuthContextType = {
   token: String | undefined;
   didFail: boolean;
+  failAuth: () => void;
   data: AuthData | undefined;
   loading: boolean;
 };
@@ -45,6 +52,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   };
 
+  const failAuth = useCallback(() => setDidFail(true), []);
+
   useEffect(() => {
     initializeToken();
   }, []);
@@ -54,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         token,
         didFail,
+        failAuth,
         data,
         loading,
       }}
