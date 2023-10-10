@@ -27,7 +27,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       roomId: 102,
       name: "PC1",
       ipAddress: "192.168.58.62",
-      macAddress: "00:00:00:00:00:00",
+      macAddress: "001122334455",
       lastUser: "Max Mustermann",
       online: true,
     },
@@ -49,7 +49,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       id: 4,
       roomId: 102,
       name: "PC4",
-      macAddress: "00:00:00:00:00:00",
+      macAddress: "001122334455",
       online: true,
     },
     {

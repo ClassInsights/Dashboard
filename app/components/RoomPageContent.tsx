@@ -169,7 +169,13 @@ const PageContent = () => {
         )}
         {computer.macAddress && (
           <ComputerDetail
-            value={computer.macAddress}
+            value={
+              computer.macAddress
+                .toString()
+                .match(/.{1,2}/g)
+                ?.reverse()
+                .join(":") ?? ""
+            }
             iconPath="/computer.svg"
             altText="Mac-Address Icon"
           />
