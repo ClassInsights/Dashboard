@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setToken(token);
     const result = decode(token, { json: true });
-    if (result == null) {
+    if (result == null || result["role"] !== "Admin") {
       setDidFail(true);
       setLoading(false);
       return;
