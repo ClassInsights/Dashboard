@@ -77,9 +77,9 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
 
   return (
     <Container
-      disabled={!computer.online}
+      disabled={!computer.isOnline}
       onClick={
-        !computer.online
+        !computer.isOnline
           ? () =>
               alert.show(
                 `Möchtest du den Computer ${computer?.name} wirklich starten?`,
@@ -96,7 +96,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
     >
       <div className="mb-1.5 flex justify-between">
         <h3>{computer.name}</h3>
-        {computer.online && (
+        {computer.isOnline && (
           <div className="flex gap-1.5">
             <ComputerAction
               computerId={computer.id}
@@ -123,7 +123,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
         )}
       </div>
       <ComputerDetail
-        value={computer.online ? "Online" : "Offline"}
+        value={computer.isOnline ? "Online" : "Offline"}
         iconPath="/status.svg"
         altText="Status Icon"
       />
