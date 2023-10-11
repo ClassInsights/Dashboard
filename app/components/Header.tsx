@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
             alt="Go back"
             width={25}
             height={25}
-            className="onBackground-light dark:onBackground-dark mr-2"
+            className="onBackground-light dark:onBackground-dark mr-2 h-auto w-6"
             draggable={false}
           />
         )}
