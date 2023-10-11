@@ -37,7 +37,7 @@ const Alert = () => {
     >
       <p>{alert.message}</p>
       {alert.actions && (
-        <div className="mt-1 flex w-full items-center justify-center gap-8">
+        <div className="mt-2 flex w-full items-center justify-center gap-8">
           {alert.actions.map((action, index) => (
             <button
               key={index}
