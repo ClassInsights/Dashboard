@@ -38,6 +38,7 @@ const ComputerAction: React.FC<ComputerActionProps> = ({
           height={10}
           alt={altText}
           className="onBackground-light dark:onBackground-dark h-4 w-auto"
+          draggable={false}
         />
       </div>
     </div>
