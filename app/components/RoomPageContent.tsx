@@ -119,7 +119,22 @@ const PageContent = () => {
 
   const getComputerWidget = useCallback(
     (computer: Computer, key: string) => (
-      <Container key={key}>
+      <Container
+        key={key}
+        disabled={!computer.online}
+        onClick={
+          !computer.online
+            ? () =>
+                alert.show("Möchtest du den PC wirklich starten?", [
+                  { value: "Ja", onClick: () => console.log("Pc Start") },
+                  {
+                    value: "Nein",
+                    onClick: () => console.log("Start canceled"),
+                  },
+                ])
+            : undefined
+        }
+      >
         <div className="mb-1.5 flex justify-between">
           <h3>{computer.name}</h3>
           {computer.online && (
