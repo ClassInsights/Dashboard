@@ -7,17 +7,13 @@ import { useCallback, useMemo } from "react";
 
 type ComputerWidgetProps = {
   computer: Computer;
-  key: string;
 };
 
-const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer, key }) => {
+const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
   const alert = useAlert();
 
   const shutdownAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (event.ctrlKey) console.log("instant shutdown");
       else
         alert.show(
@@ -38,10 +34,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer, key }) => {
   );
 
   const restartAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (event.ctrlKey) console.log("instant restart");
       else
         alert.show(
@@ -62,10 +55,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer, key }) => {
   );
 
   const logoutAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (event.ctrlKey) console.log("instant logout");
       else
         alert.show(
@@ -87,7 +77,6 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer, key }) => {
 
   return (
     <Container
-      key={key}
       disabled={!computer.online}
       onClick={
         !computer.online
