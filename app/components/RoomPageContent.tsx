@@ -2,12 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "./Header";
 import { useData } from "@/app/contexts/DataContext";
 import { useSearchParams } from "next/navigation";
-import Container from "./containers/Container";
 import Computer from "../types/computer";
-import ComputerDetail from "./computer/ComputerDetail";
 import Image from "next/image";
-import ComputerAction from "./computer/ComputerAction";
-import { useAlert } from "../contexts/AlertContext";
 import ComputerWidget from "./computer/ComputerWidget";
 
 const PageContent = () => {
@@ -17,7 +13,6 @@ const PageContent = () => {
 
   const query = useSearchParams();
   const data = useData();
-  const alert = useAlert();
 
   const room = useMemo(
     () =>

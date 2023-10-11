@@ -3,7 +3,7 @@ import Container from "../containers/Container";
 import { useAlert } from "@/app/contexts/AlertContext";
 import ComputerAction from "./ComputerAction";
 import ComputerDetail from "./ComputerDetail";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 type ComputerWidgetProps = {
   computer: Computer;

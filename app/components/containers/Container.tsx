@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 interface ContainerWidgetProps {
   showArrow?: boolean;
   onClick?: () => void;
