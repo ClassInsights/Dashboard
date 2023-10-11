@@ -35,10 +35,13 @@ const PageContent = () => {
     return weight;
   }, []);
 
-  const fetchComputers = useCallback(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setLoading(false);
-  }, []);
+  const fetchComputers = useCallback(
+    async (id: number) => {
+      await data.fetchComputers(id);
+      setLoading(false);
+    },
+    [data.fetchComputers],
+  );
 
   useEffect(() => {
     var leftWeight = 0;
@@ -61,8 +64,15 @@ const PageContent = () => {
     });
     setLeftComputers(newLeftComputers);
     setRightComputers(newRightComputers);
-    fetchComputers();
+    if (computers) setLoading(false);
+    fetchComputers;
   }, [computers, weightOfComputer, fetchComputers]);
+
+  const reloadComputers = useCallback(async () => {
+    setLoading(true);
+    if (room) await fetchComputers(room.id);
+    setLoading(false);
+  }, [room, fetchComputers]);
 
   if (!room) {
     query.delete();
@@ -72,12 +82,20 @@ const PageContent = () => {
   return (
     <>
       <div className="hidden md:block">
-        <Header title={room.longName} previousPath="/rooms" />
+        <Header
+          title={room.longName}
+          previousPath="/rooms"
+          reloadAction={reloadComputers}
+        />
       </div>
       <div className="block md:hidden">
-        <Header title={room.name} previousPath="/rooms" />
+        <Header
+          title={room.name}
+          previousPath="/rooms"
+          reloadAction={reloadComputers}
+        />
       </div>
-      <h2 className="mb-2">Registrierte Computer</h2>
+      <h2 className="mb-2 w-full">Registrierte Computer</h2>
       <div className="w-full">
         {loading ? (
           <div className="flex h-32 w-full items-center justify-center">
