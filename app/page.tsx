@@ -3,7 +3,6 @@
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import ConfigSection from "./components/ConfigSection";
 import Header from "./components/Header";
 import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
@@ -53,12 +52,23 @@ export default function Home() {
           onClick={() => router.push("/rooms")}
         />
       </div>
-      <ConfigSection
-        title="Verknüpfe Gruppen"
-        description="Hier kannst du die Azure AD Gruppen mit den WebUntis Klassen verknüpfen."
-        action={groupModal.toggle}
-        actionLabel="Einstellungen"
-      />
+      <section className="mt-10 flex-col xs:flex-row">
+        <h2>Konfiguration verwalten</h2>
+        <div className="flex flex-col justify-between xs:flex-row xs:items-center">
+          <p>
+            Hier kannst du alle nötigen Wartungsarbeiten für das ClassInsights
+            Ökosystem tätigen.
+          </p>
+          <button
+            onClick={() => router.push("/settings")}
+            className="mt-4 rounded-lg bg-primary px-4 py-3 xs:ml-20 xs:mt-0"
+          >
+            <span className="text-background dark:text-dark-background">
+              Einstellungen
+            </span>
+          </button>
+        </div>
+      </section>
       <div className="h-20 w-full"></div>
       <Footer />
     </>
