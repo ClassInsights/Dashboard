@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, previousPath }) => {
   return (
     <div className="mb-10 flex flex-col">
       <div
-        className={`flex flex-shrink items-center ${
+        className={`flex w-max flex-shrink ${
           previousPath !== undefined ? "cursor-pointer" : ""
         }`}
         onClick={() =>
