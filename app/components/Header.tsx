@@ -7,14 +7,14 @@ type HeaderProps = {
   title: string;
   subtitle?: string;
   previousPath?: string;
-  action?: React.ReactNode;
+  reloadAction?: () => void;
 };
 
 const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
   previousPath,
-  action,
+  reloadAction,
 }) => {
   const router = useRouter();
   return (
@@ -42,7 +42,21 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         {subtitle && <p className="mt-3 sm:w-3/4 lg:w-3/5">{subtitle}</p>}
       </div>
-      {action && action}
+      {reloadAction && (
+        <div
+          className="dark:bg-primary-dark flex-shrink-0 flex-grow cursor-pointer rounded-md bg-primary p-1.5"
+          onClick={reloadAction}
+        >
+          <Image
+            src="/refresh.svg"
+            alt="Refresh rooms"
+            height={15}
+            width={15}
+            className="dark:onBackground-light onBackground-dark h-5 w-5"
+            draggable={false}
+          />
+        </div>
+      )}
     </div>
   );
 };
