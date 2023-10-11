@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import { useRouter, useSearchParams } from "next/navigation";
 import PageContent from "@/app/components/RoomPageContent";
 import ContainerPreset from "@/app/components/containers/ContainerPreset";
+import Image from "next/image";
 
 export default function RoomOverviewPage() {
   const router = useRouter();
@@ -24,6 +25,21 @@ export default function RoomOverviewPage() {
         title="Räume"
         subtitle="Hier siehst du alle Räume der Schule mit registrierten Geräten."
         previousPath="/"
+        action={
+          <div
+            className="dark:bg-primary-dark flex-shrink-0 flex-grow cursor-pointer rounded-md bg-primary p-1.5"
+            onClick={() => data.reloadRooms()}
+          >
+            <Image
+              src="/refresh.svg"
+              alt="Refresh rooms"
+              height={15}
+              width={15}
+              className="dark:onBackground-light onBackground-dark h-5 w-5"
+              draggable={false}
+            />
+          </div>
+        }
       />
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         {data.rooms?.map((room, index) => (

@@ -15,8 +15,9 @@ import Loading from "../components/Loading";
 
 export type DataContextType = {
   rooms: Room[];
+  reloadRooms: () => void;
   computers: Computer[];
-  setComputers: React.Dispatch<React.SetStateAction<Computer[]>>;
+  fetchComputers: (id: number) => Promise<void>;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -107,8 +108,20 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     // TODO: Fetch rooms from API; auth.failAuth() on error while fetching
   };
 
+  const reloadRooms = useCallback(async () => {
+    setLoading(true);
+    await fetchRooms();
+    setLoading(false);
+  }, [fetchRooms]);
+
+  const fetchComputers = useCallback(async () => {
+    // TODO: Fetch computers from API
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }, []);
+
   const initializeData = useCallback(async () => {
     await fetchRooms();
+    await fetchComputers();
     setLoading(false);
   }, []);
 
@@ -123,7 +136,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   if (loading || parentLoading) return <Loading />;
 
   return (
-    <DataContext.Provider value={{ rooms, computers, setComputers }}>
+    <DataContext.Provider
+      value={{ rooms, reloadRooms, computers, fetchComputers }}
+    >
       {children}
     </DataContext.Provider>
   );
