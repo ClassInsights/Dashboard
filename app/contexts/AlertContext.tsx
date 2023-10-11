@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import Action from "../types/alertAction";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type AlertContextType = {
   message: string;
@@ -21,20 +21,32 @@ type AlertContextType = {
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
-  const [message, setMessage] = useState<string>("Du hast gewonnen!");
+  const [message, setMessage] = useState<string>("");
   const [actions, setActions] = useState<Action[]>([]);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const path = usePathname();
+  const query = useSearchParams();
 
-  useEffect(() => hide(), [path]);
+  useEffect(() => setIsVisible(false), [path, query]);
 
-  const show = useCallback((message: string, actions?: Action[]) => {
-    if (isVisible) hide();
-    setMessage(message);
-    setActions(actions || []);
-    setIsVisible(true);
-  }, []);
+  const show = useCallback(
+    (message: string, actions?: Action[]) => {
+      if (isVisible) {
+        setIsVisible(false);
+        setTimeout(() => {
+          setMessage(message);
+          setActions(actions || []);
+          setIsVisible(true);
+        }, 150);
+      } else {
+        setMessage(message);
+        setActions(actions || []);
+        setIsVisible(true);
+      }
+    },
+    [isVisible],
+  );
 
   const hide = useCallback(() => setIsVisible(false), []);
 

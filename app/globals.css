@@ -90,12 +90,15 @@
     0% {
       transform: translateY(25%);
     }
+    50% {
+      transform: translateY(-100%);
+    }
     100% {
       transform: translateY(-100%);
     }
   }
   .alert-close-animation {
-    animation: alert-close 0.1s ease-in-out;
+    animation: alert-close 0.2s ease-in-out;
   }
   * {
     @apply select-light dark:select-dark text-onBackground transition-colors duration-300 ease-in-out dark:text-dark-onBackground;
