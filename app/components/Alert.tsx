@@ -5,26 +5,28 @@ import { useAlert } from "../contexts/AlertContext";
 
 const Alert = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-
   const alert = useAlert();
 
+  var timeout: NodeJS.Timeout;
+
   const startCloseAnimation = useCallback(() => {
-    const timeout = setTimeout(() => {
+    const closeTimeout = setTimeout(() => {
       setIsVisible(false);
-      clearTimeout(timeout);
+      alert.hide();
+      clearTimeout(closeTimeout);
     }, 200);
   }, []);
 
   useEffect(() => {
-    if (alert.isVisible) setIsVisible(true);
-    else return;
-    const timeout = setTimeout(
-      () => {
-        startCloseAnimation();
-        alert.hide();
-      },
-      alert.actions.length > 0 ? 6000 : 2500,
-    );
+    if (alert.isVisible) {
+      setIsVisible(true);
+      timeout = setTimeout(
+        () => {
+          startCloseAnimation();
+        },
+        alert.actions.length > 0 ? 6000 : 2500,
+      );
+    } else if (isVisible) startCloseAnimation();
     return () => clearTimeout(timeout);
   }, [alert]);
 
@@ -32,7 +34,7 @@ const Alert = () => {
 
   return (
     <div
-      className={`alert-animation absolute left-0 right-0 mx-auto w-max translate-y-1/4 select-none rounded-xl bg-secondary px-5 py-2 shadow-sm dark:bg-dark-secondary
+      className={`alert-animation absolute left-0 right-0 z-10 mx-auto max-w-max translate-y-1/4 select-none rounded-xl bg-secondary px-5 py-2 shadow-sm dark:bg-dark-secondary
     ${!alert.isVisible ? "alert-close-animation" : ""}`}
     >
       <p>{alert.message}</p>

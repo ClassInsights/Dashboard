@@ -30,7 +30,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
           ],
         );
     },
-    [],
+    [alert, computer?.name],
   );
 
   const restartAction = useCallback(
@@ -51,7 +51,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
           ],
         );
     },
-    [],
+    [alert, computer?.name],
   );
 
   const logoutAction = useCallback(
@@ -72,7 +72,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
           ],
         );
     },
-    [],
+    [alert, computer?.name],
   );
 
   return (

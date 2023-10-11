@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import Room from "../types/room";
 import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
@@ -101,10 +107,10 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     // TODO: Fetch rooms from API; auth.failAuth() on error while fetching
   };
 
-  const initializeData = async () => {
+  const initializeData = useCallback(async () => {
     await fetchRooms();
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     initializeData();

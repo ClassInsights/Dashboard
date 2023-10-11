@@ -22,7 +22,7 @@ const PageContent = () => {
   const room = useMemo(
     () =>
       data.rooms?.find((room) => room.id === parseInt(query.get("id") ?? "")),
-    [query],
+    [data.rooms, query],
   );
 
   const computers = useMemo(
@@ -67,7 +67,7 @@ const PageContent = () => {
     setLeftComputers(newLeftComputers);
     setRightComputers(newRightComputers);
     fetchComputers();
-  }, [weightOfComputer, fetchComputers]);
+  }, [computers, weightOfComputer, fetchComputers]);
 
   if (!room) {
     query.delete();

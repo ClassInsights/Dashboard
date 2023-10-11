@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import Action from "../types/alertAction";
+import { usePathname, useRouter } from "next/navigation";
 
 type AlertContextType = {
   message: string;
@@ -18,14 +25,15 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
   const [actions, setActions] = useState<Action[]>([]);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
+  const path = usePathname();
+
+  useEffect(() => hide(), [path]);
+
   const show = useCallback((message: string, actions?: Action[]) => {
-    setIsVisible(false);
-    const timeout = setTimeout(() => {
-      setMessage(message);
-      setActions(actions || []);
-      setIsVisible(true);
-      clearTimeout(timeout);
-    }, 100);
+    if (isVisible) hide();
+    setMessage(message);
+    setActions(actions || []);
+    setIsVisible(true);
   }, []);
 
   const hide = useCallback(() => setIsVisible(false), []);

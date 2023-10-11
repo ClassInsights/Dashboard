@@ -23,13 +23,13 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getConfig = useMemo(() => config.current, []);
 
-  const setConfig = useCallback((config: Config) => {
-    config = config;
+  const setConfig = useCallback((newConfig: Config) => {
+    config.current = newConfig;
   }, []);
 
   const saveConfig = useCallback(() => {
     // TODO: Save config to Server
-  }, [config]);
+  }, []);
 
   return (
     <ConfigContext.Provider
