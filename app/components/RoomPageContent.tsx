@@ -8,6 +8,7 @@ import ComputerDetail from "./computer/ComputerDetail";
 import Image from "next/image";
 import ComputerAction from "./computer/ComputerAction";
 import { useAlert } from "../contexts/AlertContext";
+import ComputerWidget from "./computer/ComputerWidget";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -38,167 +39,6 @@ const PageContent = () => {
     const weight = details.filter((detail) => detail != null).length + 5;
     return weight;
   }, []);
-
-  const shutdownAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
-      if (event.ctrlKey) console.log("instant shutdown");
-      else
-        alert.show(
-          `Möchtest du den Computer ${computers.find(
-            (computer) => computer.id === computerId,
-          )?.name} wirklich herunterfahren?`,
-          [
-            {
-              value: "Ja",
-              onClick: () => console.log("shutdown"),
-            },
-            {
-              value: "Nein",
-              onClick: () => console.log("no shutdown"),
-            },
-          ],
-        );
-    },
-    [],
-  );
-
-  const restartAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
-      if (event.ctrlKey) console.log("instant restart");
-      else
-        alert.show(
-          `Möchtest du den Computer ${computers.find(
-            (computer) => computer.id === computerId,
-          )?.name} wirklich neustarten?`,
-          [
-            {
-              value: "Ja",
-              onClick: () => console.log("restart"),
-            },
-            {
-              value: "Nein",
-              onClick: () => console.log("no restart"),
-            },
-          ],
-        );
-    },
-    [],
-  );
-
-  const logoutAction = useCallback(
-    (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      computerId: number,
-    ) => {
-      if (event.ctrlKey) console.log("instant logout");
-      else
-        alert.show(
-          `Möchtest du den Computer ${computers.find(
-            (computer) => computer.id === computerId,
-          )?.name} wirklich abmelden?`,
-          [
-            {
-              value: "Ja",
-              onClick: () => console.log("logout"),
-            },
-            {
-              value: "Nein",
-              onClick: () => console.log("no logout"),
-            },
-          ],
-        );
-    },
-    [],
-  );
-
-  const getComputerWidget = useCallback(
-    (computer: Computer, key: string) => (
-      <Container
-        key={key}
-        disabled={!computer.online}
-        onClick={
-          !computer.online
-            ? () =>
-                alert.show("Möchtest du den PC wirklich starten?", [
-                  { value: "Ja", onClick: () => console.log("Pc Start") },
-                  {
-                    value: "Nein",
-                    onClick: () => console.log("Start canceled"),
-                  },
-                ])
-            : undefined
-        }
-      >
-        <div className="mb-1.5 flex justify-between">
-          <h3>{computer.name}</h3>
-          {computer.online && (
-            <div className="flex gap-1.5">
-              <ComputerAction
-                computerId={computer.id}
-                iconPath="/shutdown.svg"
-                action={shutdownAction}
-                altText="Shutdown Computer"
-                hintText="Herunterfahren"
-              />
-              <ComputerAction
-                computerId={computer.id}
-                iconPath="/restart.svg"
-                action={restartAction}
-                altText="Restart Computer"
-                hintText="Neustarten"
-              />
-              <ComputerAction
-                computerId={computer.id}
-                iconPath="/logout.svg"
-                action={logoutAction}
-                altText="Logout Computer"
-                hintText="Abmelden"
-              />
-            </div>
-          )}
-        </div>
-        <ComputerDetail
-          value={computer.online ? "Online" : "Offline"}
-          iconPath="/status.svg"
-          altText="Status Icon"
-        />
-        {computer.lastUser && (
-          <ComputerDetail
-            value={computer.lastUser}
-            iconPath="/user.svg"
-            altText="User Icon"
-          />
-        )}
-        {computer.ipAddress && (
-          <ComputerDetail
-            value={computer.ipAddress}
-            iconPath="/network.svg"
-            altText="IP-Address Icon"
-          />
-        )}
-        {computer.macAddress && (
-          <ComputerDetail
-            value={
-              computer.macAddress
-                .toString()
-                .match(/.{1,2}/g)
-                ?.reverse()
-                .join(":") ?? ""
-            }
-            iconPath="/computer.svg"
-            altText="Mac-Address Icon"
-          />
-        )}
-      </Container>
-    ),
-    [],
-  );
 
   const fetchComputers = useCallback(async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -260,20 +100,20 @@ const PageContent = () => {
         ) : (
           <div className="w-full">
             <div className="flex w-full flex-col gap-4 sm:hidden">
-              {computers.map((computer, index) =>
-                getComputerWidget(computer, `s-${index}`),
-              )}
+              {computers.map((computer, index) => (
+                <ComputerWidget computer={computer} key={`s-${index}`} />
+              ))}
             </div>
             <div className="hidden w-full gap-4 sm:flex">
               <div className="flex w-full flex-col gap-4">
-                {leftComputers.map((computer, index) =>
-                  getComputerWidget(computer, `l-${index}`),
-                )}
+                {leftComputers.map((computer, index) => (
+                  <ComputerWidget computer={computer} key={`l-${index}`} />
+                ))}
               </div>
               <div className="flex w-full flex-col gap-4">
-                {rightComputers.map((computer, index) =>
-                  getComputerWidget(computer, `r-${index}`),
-                )}
+                {rightComputers.map((computer, index) => (
+                  <ComputerWidget computer={computer} key={`r-${index}`} />
+                ))}
               </div>
             </div>
           </div>
