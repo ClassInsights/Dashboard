@@ -25,7 +25,7 @@ const Alert = () => {
     setIsClosing(false);
     timeout = setTimeout(
       () => alert.hide(),
-      alert.actions.length === 0 ? 2000 : 8000,
+      alert.actions.length === 0 ? 5000 : 8000,
     );
     return () => clearTimeout(timeout);
   }, [alert]);
@@ -34,11 +34,11 @@ const Alert = () => {
 
   return (
     <div
-      className={`alert-animation absolute left-0 right-0 z-10 mx-auto max-w-max translate-y-1/4 select-none rounded-xl bg-secondary px-5 py-2 shadow-sm dark:bg-dark-secondary
+      className={`alert-animation absolute left-0 right-0 z-10 mx-auto max-w-max translate-y-1/4 rounded-xl bg-secondary px-5 py-2 shadow-sm dark:bg-dark-secondary
     ${isClosing ? "alert-close-animation" : ""}`}
     >
       <p>{alert.message}</p>
-      {alert.actions && (
+      {alert.actions.length > 0 && (
         <div className="mt-2 flex w-full items-center justify-center gap-8">
           {alert.actions.map((action, index) => (
             <button
