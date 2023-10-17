@@ -1,3 +1,4 @@
+import ChangesBanner from "@/app/components/ChangesBanner";
 import { ConfigProvider } from "@/app/contexts/ConfigContext";
 
 export default function SettingsLayout({
@@ -5,5 +6,10 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ConfigProvider>{children}</ConfigProvider>;
+  return (
+    <ConfigProvider>
+      <ChangesBanner />
+      {children}
+    </ConfigProvider>
+  );
 }
