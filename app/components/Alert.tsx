@@ -25,7 +25,7 @@ const Alert = () => {
     setIsClosing(false);
     timeout = setTimeout(
       () => alert.hide(),
-      alert.actions.length === 0 ? 5000 : 8000,
+      alert.actions.length === 0 ? 3000 : 8000,
     );
     return () => clearTimeout(timeout);
   }, [alert]);
