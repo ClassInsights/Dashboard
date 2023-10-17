@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 
 type TextInputProps = {
-  value?: string;
+  initialValue?: string;
   placeholder?: string;
   style?: "primary" | "secondary" | "tertiary";
   regexPattern?: string;
@@ -11,22 +11,23 @@ type TextInputProps = {
 };
 
 const TextInput: React.FC<TextInputProps> = ({
-  value,
+  initialValue,
   placeholder,
   style,
   regexPattern,
   onSubmit,
 }) => {
-  const [inputValue, setInputValue] = useState(value ?? "");
+  const [inputValue, setInputValue] = useState(initialValue ?? "");
 
   const submitValue = useCallback(
-    (value: string) =>
-      regexPattern
-        ? new RegExp(regexPattern).test(value)
-          ? onSubmit(value)
-          : setInputValue(value)
-        : onSubmit(value),
-    [regexPattern, value, onSubmit],
+    (value: string) => {
+      if (value === initialValue) return;
+      else if (regexPattern) {
+        const regex = new RegExp(regexPattern);
+        regex.test(value) ? onSubmit(value) : setInputValue(initialValue ?? "");
+      } else onSubmit(value);
+    },
+    [regexPattern, initialValue, onSubmit],
   );
 
   return (
