@@ -1,5 +1,5 @@
 type Config = {
-  teacherGroup: string;
+  teacherGroupId: string;
   domainSid: string;
   domainName: string;
   caSubject: string;
