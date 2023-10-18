@@ -180,7 +180,7 @@ const SettingsPage = () => {
                 height={25}
                 alt="Copy to Clipboard"
                 className="onBackground-light dark:onBackground-dark h-5 w-auto cursor-pointer"
-                onClick={() => {
+                onClick={async () => {
                   if (
                     navigator === undefined ||
                     navigator.clipboard === undefined
@@ -190,9 +190,16 @@ const SettingsPage = () => {
                     );
                     return;
                   }
-                  navigator.clipboard.writeText(
-                    "Get-ADDomain -Identity PROJEKT | Select Name, DomainSID",
-                  );
+                  try {
+                    await navigator.clipboard.writeText(
+                      "Get-ADDomain -Identity PROJEKT | Select Name, DomainSID",
+                    );
+                  } catch (_) {
+                    alert.show(
+                      "Kopieren fehlgeschlagen - du kannst noch manuell kopieren",
+                    );
+                    return;
+                  }
                   alert.show("PowerShell Befehl kopiert");
                 }}
                 draggable={false}
