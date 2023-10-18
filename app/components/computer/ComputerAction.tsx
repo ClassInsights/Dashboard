@@ -22,7 +22,7 @@ const ComputerAction: React.FC<ComputerActionProps> = ({
 }) => {
   return (
     <div className="group relative flex flex-col gap-4">
-      <div className="absolute top-[-2rem] z-50 hidden items-center justify-center rounded-md bg-tertiary px-1.5 py-0.5 group-hover:block">
+      <div className="absolute top-[-2rem] z-40 hidden items-center justify-center rounded-md bg-tertiary px-1.5 py-0.5 group-hover:block">
         <small className="select-none">{hintText}</small>
       </div>
       <div
