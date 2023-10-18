@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import Divider from "@/app/components/settings/Divider";
 import Container from "@/app/components/containers/Container";
 import SecretArea from "@/app/components/settings/SecretArea";
+import DropDownList from "@/app/components/forms/DropDownList";
 
 const SettingsPage = () => {
   const config = useConfig();
@@ -74,9 +75,44 @@ const SettingsPage = () => {
       </section>
       <div className="h-20 w-full" />
       <SettingsSection
+        title="Azure Lehrergruppe"
+        description="Hier kannst du die Azure Gruppe für die Lehrer festlegen."
+        input={
+          <DropDownList
+            options={[
+              {
+                displayName: "2019KK",
+                value: "e4816e17-4c37-8306-6fe6-9f96d74c4b25",
+              },
+              {
+                displayName: "2020KK",
+                value: "e4816e17-4c37-8306-6fe6-6f98d32c2b34",
+              },
+              {
+                displayName: "2021KK",
+                value: "e4816e17-4c37-8306-6fe6-2f93d72d4c82",
+              },
+              {
+                displayName: "Teacher",
+                value: "e4816e17-4c37-8306-6fe6-2f93b35d6c49",
+              },
+            ]}
+            selected={currentConfig.teacherGroupId}
+            title="Aktuelle Lehrergruppe"
+            disabled={config.isSaving}
+            onChange={(element) =>
+              config.updateConfig({
+                ...currentConfig,
+                teacherGroupId: element.value,
+              })
+            }
+          />
+        }
+      />
+      <Divider />
+      <SettingsSection
         title="Azure Gruppen Pattern"
-        description="Hier kannst du das Muster/Pattern für die Azure Schüler Gruppen
-                Namen festlegen."
+        description="Hier kannst du das Muster/Pattern für die Benennung der Azure Schüler Gruppen festlegen."
         info={
           <div className="select-none">
             <p className="mb-0.5">Beispiele:</p>
@@ -94,12 +130,32 @@ const SettingsPage = () => {
           <TextInput
             initialValue={currentConfig.azureGroupPattern}
             placeholder="Gruppen Pattern"
-            title="Aktueller Wert"
+            title="Aktuelles Pattern"
             regexPattern="(?=.*YEAR)(?=.*CLASS)"
+            disabled={config.isSaving}
             onSubmit={(value) =>
               config.updateConfig({
                 ...currentConfig,
                 azureGroupPattern: value,
+              })
+            }
+          />
+        }
+      />
+      <Divider />
+      <SettingsSection
+        title="CASubject (Clientzertifikat)"
+        description="Das CASubject ist der Name der Zertifizierungsstelle, die das Clientztertifikat erstellt hat."
+        input={
+          <TextInput
+            initialValue={currentConfig.caSubject}
+            placeholder="CASubject"
+            title="Aktuelles CASubject"
+            disabled={config.isSaving}
+            onSubmit={(value) =>
+              config.updateConfig({
+                ...currentConfig,
+                caSubject: value,
               })
             }
           />
@@ -148,29 +204,12 @@ const SettingsPage = () => {
           <TextInput
             initialValue={currentConfig.domainSid}
             placeholder="DomainSID"
-            title="Aktueller Wert"
+            title="Aktuelle DomainSID"
+            disabled={config.isSaving}
             onSubmit={(value) =>
               config.updateConfig({
                 ...currentConfig,
                 domainSid: value,
-              })
-            }
-          />
-        }
-      />
-      <Divider />
-      <SettingsSection
-        title="CASubject (Clientzertifikat)"
-        description="Das CASubject ist der Name der Zertifizierungsstelle, die das Clientztertifikat erstellt hat."
-        input={
-          <TextInput
-            initialValue={currentConfig.caSubject}
-            placeholder="CASubject"
-            title="Aktueller Wert"
-            onSubmit={(value) =>
-              config.updateConfig({
-                ...currentConfig,
-                caSubject: value,
               })
             }
           />
