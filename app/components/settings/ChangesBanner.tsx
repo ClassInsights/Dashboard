@@ -29,7 +29,11 @@ const ChangesBanner = () => {
     ${isClosing ? "banner-close-animation" : ""}`}
     >
       <p className="text-center text-background dark:text-dark-background">
-        Es gibt ungespeicherte Änderungen - klicke auf "Speichern" zum Sichern.
+        Es gibt ungespeicherte Änderungen - klicke auf{" "}
+        <span className="font-bold text-background dark:text-dark-background">
+          Speichern
+        </span>{" "}
+        zum Sichern.
       </p>
       <button
         disabled={loading}

@@ -88,7 +88,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const auth = useAuth();
 
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setRooms([
       {
@@ -106,7 +106,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     ]);
 
     // TODO: Fetch rooms from API; auth.failAuth() on error while fetching
-  };
+  }, []);
 
   const reloadRooms = useCallback(async () => {
     setLoading(true);
@@ -123,7 +123,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     await fetchRooms();
     await fetchComputers();
     setLoading(false);
-  }, []);
+  }, [fetchRooms, fetchComputers]);
 
   useEffect(() => {
     initializeData();

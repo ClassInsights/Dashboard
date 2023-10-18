@@ -40,7 +40,7 @@ const PageContent = () => {
       await data.fetchComputers(id);
       setLoading(false);
     },
-    [data.fetchComputers],
+    [data],
   );
 
   useEffect(() => {

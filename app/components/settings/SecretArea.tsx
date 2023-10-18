@@ -13,8 +13,8 @@ const SecretArea = () => {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSubmitting(false);
-    alert.show("ClientSecret wurde gespeichert");
-  }, [azureSecret]);
+    alert.show("Azure Secret wurde gespeichert");
+  }, [alert]);
 
   const disableSubmit = useMemo(
     () => azureSecret === "" || isSubmitting,
