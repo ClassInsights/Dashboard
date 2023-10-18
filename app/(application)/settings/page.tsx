@@ -93,15 +93,13 @@ const SettingsPage = () => {
         description="Die DomainSID ist eine eindeutige Kennung für eine Windows-Domäne."
         info={
           <>
-            <p className="pb-1">
+            <p className="pb-1.5">
               Hierfür musst du folgenden PowerShell Befehl auf dem
               DomainController ausführen (DOMAIN mit richtigem Domain Namen
               austauschen):
             </p>
             <div className="flex w-full items-center justify-between gap-4 rounded-md border-2 border-primary p-2 dark:border-dark-primary xl:w-max">
-              <p className="">
-                Get-ADDomain -Identity DOMAIN | Select Name, DomainSID
-              </p>
+              <p>Get-ADDomain -Identity DOMAIN | Select Name, DomainSID</p>
               <Image
                 src={"/copy.svg"}
                 width={25}
