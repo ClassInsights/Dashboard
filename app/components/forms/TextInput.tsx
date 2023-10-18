@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 type TextInputProps = {
   initialValue?: string;
@@ -8,7 +8,10 @@ type TextInputProps = {
   title?: string;
   style?: "primary" | "secondary" | "tertiary";
   regexPattern?: string;
-  onSubmit: (value: string) => void;
+  disabled?: boolean;
+  reset?: boolean;
+  onSubmit?: (value: string) => void;
+  onChange?: (value: string) => void;
 };
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -17,17 +20,27 @@ const TextInput: React.FC<TextInputProps> = ({
   title,
   style,
   regexPattern,
+  disabled,
+  reset,
   onSubmit,
+  onChange,
 }) => {
   const [inputValue, setInputValue] = useState(initialValue ?? "");
+
+  useEffect(() => {
+    if (reset) setInputValue(initialValue ?? "");
+  }, [reset, initialValue]);
 
   const submitValue = useCallback(
     (value: string) => {
       if (value === initialValue) return;
-      else if (regexPattern) {
-        const regex = new RegExp(regexPattern);
-        regex.test(value) ? onSubmit(value) : setInputValue(initialValue ?? "");
-      } else onSubmit(value);
+      if (!regexPattern) {
+        if (onSubmit) onSubmit(value);
+        return;
+      }
+      const regex = new RegExp(regexPattern);
+      if (regex.test(value) && onSubmit) onSubmit(value);
+      else setInputValue(initialValue ?? "");
     },
     [regexPattern, initialValue, onSubmit],
   );
@@ -38,11 +51,15 @@ const TextInput: React.FC<TextInputProps> = ({
         <small className="absolute bottom-10 select-none">{title}</small>
       )}
       <input
+        disabled={disabled}
         type="text"
         value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
+        onChange={(event) => {
+          setInputValue(event.target.value);
+          if (onChange) onChange(event.target.value);
+        }}
         placeholder={placeholder}
-        className={`rounded-lg px-4 py-2 placeholder-onBackground outline-none placeholder:opacity-20 dark:placeholder-dark-onBackground
+        className={`rounded-md px-4 py-2 placeholder-onBackground outline-none transition-opacity placeholder:opacity-20 dark:placeholder-dark-onBackground
       ${
         style === "primary"
           ? "bg-primary text-background dark:bg-dark-primary dark:text-dark-background"
@@ -53,7 +70,8 @@ const TextInput: React.FC<TextInputProps> = ({
           ? "bg-secondary dark:bg-dark-secondary"
           : ""
       }
-      ${style === "tertiary" ? "bg-tertiary dark:bg-dark-tertiary" : ""}"}`}
+      ${style === "tertiary" ? "bg-tertiary dark:bg-dark-tertiary" : ""}
+    ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
         onBlur={() => submitValue(inputValue)}
       />
     </div>
