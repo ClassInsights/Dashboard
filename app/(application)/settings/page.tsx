@@ -1,13 +1,14 @@
 "use client";
 
-import Header from "@/app/components/Header";
-import SettingsSection from "@/app/components/SettingsSection";
+import Header from "@/app/components/general/Header";
+import SettingsSection from "@/app/components/settings/SettingsSection";
 import ListContainer from "@/app/components/containers/ListContainer";
 import TextInput from "@/app/components/forms/TextInput";
 import { useAlert } from "@/app/contexts/AlertContext";
 import { useConfig } from "@/app/contexts/ConfigContext";
 import Image from "next/image";
 import { useMemo } from "react";
+import Divider from "@/app/components/settings/Divider";
 
 const SettingsPage = () => {
   const config = useConfig();
@@ -56,6 +57,7 @@ const SettingsPage = () => {
         </ListContainer>
         <ListContainer title="Test"></ListContainer>
       </section>
+      <div className="h-20 w-full" />
       <SettingsSection
         title="Azure Gruppen Pattern"
         description="Hier kannst du das Muster/Pattern für die Azure Schüler Gruppen
@@ -88,6 +90,7 @@ const SettingsPage = () => {
           />
         }
       />
+      <Divider />
       <SettingsSection
         title="Domain Security Identifier"
         description="Die DomainSID ist eine eindeutige Kennung für eine Windows-Domäne."
@@ -135,6 +138,24 @@ const SettingsPage = () => {
               config.updateConfig({
                 ...currentConfig,
                 domainSid: value,
+              })
+            }
+          />
+        }
+      />
+      <Divider />
+      <SettingsSection
+        title="CASubject (Clientzertifikat)"
+        description="Das CASubject ist der Name der Zertifizierungsstelle, die das Clientztertifikat erstellt hat."
+        input={
+          <TextInput
+            initialValue={currentConfig.caSubject}
+            placeholder="CASubject"
+            title="Aktueller Wert"
+            onSubmit={(value) =>
+              config.updateConfig({
+                ...currentConfig,
+                caSubject: value,
               })
             }
           />
