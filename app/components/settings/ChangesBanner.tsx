@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useConfig } from "../contexts/ConfigContext";
-import { useAlert } from "../contexts/AlertContext";
+import { useConfig } from "../../contexts/ConfigContext";
+import { useAlert } from "../../contexts/AlertContext";
 
 const ChangesBanner = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);

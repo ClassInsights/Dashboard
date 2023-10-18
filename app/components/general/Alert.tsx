@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAlert } from "../contexts/AlertContext";
+import { useAlert } from "../../contexts/AlertContext";
 
 const Alert = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);

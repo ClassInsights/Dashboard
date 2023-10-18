@@ -1,9 +1,9 @@
 "use client";
 
 import { useData } from "@/app/contexts/DataContext";
-import Header from "../../components/Header";
+import Header from "../../components/general/Header";
 import { useRouter, useSearchParams } from "next/navigation";
-import PageContent from "@/app/components/RoomPageContent";
+import PageContent from "@/app/components/computer/RoomPageContent";
 import ContainerPreset from "@/app/components/containers/ContainerPreset";
 import Image from "next/image";
 

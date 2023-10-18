@@ -1,9 +1,9 @@
 "use client";
 
 import { useAuth } from "./contexts/AuthContext";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
+import Navbar from "./components/general/Navbar";
+import Footer from "./components/general/Footer";
+import Header from "./components/general/Header";
 import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
 import { useLinkGroupModal } from "./components/modals/LinkGroupModal";

@@ -6,7 +6,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import "./globals.css";
 import type { Metadata } from "next";
 import { DataProvider } from "./contexts/DataContext";
-import Alert from "./components/Alert";
+import Alert from "./components/general/Alert";
 import { AlertProvider } from "./contexts/AlertContext";
 
 export const metadata: Metadata = {

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Header from "./Header";
+import Header from "../general/Header";
 import { useData } from "@/app/contexts/DataContext";
 import { useSearchParams } from "next/navigation";
-import Computer from "../types/computer";
+import Computer from "../../types/computer";
 import Image from "next/image";
-import ComputerWidget from "./computer/ComputerWidget";
+import ComputerWidget from "./ComputerWidget";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);

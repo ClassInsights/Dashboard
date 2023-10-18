@@ -1,4 +1,4 @@
-import ChangesBanner from "@/app/components/ChangesBanner";
+import ChangesBanner from "@/app/components/settings/ChangesBanner";
 import { ConfigProvider } from "@/app/contexts/ConfigContext";
 
 export default function SettingsLayout({
