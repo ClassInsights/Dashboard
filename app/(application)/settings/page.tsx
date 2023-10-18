@@ -1,13 +1,17 @@
 "use client";
 
 import Header from "@/app/components/Header";
+import SettingsSection from "@/app/components/SettingsSection";
 import ListContainer from "@/app/components/containers/ListContainer";
 import TextInput from "@/app/components/forms/TextInput";
+import { useAlert } from "@/app/contexts/AlertContext";
 import { useConfig } from "@/app/contexts/ConfigContext";
+import Image from "next/image";
 import { useMemo } from "react";
 
 const SettingsPage = () => {
   const config = useConfig();
+  const alert = useAlert();
 
   const currentConfig = useMemo(() => config.getConfig(), [config]);
 
@@ -52,39 +56,83 @@ const SettingsPage = () => {
         </ListContainer>
         <ListContainer title="Test"></ListContainer>
       </section>
-      <section className="mt-10 flex w-full flex-col">
-        <div>
-          <h2 className="pb-2">Azure Gruppen Pattern</h2>
-          <div className="flex w-full items-start justify-between">
-            <div>
-              <p className="pb-2">
-                Hier kannst du das Muster/Pattern für die Azure Gruppen Namen
-                festlegen.
-              </p>
-              <p className="mb-0.5">Beispiele:</p>
-              <div className="grid w-max grid-cols-2 gap-x-10">
-                <small>Klasse</small>
-                <small className="mb-0.5">Pattern</small>
-                <p>2019_KK</p>
-                <p>YEAR_CLASS</p>
-                <p>KKB/2022</p>
-                <p>CLASS/YEAR</p>
-              </div>
+      <SettingsSection
+        title="Azure Gruppen Pattern"
+        description="Hier kannst du das Muster/Pattern für die Azure Schüler Gruppen
+                Namen festlegen."
+        info={
+          <>
+            <p className="mb-0.5">Beispiele:</p>
+            <div className="grid w-max grid-cols-2 gap-x-4 sm:gap-x-10">
+              <small>Klasse</small>
+              <small className="mb-0.5">Pattern</small>
+              <p>2019_KK</p>
+              <p>YEAR_CLASS</p>
+              <p>KKB/2022</p>
+              <p>CLASS/YEAR</p>
             </div>
-            <TextInput
-              initialValue={currentConfig.azureGroupPattern}
-              placeholder="Gruppen Pattern"
-              regexPattern="(?=.*YEAR)(?=.*CLASS)"
-              onSubmit={(value) =>
-                config.updateConfig({
-                  ...currentConfig,
-                  azureGroupPattern: value,
-                })
-              }
-            />
-          </div>
-        </div>
-      </section>
+          </>
+        }
+        input={
+          <TextInput
+            initialValue={currentConfig.azureGroupPattern}
+            placeholder="Gruppen Pattern"
+            title="Aktueller Wert"
+            regexPattern="(?=.*YEAR)(?=.*CLASS)"
+            onSubmit={(value) =>
+              config.updateConfig({
+                ...currentConfig,
+                azureGroupPattern: value,
+              })
+            }
+          />
+        }
+      />
+      <SettingsSection
+        title="Domain Security Identifier"
+        description="Die DomainSID ist eine eindeutige Kennung für eine Windows-Domäne."
+        info={
+          <>
+            <p className="pb-1">
+              Hierfür musst du folgenden PowerShell Befehl auf dem
+              DomainController ausführen (DOMAIN mit richtigem Domain Namen
+              austauschen):
+            </p>
+            <div className="flex w-full items-center justify-between gap-4 rounded-md border-2 border-primary p-2 dark:border-dark-primary xl:w-max">
+              <p className="">
+                Get-ADDomain -Identity DOMAIN | Select Name, DomainSID
+              </p>
+              <Image
+                src={"/copy.svg"}
+                width={25}
+                height={25}
+                alt="Copy to Clipboard"
+                className="onBackground-light dark:onBackground-dark h-5 w-auto cursor-pointer"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    "Get-ADDomain -Identity PROJEKT | Select Name, DomainSID",
+                  );
+                  alert.show("PowerShell Befehl kopiert!");
+                }}
+                draggable={false}
+              />
+            </div>
+          </>
+        }
+        input={
+          <TextInput
+            initialValue={currentConfig.domainSid}
+            placeholder="DomainSID"
+            title="Aktueller Wert"
+            onSubmit={(value) =>
+              config.updateConfig({
+                ...currentConfig,
+                domainSid: value,
+              })
+            }
+          />
+        }
+      />
     </>
   );
 };
