@@ -12,7 +12,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
   input,
 }) => {
   return (
-    <section className="relative mt-14 flex w-full flex-col">
+    <section className="relative flex w-full flex-col">
       <h2 className="select-none pb-2 ">{title}</h2>
       <div className="flex w-full flex-col items-start justify-between gap-8 sm:flex-row">
         <div>
