@@ -110,7 +110,7 @@ const SettingsPage = () => {
                   navigator.clipboard.writeText(
                     "Get-ADDomain -Identity PROJEKT | Select Name, DomainSID",
                   );
-                  alert.show("PowerShell Befehl kopiert!");
+                  alert.show("PowerShell Befehl kopiert");
                 }}
                 draggable={false}
               />

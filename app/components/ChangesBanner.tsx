@@ -40,8 +40,8 @@ const ChangesBanner = () => {
           setLoading(true);
           const success = await config.saveConfig();
           success
-            ? alert.show("Erfolgreich gespeichert!")
-            : alert.show("Ein Fehler ist aufgetreten!");
+            ? alert.show("Konfiguration erfolgreich gespeichert")
+            : alert.show("Ein unerwarteter Fehler ist aufgetreten");
           setLoading(false);
         }}
       >
