@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   return (
-    <div className="mb-10 flex w-full items-center justify-between gap-10">
+    <div className="mb-10 flex w-full select-none items-center justify-between gap-10">
       <div className="w-full">
         <div
           className={`flex w-max ${

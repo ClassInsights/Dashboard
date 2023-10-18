@@ -52,7 +52,7 @@ export default function Home() {
           onClick={() => router.push("/rooms")}
         />
       </div>
-      <section className="mt-10 flex-col xs:flex-row">
+      <section className="mt-10 select-none flex-col xs:flex-row">
         <h2>Konfiguration verwalten</h2>
         <div className="flex flex-col justify-between xs:flex-row xs:items-center">
           <p>

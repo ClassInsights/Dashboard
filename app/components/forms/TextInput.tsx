@@ -34,7 +34,9 @@ const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <div className="relative flex w-full flex-col">
-      {title && <small className="absolute bottom-10">{title}</small>}
+      {title && (
+        <small className="absolute bottom-10 select-none">{title}</small>
+      )}
       <input
         type="text"
         value={inputValue}

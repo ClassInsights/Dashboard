@@ -95,7 +95,7 @@ const PageContent = () => {
           reloadAction={reloadComputers}
         />
       </div>
-      <h2 className="mb-2 w-full">Registrierte Computer</h2>
+      <h2 className="mb-2 w-full select-none">Registrierte Computer</h2>
       <div className="w-full">
         {loading ? (
           <div className="flex h-32 w-full items-center justify-center">

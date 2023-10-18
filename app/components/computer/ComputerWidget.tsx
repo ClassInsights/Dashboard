@@ -95,7 +95,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
       }
     >
       <div className="mb-1.5 flex justify-between">
-        <h3>{computer.name}</h3>
+        <h3 className="select-none">{computer.name}</h3>
         {computer.isOnline && (
           <div className="flex gap-1.5">
             <ComputerAction
@@ -122,38 +122,42 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
           </div>
         )}
       </div>
-      <ComputerDetail
-        value={computer.isOnline ? "Online" : "Offline"}
-        iconPath="/status.svg"
-        altText="Status Icon"
-      />
-      {computer.lastUser && (
-        <ComputerDetail
-          value={computer.lastUser}
-          iconPath="/user.svg"
-          altText="User Icon"
-        />
-      )}
-      {computer.ipAddress && (
-        <ComputerDetail
-          value={computer.ipAddress}
-          iconPath="/network.svg"
-          altText="IP-Address Icon"
-        />
-      )}
-      {computer.macAddress && (
-        <ComputerDetail
-          value={
-            computer.macAddress
-              .toString()
-              .match(/.{1,2}/g)
-              ?.reverse()
-              .join(":") ?? ""
-          }
-          iconPath="/computer.svg"
-          altText="Mac-Address Icon"
-        />
-      )}
+      <div className={!computer.isOnline ? "select-none" : ""}>
+        <div className="select-none">
+          <ComputerDetail
+            value={computer.isOnline ? "Online" : "Offline"}
+            iconPath="/status.svg"
+            altText="Status Icon"
+          />
+        </div>
+        {computer.lastUser && (
+          <ComputerDetail
+            value={computer.lastUser}
+            iconPath="/user.svg"
+            altText="User Icon"
+          />
+        )}
+        {computer.ipAddress && (
+          <ComputerDetail
+            value={computer.ipAddress}
+            iconPath="/network.svg"
+            altText="IP-Address Icon"
+          />
+        )}
+        {computer.macAddress && (
+          <ComputerDetail
+            value={
+              computer.macAddress
+                .toString()
+                .match(/.{1,2}/g)
+                ?.reverse()
+                .join(":") ?? ""
+            }
+            iconPath="/computer.svg"
+            altText="Mac-Address Icon"
+          />
+        )}
+      </div>
     </Container>
   );
 };

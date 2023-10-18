@@ -61,7 +61,7 @@ const SettingsPage = () => {
         description="Hier kannst du das Muster/Pattern für die Azure Schüler Gruppen
                 Namen festlegen."
         info={
-          <>
+          <div className="select-none">
             <p className="mb-0.5">Beispiele:</p>
             <div className="grid w-max grid-cols-2 gap-x-4 sm:gap-x-10">
               <small>Klasse</small>
@@ -71,7 +71,7 @@ const SettingsPage = () => {
               <p>KKB/2022</p>
               <p>CLASS/YEAR</p>
             </div>
-          </>
+          </div>
         }
         input={
           <TextInput
@@ -93,7 +93,7 @@ const SettingsPage = () => {
         description="Die DomainSID ist eine eindeutige Kennung für eine Windows-Domäne."
         info={
           <>
-            <p className="pb-1.5">
+            <p className="select-none pb-1.5">
               Hierfür musst du folgenden PowerShell Befehl auf dem
               DomainController ausführen (DOMAIN mit richtigem Domain Namen
               austauschen):
@@ -107,6 +107,15 @@ const SettingsPage = () => {
                 alt="Copy to Clipboard"
                 className="onBackground-light dark:onBackground-dark h-5 w-auto cursor-pointer"
                 onClick={() => {
+                  if (
+                    navigator === undefined ||
+                    navigator.clipboard === undefined
+                  ) {
+                    alert.show(
+                      "Kopieren fehlgeschlagen - du kannst noch manuell kopieren",
+                    );
+                    return;
+                  }
                   navigator.clipboard.writeText(
                     "Get-ADDomain -Identity PROJEKT | Select Name, DomainSID",
                   );
