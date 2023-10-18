@@ -9,6 +9,8 @@ import { useConfig } from "@/app/contexts/ConfigContext";
 import Image from "next/image";
 import { useMemo } from "react";
 import Divider from "@/app/components/settings/Divider";
+import Container from "@/app/components/containers/Container";
+import SecretArea from "@/app/components/settings/SecretArea";
 
 const SettingsPage = () => {
   const config = useConfig();
@@ -44,18 +46,31 @@ const SettingsPage = () => {
         subtitle="Hier kannst du das ClassInsights Ökosystem bearbeiten."
         previousPath="/"
       />
-      <section className="flex select-none flex-col gap-4 sm:flex-row">
-        <ListContainer title="Schuljahr">
-          {details.map((detail) => (
-            <div className="flex select-none justify-between" key={detail.name}>
-              <p>{detail.name}</p>
-              <p className="text-primary dark:text-dark-primary">
-                {detail.value}
-              </p>
-            </div>
-          ))}
-        </ListContainer>
-        <ListContainer title="Test"></ListContainer>
+      <section className="grid select-none grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="flex items-stretch">
+          <ListContainer title="Schuljahr">
+            {details.map((detail) => (
+              <div
+                className="flex select-none justify-between"
+                key={detail.name}
+              >
+                <p>{detail.name}</p>
+                <p className="text-primary dark:text-dark-primary">
+                  {detail.value}
+                </p>
+              </div>
+            ))}
+          </ListContainer>
+        </div>
+        <div className="flex w-full items-stretch sm:col-span-2 sm:w-max">
+          <Container>
+            <h3 className="mb-1.5">Azure Secret</h3>
+            <p className="mb-2">
+              Hierfür musst du eine App im Azure Portal erstellen.
+            </p>
+            <SecretArea />
+          </Container>
+        </div>
       </section>
       <div className="h-20 w-full" />
       <SettingsSection
