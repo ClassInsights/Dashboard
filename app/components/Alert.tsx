@@ -34,16 +34,18 @@ const Alert = () => {
 
   return (
     <div
-      className={`alert-animation fixed left-0 right-0 z-50 mx-auto max-w-max translate-y-1/4 rounded-xl bg-secondary px-5 py-2 shadow-md dark:bg-dark-secondary
+      className={`alert-animation fixed left-0 right-0 z-50 mx-auto max-w-max translate-y-1/4 rounded-xl bg-primary px-5 py-2 shadow-md dark:bg-dark-primary
     ${isClosing ? "alert-close-animation" : ""}`}
     >
-      <p>{alert.message}</p>
+      <p className="text-background dark:text-dark-background">
+        {alert.message}
+      </p>
       {alert.actions.length > 0 && (
         <div className="mt-2 flex w-full items-center justify-center gap-8">
           {alert.actions.map((action, index) => (
             <button
               key={index}
-              className="rounded-md bg-tertiary px-3 py-0.5 dark:bg-dark-tertiary"
+              className="rounded-md border border-background px-3 py-0.5 text-background dark:border-dark-background dark:text-dark-background"
               onClick={() => {
                 action.onClick();
                 alert.hide();
