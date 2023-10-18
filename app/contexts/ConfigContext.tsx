@@ -14,6 +14,7 @@ type ConfigContextType = {
   getConfig: () => Config | undefined;
   updateConfig: (updatedConfig: Config) => void;
   hasUnsavedChanges: boolean;
+  isSaving: boolean;
   saveConfig: () => Promise<boolean>;
 };
 
@@ -22,6 +23,7 @@ const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
   const [config, setConfig] = useState<Config | undefined>(undefined);
   const [newConfig, setNewConfig] = useState<Config | undefined>(undefined);
+  const [isSaving, setIsSaving] = useState(false);
 
   const hasUnsavedChanges = useMemo(() => {
     if (!config || !newConfig) return false;
@@ -42,9 +44,11 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
 
   const saveConfig = useCallback(async () => {
     // TODO: Save config to Server
+    setIsSaving(true);
     await new Promise((resolve) => setTimeout(resolve, 3000));
     setConfig(newConfig);
     setNewConfig(undefined);
+    setIsSaving(false);
     return true;
   }, [newConfig]);
 
@@ -70,6 +74,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
         getConfig,
         updateConfig,
         hasUnsavedChanges,
+        isSaving,
         saveConfig,
       }}
     >
