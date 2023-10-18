@@ -46,7 +46,7 @@ const TextInput: React.FC<TextInputProps> = ({
   );
 
   return (
-    <div className="relative flex w-full flex-col">
+    <div className="relative w-full">
       {title && (
         <small className="absolute bottom-10 select-none">{title}</small>
       )}
@@ -59,7 +59,7 @@ const TextInput: React.FC<TextInputProps> = ({
           if (onChange) onChange(event.target.value);
         }}
         placeholder={placeholder}
-        className={`rounded-md px-4 py-2 placeholder-onBackground outline-none transition-opacity placeholder:opacity-20 dark:placeholder-dark-onBackground
+        className={`w-full rounded-md px-4 py-2 placeholder-onBackground outline-none transition-opacity placeholder:opacity-20 dark:placeholder-dark-onBackground
       ${
         style === "primary"
           ? "bg-primary text-background dark:bg-dark-primary dark:text-dark-background"
