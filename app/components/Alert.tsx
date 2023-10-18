@@ -34,7 +34,7 @@ const Alert = () => {
 
   return (
     <div
-      className={`alert-animation absolute left-0 right-0 z-10 mx-auto max-w-max translate-y-1/4 rounded-xl bg-secondary px-5 py-2 shadow-sm dark:bg-dark-secondary
+      className={`alert-animation fixed left-0 right-0 z-10 mx-auto max-w-max translate-y-1/4 rounded-xl bg-secondary px-5 py-2 shadow-md dark:bg-dark-secondary
     ${isClosing ? "alert-close-animation" : ""}`}
     >
       <p>{alert.message}</p>
