@@ -44,7 +44,7 @@ const Navbar = () => {
             alt="Brightness Switch"
             width={25}
             height={25}
-            className={`onBackground-light dark:onBackground-dark cursor-pointer transition-transform dark:rotate-180`}
+            className="onBackground-light dark:onBackground-dark cursor-pointer transition-transform dark:rotate-180"
             draggable={false}
           />
         </div>
