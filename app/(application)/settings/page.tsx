@@ -169,8 +169,10 @@ const SettingsPage = () => {
           <>
             <p className="select-none pb-1.5">
               Hierfür musst du folgenden PowerShell Befehl auf dem
-              DomainController ausführen (DOMAIN mit richtigem Domain Namen
-              austauschen):
+              DomainController ausführen. Damit dieser Command auch außerhalb
+              des DomainControllers ausgeführt werden kann, musst du die Remote
+              Server Administration Tools installieren. (DOMAIN mit richtigem
+              Domain Namen austauschen):
             </p>
             <div className="flex w-full items-center justify-between gap-4 rounded-md border-2 border-primary p-2 dark:border-dark-primary xl:w-max">
               <p>Get-ADDomain -Identity DOMAIN | Select Name, DomainSID</p>
