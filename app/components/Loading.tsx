@@ -24,8 +24,7 @@ const Loading = () => {
         </div>
         <div className="flex items-center">
           <div className="mr-4 hidden items-center sm:flex">
-            <div className="animate-pulse rounded-full bg-onBackground dark:bg-dark-onBackground">
-            </div>
+            <div className="h-6 w-32 animate-pulse rounded-full bg-onBackground dark:bg-dark-onBackground" />
           </div>
           <div className="animate-pulse rounded-full bg-onBackground dark:bg-dark-onBackground">
             <Image
