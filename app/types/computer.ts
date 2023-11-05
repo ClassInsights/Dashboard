@@ -6,7 +6,6 @@ type Computer = {
   macAddress?: string;
   ipAddress?: string;
   lastUser?: string;
-  lastSeen?: Date;
 };
 
 export default Computer;
