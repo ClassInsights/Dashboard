@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const initializeToken = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     const token = localStorage.getItem("accessToken");
     if (token == null) {
       setDidFail(true);
