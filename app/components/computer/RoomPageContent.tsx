@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Computer from "../../types/computer";
 import Image from "next/image";
 import ComputerWidget from "./ComputerWidget";
+import { useAlert } from "@/app/contexts/AlertContext";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -13,6 +14,7 @@ const PageContent = () => {
 
   const query = useSearchParams();
   const data = useData();
+  const alert = useAlert();
 
   const room = useMemo(
     () =>
@@ -35,44 +37,42 @@ const PageContent = () => {
     return weight;
   }, []);
 
-  const fetchComputers = useCallback(
-    async (id: number) => {
-      await data.fetchComputers(id);
-      setLoading(false);
-    },
-    [data],
-  );
-
   useEffect(() => {
-    var leftWeight = 0;
-    var rightWeight = 0;
-    const newLeftComputers: Computer[] = [];
-    const newRightComputers: Computer[] = [];
+    if (!room) return;
+    data.fetchComputers(room?.id).then(() => {
+      var leftWeight = 0;
+      var rightWeight = 0;
+      const newLeftComputers: Computer[] = [];
+      const newRightComputers: Computer[] = [];
 
-    const sortedComputers = computers?.sort(
-      (first, second) => weightOfComputer(second) - weightOfComputer(first),
-    );
+      const sortedComputers = computers?.sort(
+        (first, second) => weightOfComputer(second) - weightOfComputer(first),
+      );
 
-    sortedComputers.forEach((computer) => {
-      if (leftWeight <= rightWeight) {
-        newLeftComputers.push(computer);
-        leftWeight += weightOfComputer(computer);
-      } else {
-        newRightComputers.push(computer);
-        rightWeight += weightOfComputer(computer);
-      }
+      sortedComputers.forEach((computer) => {
+        if (leftWeight <= rightWeight) {
+          newLeftComputers.push(computer);
+          leftWeight += weightOfComputer(computer);
+        } else {
+          newRightComputers.push(computer);
+          rightWeight += weightOfComputer(computer);
+        }
+      });
+      setLeftComputers(newLeftComputers);
+      setRightComputers(newRightComputers);
+      if (computers) setLoading(false);
     });
-    setLeftComputers(newLeftComputers);
-    setRightComputers(newRightComputers);
-    if (computers) setLoading(false);
-    fetchComputers;
-  }, [computers, weightOfComputer, fetchComputers]);
+  }, [computers, weightOfComputer, data, room]);
 
   const reloadComputers = useCallback(async () => {
-    setLoading(true);
-    if (room) await fetchComputers(room.id);
+    if (!room) return;
+    var hasFinished = false;
+    setTimeout(() => !hasFinished && setLoading(true), 500);
+    await data.fetchComputers(room.id);
+    hasFinished = true;
     setLoading(false);
-  }, [room, fetchComputers]);
+    alert.show("Computer wurden aktualisiert");
+  }, [room, data, alert]);
 
   if (!room) {
     query.delete();
