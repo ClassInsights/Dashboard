@@ -25,7 +25,6 @@ const Loading = () => {
         <div className="flex items-center">
           <div className="mr-4 hidden items-center sm:flex">
             <div className="animate-pulse rounded-full bg-onBackground dark:bg-dark-onBackground">
-              <p>You got Jebaited</p>
             </div>
           </div>
           <div className="animate-pulse rounded-full bg-onBackground dark:bg-dark-onBackground">
