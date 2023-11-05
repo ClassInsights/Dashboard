@@ -1,7 +1,4 @@
 import { AuthProvider } from "./contexts/AuthContext";
-import LinkGroupModal, {
-  LinkGroupProvider,
-} from "./components/modals/LinkGroupModal";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./globals.css";
 import type { Metadata } from "next";
@@ -36,13 +33,10 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider>
               <DataProvider>
-                <LinkGroupProvider>
-                  <AlertProvider>
-                    <Alert />
-                    <LinkGroupModal />
-                    <div className="h-full min-h-screen">{children}</div>
-                  </AlertProvider>
-                </LinkGroupProvider>
+                <AlertProvider>
+                  <Alert />
+                  <div className="h-full min-h-screen">{children}</div>
+                </AlertProvider>
               </DataProvider>
             </ThemeProvider>
           </AuthProvider>

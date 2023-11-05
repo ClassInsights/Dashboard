@@ -6,7 +6,6 @@ import Footer from "./components/general/Footer";
 import Header from "./components/general/Header";
 import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
-import { useLinkGroupModal } from "./components/modals/LinkGroupModal";
 import ContainerPreset from "./components/containers/ContainerPreset";
 
 export default function Home() {
@@ -14,8 +13,6 @@ export default function Home() {
 
   const data = useData();
   const auth = useAuth();
-
-  const groupModal = useLinkGroupModal();
 
   if (auth.didFail && !auth.loading)
     return (
