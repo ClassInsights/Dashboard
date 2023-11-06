@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { DataProvider } from "./contexts/DataContext";
 import Alert from "./components/general/Alert";
 import { AlertProvider } from "./contexts/AlertContext";
+import { RatelimitProvider } from "./contexts/RatelimitContext";
 
 export const metadata: Metadata = {
   title: "ClassInsights",
@@ -30,16 +31,18 @@ export default function RootLayout({
     <html lang="de">
       <body className="overflow-x-hidden bg-background dark:bg-dark-background">
         <main className="relative mx-4 min-h-screen md:mx-auto md:w-5/6 xl:w-[65%] 2xl:w-3/5">
-          <AuthProvider>
-            <ThemeProvider>
-              <DataProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <RatelimitProvider>
                 <AlertProvider>
-                  <Alert />
-                  <div className="h-full min-h-screen">{children}</div>
+                  <DataProvider>
+                    <Alert />
+                    <div className="h-full min-h-screen">{children}</div>
+                  </DataProvider>
                 </AlertProvider>
-              </DataProvider>
-            </ThemeProvider>
-          </AuthProvider>
+              </RatelimitProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </main>
       </body>
     </html>

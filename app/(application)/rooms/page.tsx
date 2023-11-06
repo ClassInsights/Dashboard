@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useData } from "@/app/contexts/DataContext";
 import Header from "../../components/general/Header";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,10 +17,17 @@ export default function RoomOverviewPage() {
   const alert = useAlert();
   const data = useData();
 
-  if (query.get("id") !== null) {
-    if (data.rooms?.find((room) => room.id === parseInt(query.get("id") ?? "")))
-      return <PageContent />;
-    else window.history.replaceState({}, "", "/rooms");
+  const roomId = useMemo(
+    () => (query.get("id") ? parseInt(query.get("id")!) : undefined),
+    [query],
+  );
+
+  if (roomId) {
+    console.log("RoomId: ", roomId);
+    if (!data.rooms?.find((room) => room.id === roomId)) {
+      window.history.pushState({}, "", "/rooms");
+      return;
+    } else return <PageContent />;
   }
 
   return (

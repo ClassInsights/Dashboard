@@ -12,6 +12,7 @@ import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
 import Loading from "../components/Loading";
+import { useAlert } from "./AlertContext";
 
 export type DataContextType = {
   rooms: Room[];
@@ -64,7 +65,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       setRooms(newRooms);
     } catch (error) {
-      auth.failAuth();
+      return;
     }
   }, [auth, rooms]);
 
@@ -112,7 +113,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         setComputers(newComputers);
       } catch (error) {
-        auth.failAuth();
+        return;
       }
     },
     [auth, computers],

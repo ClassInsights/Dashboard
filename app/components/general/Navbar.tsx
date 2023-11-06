@@ -19,7 +19,7 @@ const Navbar = () => {
     [theme],
   );
   return (
-    <nav className="flex w-full items-center justify-between bg-background py-4 dark:bg-dark-background">
+    <nav className="flex w-full items-center justify-between py-4">
       <div
         className="flex cursor-pointer items-center"
         onClick={() => router.push("/")}
