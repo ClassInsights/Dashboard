@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "../general/Header";
-import { useData } from "@/app/contexts/DataContext";
+import { FetchError, useData } from "@/app/contexts/DataContext";
 import { useSearchParams } from "next/navigation";
 import Computer from "../../types/computer";
 import Image from "next/image";
 import ComputerWidget from "./ComputerWidget";
 import { useAlert } from "@/app/contexts/AlertContext";
+import { useRatelimit } from "@/app/contexts/RatelimitContext";
 
 const PageContent = () => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
@@ -15,6 +16,7 @@ const PageContent = () => {
   const query = useSearchParams();
   const data = useData();
   const alert = useAlert();
+  const ratelimit = useRatelimit();
 
   const room = useMemo(
     () =>
@@ -67,12 +69,35 @@ const PageContent = () => {
   const reloadComputers = useCallback(async () => {
     if (!room) return;
     var hasFinished = false;
-    setTimeout(() => !hasFinished && setLoading(true), 500);
-    await data.fetchComputers(room.id);
+    const timeout = setTimeout(() => !hasFinished && setLoading(true), 500);
+    const result = await data.fetchComputers(room.id);
+    hasFinished = true;
+    setLoading(false);
+    if (result === FetchError.Unknown) {
+      alert.show("Etwas ist schiefgelaufen");
+      return;
+    }
+    if (result === FetchError.Ratelimited) {
+      const limit = ratelimit.getRatelimit("fetchRooms");
+      if (!limit) {
+        alert.show("Etwas ist schiefgelaufen");
+        return;
+      }
+      const secondsLeft = Math.ceil(
+        (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
+      );
+      alert.show(
+        `Warte noch ${secondsLeft} ${
+          secondsLeft === 1 ? "Sekunde" : "Sekunden"
+        } zum Aktualisieren`,
+      );
+      clearTimeout(timeout);
+      return;
+    }
     hasFinished = true;
     setLoading(false);
     alert.show("Computer wurden aktualisiert");
-  }, [room, data, alert]);
+  }, [room, data, alert, ratelimit]);
 
   if (!room) {
     query.delete();

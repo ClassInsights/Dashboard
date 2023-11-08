@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useData } from "@/app/contexts/DataContext";
+import { FetchError, useData } from "@/app/contexts/DataContext";
 import Header from "../../components/general/Header";
 import { useRouter, useSearchParams } from "next/navigation";
 import PageContent from "@/app/components/computer/RoomPageContent";
 import ContainerPreset from "@/app/components/containers/ContainerPreset";
 import Image from "next/image";
 import { useAlert } from "@/app/contexts/AlertContext";
+import { useRatelimit } from "@/app/contexts/RatelimitContext";
 
 export default function RoomOverviewPage() {
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ export default function RoomOverviewPage() {
 
   const alert = useAlert();
   const data = useData();
+  const ratelimit = useRatelimit();
 
   const roomId = useMemo(
     () => (query.get("id") ? parseInt(query.get("id")!) : undefined),
@@ -38,10 +40,34 @@ export default function RoomOverviewPage() {
         previousPath="/"
         reloadAction={async () => {
           var hasFinished = false;
-          setTimeout(() => !hasFinished && setLoading(true), 500);
-          await data.fetchRooms();
+          const timeout = setTimeout(
+            () => !hasFinished && setLoading(true),
+            500,
+          );
+          const result = await data.fetchRooms();
           hasFinished = true;
           setLoading(false);
+          if (result === FetchError.Unknown) {
+            alert.show("Etwas ist schiefgelaufen");
+            return;
+          }
+          if (result === FetchError.Ratelimited) {
+            const limit = ratelimit.getRatelimit("fetchRooms");
+            if (!limit) {
+              alert.show("Etwas ist schiefgelaufen");
+              return;
+            }
+            const secondsLeft = Math.ceil(
+              (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
+            );
+            alert.show(
+              `Warte noch ${secondsLeft} ${
+                secondsLeft === 1 ? "Sekunde" : "Sekunden"
+              } zum Aktualisieren`,
+            );
+            clearTimeout(timeout);
+            return;
+          }
           alert.show("Räume wurden aktualisiert");
         }}
       />

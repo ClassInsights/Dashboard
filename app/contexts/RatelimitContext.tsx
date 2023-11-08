@@ -5,7 +5,8 @@ import Ratelimit from "../types/ratelimit";
 type RatelimitContextType = {
   ratelimits: Ratelimit[];
   isRateLimited(key: string): boolean;
-  addRateLimit(key: string, duration: number): void;
+  addRateLimit(key: string, duration?: number): void;
+  getRatelimit(key: string): Ratelimit | undefined;
 };
 
 const RatelimitContext = createContext<RatelimitContextType | undefined>(
@@ -36,13 +37,19 @@ export const RatelimitProvider = ({
         });
         return newRateLimits;
       });
-      setTimeout(() => {
-        setRatelimits((newRateLimits) => {
-          newRateLimits.filter((ratelimit) => ratelimit.key !== key);
-          return newRateLimits;
-        });
-      }, duration);
+      setTimeout(
+        () =>
+          setRatelimits((newRateLimits) =>
+            newRateLimits.filter((ratelimit) => ratelimit.key !== key),
+          ),
+        duration,
+      );
     },
+    [ratelimits],
+  );
+
+  const getRatelimit = useCallback(
+    (key: string) => ratelimits.find((ratelimit) => ratelimit.key === key),
     [ratelimits],
   );
 
@@ -52,6 +59,7 @@ export const RatelimitProvider = ({
         ratelimits,
         isRateLimited,
         addRateLimit,
+        getRatelimit,
       }}
     >
       {children}
