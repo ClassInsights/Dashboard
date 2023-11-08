@@ -1,10 +1,11 @@
 "use client";
 import { createContext, useCallback, useState, useContext } from "react";
+import Ratelimit from "../types/ratelimit";
 
 type RatelimitContextType = {
-  ratelimits: string[];
+  ratelimits: Ratelimit[];
   isRateLimited(key: string): boolean;
-  addRateLimit(key: string): void;
+  addRateLimit(key: string, duration: number): void;
 };
 
 const RatelimitContext = createContext<RatelimitContextType | undefined>(
@@ -16,24 +17,31 @@ export const RatelimitProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [ratelimits, setRatelimits] = useState<string[]>([]);
+  const [ratelimits, setRatelimits] = useState<Ratelimit[]>([]);
 
   const isRateLimited = useCallback(
-    (key: string) => ratelimits.includes(key),
+    (key: string) =>
+      ratelimits.find((ratelimit) => ratelimit.key === key) !== undefined,
     [ratelimits],
   );
 
   const addRateLimit = useCallback(
-    async (key: string) => {
+    async (key: string, duration: number = 5000) => {
       setRatelimits((newRateLimits) => {
-        if (newRateLimits.find((name) => name !== key)) return newRateLimits;
-        return [...newRateLimits, key];
+        if (isRateLimited(key)) return newRateLimits;
+        newRateLimits.push({
+          key,
+          duration,
+          startedAt: new Date(),
+        });
+        return newRateLimits;
       });
       setTimeout(() => {
-        setRatelimits((newRateLimits) =>
-          newRateLimits.filter((name) => name !== key),
-        );
-      }, 5000);
+        setRatelimits((newRateLimits) => {
+          newRateLimits.filter((ratelimit) => ratelimit.key !== key);
+          return newRateLimits;
+        });
+      }, duration);
     },
     [ratelimits],
   );
