@@ -12,7 +12,7 @@ import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
 import Loading from "../components/Loading";
-import { useAlert } from "./AlertContext";
+import { useFail } from "./FailContext";
 
 export type DataContextType = {
   rooms: Room[];
@@ -33,75 +33,47 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const theme = useTheme();
   const auth = useAuth();
+  const failer = useFail();
 
   const fetchRooms = useCallback(async () => {
-    if (auth.didFail || !auth.token) return;
-    const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-      mode: "no-cors",
-      headers: {
-        authorization: `Bearer ${auth.token}`,
-      },
-    });
-    const data = await result.json();
-    const newRooms: Room[] = [];
-    data.forEach((room: any) =>
-      newRooms.push({
-        id: room.roomId,
-        name: room.name,
-        longName: room.longName,
-        deviceCount: room.deviceCount,
-      }),
-    );
-    if (
-      newRooms.length === rooms.length &&
-      newRooms.every(
-        (room, index, _) =>
-          room.id === rooms[index].id &&
-          room.name === rooms[index].name &&
-          room.longName === rooms[index].longName &&
-          room.deviceCount === rooms[index].deviceCount,
+    if (failer.hasFailed || !auth.token) return;
+    try {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+        headers: {
+          authorization: `Bearer ${auth.token}`,
+        },
+      });
+      const data = await result.json();
+      const newRooms: Room[] = [];
+      data.forEach((room: any) =>
+        newRooms.push({
+          id: room.roomId,
+          name: room.name,
+          longName: room.longName,
+          deviceCount: room.deviceCount,
+        }),
+      );
+      if (
+        newRooms.length === rooms.length &&
+        newRooms.every(
+          (room, index, _) =>
+            room.id === rooms[index].id &&
+            room.name === rooms[index].name &&
+            room.longName === rooms[index].longName &&
+            room.deviceCount === rooms[index].deviceCount,
+        )
       )
-    )
+        return;
+      setRooms(newRooms);
+    } catch (error: any) {
+      failer.fail("Fehler beim Laden der Räume", error.toString());
       return;
-    setRooms(newRooms);
-    // try {
-    //   const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-    //     mode: "no-cors",
-    //     headers: {
-    //       authorization: `Bearer ${auth.token}`,
-    //     },
-    //   });
-    //   const data = await result.json();
-    //   const newRooms: Room[] = [];
-    //   data.forEach((room: any) =>
-    //     newRooms.push({
-    //       id: room.roomId,
-    //       name: room.name,
-    //       longName: room.longName,
-    //       deviceCount: room.deviceCount,
-    //     }),
-    //   );
-    //   if (
-    //     newRooms.length === rooms.length &&
-    //     newRooms.every(
-    //       (room, index, _) =>
-    //         room.id === rooms[index].id &&
-    //         room.name === rooms[index].name &&
-    //         room.longName === rooms[index].longName &&
-    //         room.deviceCount === rooms[index].deviceCount,
-    //     )
-    //   )
-    //     return;
-    //   setRooms(newRooms);
-    // } catch (error) {
-    //   console.log(error);
-    //   return;
-    // }
-  }, [auth, rooms]);
+    }
+  }, [auth, rooms, failer]);
 
   const fetchComputers = useCallback(
     async (roomId: number) => {
-      if (auth.didFail || !auth.token) return;
+      if (failer.hasFailed || !auth.token) return;
       try {
         const result = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/rooms/${roomId}/computers`,
@@ -142,12 +114,12 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         )
           return;
         setComputers(newComputers);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        failer.fail("Fehler beim Laden der Räume", error.toString());
         return;
       }
     },
-    [auth, computers],
+    [auth, computers, failer],
   );
 
   useEffect(() => {

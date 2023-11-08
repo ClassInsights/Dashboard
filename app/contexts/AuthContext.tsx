@@ -9,13 +9,11 @@ import {
 } from "react";
 import AuthData from "../types/authData";
 import { decode } from "jsonwebtoken";
+import { useFail } from "./FailContext";
 
 export type AuthContextType = {
   token: String | undefined;
-  didFail: boolean;
-  failAuth: () => void;
   data: AuthData | undefined;
-  retry: () => void;
   loading: boolean;
 };
 
@@ -23,21 +21,28 @@ export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
 );
 
+enum DecodeError {
+  Invalid,
+  Permission,
+  Expired,
+}
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<String | undefined>();
-  const [didFail, setDidFail] = useState<boolean>(false);
   const [data, setData] = useState<AuthData | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
 
+  const failer = useFail();
+
   const failAuth = useCallback(() => {
-    setDidFail(true);
+    failer.failAuth();
     setLoading(false);
     localStorage.removeItem("accessToken");
-  }, []);
+  }, [failer]);
 
   const decodeToken = useCallback((token: string) => {
     const result = decode(token, { json: true });
-    if (!result) return;
+    if (!result) return DecodeError.Invalid;
 
     const role = result["role"];
     if (
@@ -45,9 +50,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (role instanceof Array && !role.includes("Admin")) ||
       (!(role instanceof Array) && role !== "Admin")
     )
-      return;
+      return DecodeError.Permission;
 
-    if (!result.exp || result.exp < Date.now() / 1000) return;
+    if (!result.exp || result.exp < Date.now() / 1000)
+      return DecodeError.Expired;
 
     return {
       id: result["sub"] as string,
@@ -57,32 +63,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } as AuthData;
   }, []);
 
-  const initializeToken = useCallback(async () => {
+  const initializeToken = useCallback(async (refetchToken = false) => {
     const token = localStorage.getItem("accessToken");
 
-    if (token === null) {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login/pc`);
-      if (!result.ok) {
-        console.log("Response Error: ", result.status);
-        return failAuth();
-      }
+    if (refetchToken || token === null) {
+      const result = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/login/pc`,
+        {
+          credentials: "include",
+        },
+      );
+
+      if (result.status === 401) return failAuth();
+      else if (!result.ok) return failAuth();
+
       const body = await result.text();
       const authData = decodeToken(body);
 
-      if (authData) setData(authData);
-      else return failAuth();
+      if (
+        authData === DecodeError.Invalid ||
+        authData === DecodeError.Permission
+      )
+        return failAuth();
+      else if (authData === DecodeError.Expired) {
+        localStorage.removeItem("accessToken");
+        await initializeToken(true);
+        return;
+      }
 
+      setData(authData);
       localStorage.setItem("accessToken", body);
       setToken(body);
-
       setLoading(false);
       return;
     }
 
     const authData = decodeToken(token);
-    if (authData) setData(authData);
-    else return failAuth();
 
+    if (authData === DecodeError.Invalid || authData === DecodeError.Permission)
+      return failAuth();
+    else if (authData === DecodeError.Expired) {
+      localStorage.removeItem("accessToken");
+      await initializeToken(true);
+      return;
+    }
+
+    setData(authData);
     setToken(token);
     setLoading(false);
   }, []);
@@ -91,31 +117,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initializeToken();
   }, []);
 
-  if (didFail && !loading)
-    return (
-      <div className="mx-auto flex min-h-screen w-full select-none items-center justify-center md:w-2/4 xl:w-2/5 2xl:w-2/6">
-        <div className="text-center text-onBackground dark:text-dark-onBackground">
-          <h1 className="mb-3">Authentifizieren fehlgeschlagen.</h1>
-          <p>
-            Nur{" "}
-            <b className="text-primary dark:text-dark-primary">
-              Administratoren haben Zugriff
-            </b>{" "}
-            auf dieses Dashboard. Wenn du denkst, dass du Zugriff haben
-            solltest, versuche es später erneut!
-          </p>
-        </div>
-      </div>
-    );
-
   return (
     <AuthContext.Provider
       value={{
         token,
-        didFail,
-        failAuth,
         data,
-        retry: initializeToken,
         loading,
       }}
     >
