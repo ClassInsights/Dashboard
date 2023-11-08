@@ -13,12 +13,22 @@ import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
 import Loading from "../components/Loading";
 import { useFail } from "./FailContext";
+import { useRatelimit } from "./RatelimitContext";
+
+export enum FetchError {
+  Unknown,
+  Ratelimited,
+  Unauthorized,
+}
 
 export type DataContextType = {
   rooms: Room[];
-  fetchRooms: () => Promise<void>;
+  fetchRooms: (skipRatelimit?: boolean) => Promise<FetchError | undefined>;
   computers: Computer[];
-  fetchComputers: (id: number) => Promise<void>;
+  fetchComputers: (
+    id: number,
+    skipRatelimit?: boolean,
+  ) => Promise<FetchError | undefined>;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -33,47 +43,67 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const theme = useTheme();
   const auth = useAuth();
+  const ratelimit = useRatelimit();
   const failer = useFail();
 
-  const fetchRooms = useCallback(async () => {
-    if (failer.hasFailed || !auth.token) return;
-    try {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-        headers: {
-          authorization: `Bearer ${auth.token}`,
-        },
-      });
-      const data = await result.json();
-      const newRooms: Room[] = [];
-      data.forEach((room: any) =>
-        newRooms.push({
-          id: room.roomId,
-          name: room.name,
-          longName: room.longName,
-          deviceCount: room.deviceCount,
-        }),
-      );
-      if (
-        newRooms.length === rooms.length &&
-        newRooms.every(
-          (room, index, _) =>
-            room.id === rooms[index].id &&
-            room.name === rooms[index].name &&
-            room.longName === rooms[index].longName &&
-            room.deviceCount === rooms[index].deviceCount,
+  const fetchRooms = useCallback(
+    async (skipRatelimit = false) => {
+      if (failer.hasFailed || !auth.token) return FetchError.Unauthorized;
+      if (!skipRatelimit && ratelimit.isRateLimited("fetchRooms"))
+        return FetchError.Ratelimited;
+      try {
+        const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+          headers: {
+            authorization: `Bearer ${auth.token}`,
+          },
+        });
+
+        if (!skipRatelimit) ratelimit.addRateLimit("fetchRooms");
+
+        if (result.status === 401) {
+          failer.fail(
+            "Fehler beim Aktualisieren der Computer",
+            "Request finished with Code 401 (Unauthorized)",
+          );
+          return FetchError.Unauthorized;
+        } else if (result.status === 429) return FetchError.Ratelimited;
+        else if (result.status !== 200) return FetchError.Unknown;
+
+        const data = await result.json();
+        const newRooms: Room[] = [];
+        data.forEach((room: any) =>
+          newRooms.push({
+            id: room.roomId,
+            name: room.name,
+            longName: room.longName,
+            deviceCount: room.deviceCount,
+          }),
+        );
+        if (
+          newRooms.length === rooms.length &&
+          newRooms.every(
+            (room, index, _) =>
+              room.id === rooms[index].id &&
+              room.name === rooms[index].name &&
+              room.longName === rooms[index].longName &&
+              room.deviceCount === rooms[index].deviceCount,
+          )
         )
-      )
+          return;
+        setRooms(newRooms);
+      } catch (error: any) {
+        failer.fail("Fehler beim Laden der Räume", error.toString());
         return;
-      setRooms(newRooms);
-    } catch (error: any) {
-      failer.fail("Fehler beim Laden der Räume", error.toString());
-      return;
-    }
-  }, [auth, rooms, failer]);
+      }
+    },
+    [auth, rooms, failer, ratelimit],
+  );
 
   const fetchComputers = useCallback(
-    async (roomId: number) => {
+    async (roomId: number, skipRatelimit = false) => {
       if (failer.hasFailed || !auth.token) return;
+      if (!skipRatelimit && ratelimit.isRateLimited("fetchComputers"))
+        return FetchError.Ratelimited;
       try {
         const result = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/rooms/${roomId}/computers`,
@@ -83,6 +113,18 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             },
           },
         );
+
+        if (!skipRatelimit) ratelimit.addRateLimit("fetchComputers");
+
+        if (result.status === 401) {
+          failer.fail(
+            "Fehler beim Aktualisieren der Computer",
+            "Request finished with Code 401 (Unauthorized)",
+          );
+          return FetchError.Unauthorized;
+        } else if (result.status === 429) return FetchError.Ratelimited;
+        else if (result.status !== 200) return FetchError.Unknown;
+
         const data = await result.json();
         const newComputers: Computer[] = [];
         data.forEach((computer: any) =>
@@ -119,11 +161,11 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
     },
-    [auth, computers, failer],
+    [auth, computers, failer, ratelimit],
   );
 
   useEffect(() => {
-    fetchRooms().then(() => setLoading(false));
+    fetchRooms(true).then(() => setLoading(false));
   }, [fetchRooms]);
 
   useEffect(
