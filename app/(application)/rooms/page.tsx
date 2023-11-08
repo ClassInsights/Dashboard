@@ -11,7 +11,7 @@ import { useAlert } from "@/app/contexts/AlertContext";
 import { useRatelimit } from "@/app/contexts/RatelimitContext";
 
 export default function RoomOverviewPage() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const query = useSearchParams();
 
@@ -24,12 +24,14 @@ export default function RoomOverviewPage() {
     [query],
   );
 
+  useEffect(() => {
+    if (data.rooms) setLoading(false);
+  }, [data.rooms]);
+
   if (roomId) {
-    console.log("RoomId: ", roomId);
-    if (!data.rooms?.find((room) => room.id === roomId)) {
+    if (!data.rooms?.find((room) => room.id === roomId))
       window.history.pushState({}, "", "/rooms");
-      return;
-    } else return <PageContent />;
+    else return <PageContent roomId={roomId} />;
   }
 
   return (

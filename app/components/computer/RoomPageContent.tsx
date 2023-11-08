@@ -1,28 +1,35 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "../general/Header";
 import { FetchError, useData } from "@/app/contexts/DataContext";
-import { useSearchParams } from "next/navigation";
 import Computer from "../../types/computer";
 import Image from "next/image";
 import ComputerWidget from "./ComputerWidget";
 import { useAlert } from "@/app/contexts/AlertContext";
 import { useRatelimit } from "@/app/contexts/RatelimitContext";
 
-const PageContent = () => {
+const PageContent = ({ roomId }: { roomId: number }) => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
   const [rightComputers, setRightComputers] = useState<Computer[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const query = useSearchParams();
   const data = useData();
   const alert = useAlert();
   const ratelimit = useRatelimit();
 
   const room = useMemo(
-    () =>
-      data.rooms?.find((room) => room.id === parseInt(query.get("id") ?? "")),
-    [data.rooms, query],
+    () => data.rooms?.find((room) => room.id === roomId),
+    [data, roomId],
   );
+
+  useEffect(() => {
+    if (!room) return;
+    data.fetchComputers(room?.id, true).then((response) => {
+      if (response === FetchError.Unknown)
+        alert.show("Etwas ist schiefgelaufen");
+      else if (response === FetchError.Ratelimited)
+        alert.show("Du hast zu oft aktualisiert");
+    });
+  }, [room, alert]);
 
   const computers = useMemo(
     () => data.computers?.filter((computer) => computer.roomId === room?.id),
@@ -35,42 +42,39 @@ const PageContent = () => {
       computer.macAddress,
       computer.lastUser,
     ];
-    const weight = details.filter((detail) => detail != null).length + 5;
+    const weight = details.filter((detail) => detail !== null).length + 5;
     return weight;
   }, []);
 
   useEffect(() => {
-    if (!room) return;
-    data.fetchComputers(room?.id).then(() => {
-      var leftWeight = 0;
-      var rightWeight = 0;
-      const newLeftComputers: Computer[] = [];
-      const newRightComputers: Computer[] = [];
+    var leftWeight = 0;
+    var rightWeight = 0;
+    const newLeftComputers: Computer[] = [];
+    const newRightComputers: Computer[] = [];
 
-      const sortedComputers = computers?.sort(
-        (first, second) => weightOfComputer(second) - weightOfComputer(first),
-      );
+    const sortedComputers = computers?.sort(
+      (first, second) => weightOfComputer(second) - weightOfComputer(first),
+    );
 
-      sortedComputers.forEach((computer) => {
-        if (leftWeight <= rightWeight) {
-          newLeftComputers.push(computer);
-          leftWeight += weightOfComputer(computer);
-        } else {
-          newRightComputers.push(computer);
-          rightWeight += weightOfComputer(computer);
-        }
-      });
-      setLeftComputers(newLeftComputers);
-      setRightComputers(newRightComputers);
-      if (computers) setLoading(false);
+    sortedComputers.forEach((computer) => {
+      if (leftWeight <= rightWeight) {
+        newLeftComputers.push(computer);
+        leftWeight += weightOfComputer(computer);
+      } else {
+        newRightComputers.push(computer);
+        rightWeight += weightOfComputer(computer);
+      }
     });
-  }, [computers, weightOfComputer, data, room]);
+    setLeftComputers(newLeftComputers);
+    setRightComputers(newRightComputers);
+    if (computers) setLoading(false);
+  }, [computers, weightOfComputer]);
 
   const reloadComputers = useCallback(async () => {
     if (!room) return;
     var hasFinished = false;
     const timeout = setTimeout(() => !hasFinished && setLoading(true), 500);
-    const result = await data.fetchComputers(room.id);
+    const result = await data.fetchComputers(roomId);
     hasFinished = true;
     setLoading(false);
     if (result === FetchError.Unknown) {
@@ -78,7 +82,7 @@ const PageContent = () => {
       return;
     }
     if (result === FetchError.Ratelimited) {
-      const limit = ratelimit.getRatelimit("fetchRooms");
+      const limit = ratelimit.getRatelimit("fetchComputers");
       if (!limit) {
         alert.show("Etwas ist schiefgelaufen");
         return;
@@ -94,13 +98,11 @@ const PageContent = () => {
       clearTimeout(timeout);
       return;
     }
-    hasFinished = true;
-    setLoading(false);
     alert.show("Computer wurden aktualisiert");
   }, [room, data, alert, ratelimit]);
 
   if (!room) {
-    query.delete();
+    alert.show("Raum nicht gefunden");
     return;
   }
 

@@ -99,6 +99,11 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     [auth, rooms, failer, ratelimit],
   );
 
+  useEffect(() => {
+    if (!auth.token || auth.token === "") return;
+    fetchRooms(true).then(() => setLoading(false));
+  }, [auth]);
+
   const fetchComputers = useCallback(
     async (roomId: number, skipRatelimit = false) => {
       if (failer.hasFailed || !auth.token) return;
@@ -128,7 +133,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         const data = await result.json();
         const newComputers: Computer[] = [];
         data.forEach((computer: any) =>
-          computers.push({
+          newComputers.push({
             id: computer.computerId,
             roomId: computer.roomId,
             name: computer.name,
@@ -157,16 +162,12 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         setComputers(newComputers);
       } catch (error: any) {
-        failer.fail("Fehler beim Laden der Räume", error.toString());
+        failer.fail("Fehler beim Laden der Computer", error.toString());
         return;
       }
     },
     [auth, computers, failer, ratelimit],
   );
-
-  useEffect(() => {
-    fetchRooms(true).then(() => setLoading(false));
-  }, [fetchRooms]);
 
   useEffect(
     () => setParentLoading(theme.loading || auth.loading),
