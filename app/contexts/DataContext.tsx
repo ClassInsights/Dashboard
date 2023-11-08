@@ -36,37 +36,67 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchRooms = useCallback(async () => {
     if (auth.didFail || !auth.token) return;
-    try {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-        headers: {
-          authorization: `Bearer ${auth.token}`,
-        },
-      });
-      const data = await result.json();
-      const newRooms: Room[] = [];
-      data.forEach((room: any) =>
-        newRooms.push({
-          id: room.roomId,
-          name: room.name,
-          longName: room.longName,
-          deviceCount: room.deviceCount,
-        }),
-      );
-      if (
-        newRooms.length === rooms.length &&
-        newRooms.every(
-          (room, index, _) =>
-            room.id === rooms[index].id &&
-            room.name === rooms[index].name &&
-            room.longName === rooms[index].longName &&
-            room.deviceCount === rooms[index].deviceCount,
-        )
+    const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+      mode: "no-cors",
+      headers: {
+        authorization: `Bearer ${auth.token}`,
+      },
+    });
+    const data = await result.json();
+    const newRooms: Room[] = [];
+    data.forEach((room: any) =>
+      newRooms.push({
+        id: room.roomId,
+        name: room.name,
+        longName: room.longName,
+        deviceCount: room.deviceCount,
+      }),
+    );
+    if (
+      newRooms.length === rooms.length &&
+      newRooms.every(
+        (room, index, _) =>
+          room.id === rooms[index].id &&
+          room.name === rooms[index].name &&
+          room.longName === rooms[index].longName &&
+          room.deviceCount === rooms[index].deviceCount,
       )
-        return;
-      setRooms(newRooms);
-    } catch (error) {
+    )
       return;
-    }
+    setRooms(newRooms);
+    // try {
+    //   const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+    //     mode: "no-cors",
+    //     headers: {
+    //       authorization: `Bearer ${auth.token}`,
+    //     },
+    //   });
+    //   const data = await result.json();
+    //   const newRooms: Room[] = [];
+    //   data.forEach((room: any) =>
+    //     newRooms.push({
+    //       id: room.roomId,
+    //       name: room.name,
+    //       longName: room.longName,
+    //       deviceCount: room.deviceCount,
+    //     }),
+    //   );
+    //   if (
+    //     newRooms.length === rooms.length &&
+    //     newRooms.every(
+    //       (room, index, _) =>
+    //         room.id === rooms[index].id &&
+    //         room.name === rooms[index].name &&
+    //         room.longName === rooms[index].longName &&
+    //         room.deviceCount === rooms[index].deviceCount,
+    //     )
+    //   )
+    //     return;
+    //   setRooms(newRooms);
+    // } catch (error) {
+    //   console.log(error);
+    //   return;
+    // }
   }, [auth, rooms]);
 
   const fetchComputers = useCallback(
@@ -113,6 +143,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         setComputers(newComputers);
       } catch (error) {
+        console.log(error);
         return;
       }
     },
