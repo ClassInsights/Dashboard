@@ -9,6 +9,9 @@ import {
   useState,
 } from "react";
 import Config from "../types/config";
+import { useFail } from "./FailContext";
+import Loading from "../components/Loading";
+import { useAuth } from "./AuthContext";
 
 type ConfigContextType = {
   getConfig: () => Config | undefined;
@@ -21,9 +24,59 @@ type ConfigContextType = {
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | undefined>(undefined);
   const [newConfig, setNewConfig] = useState<Config | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
+
+  const auth = useAuth();
+  const failer = useFail();
+
+  const fetchConfig = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/config`,
+        {
+          headers: {
+            authorization: `Bearer ${auth.token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        failer.fail(
+          "Fehler beim Laden der Konfiguration",
+          await response.text(),
+        );
+        return;
+      }
+      const config = await response.json();
+      setConfig({
+        teacherGroupId: config.TeacherGroup,
+        domainSid: config.DomainSid,
+        domainName: config.DomainName,
+        caSubject: config.CASubject,
+        schoolYear: {
+          name: config.SchoolYear.Name,
+          startDate: new Date(config.SchoolYear.StartDate),
+          endDate: new Date(config.SchoolYear.EndDate),
+        },
+        azureGroupPattern: config.AzureGroupPattern,
+      });
+    } catch (error: any) {
+      failer.fail("Fehler beim Laden der Konfiguration", error.toString());
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConfig().then(() => setLoading(false));
+  }, []);
+
+  const getConfig = useCallback(() => newConfig ?? config, [newConfig, config]);
+
+  const updateConfig = useCallback(
+    (updatedConfig: Config) => setNewConfig(updatedConfig),
+    [],
+  );
 
   const hasUnsavedChanges = useMemo(() => {
     if (!config || !newConfig) return false;
@@ -35,38 +88,43 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, [config, newConfig]);
 
-  const updateConfig = useCallback(
-    (updatedConfig: Config) => setNewConfig(updatedConfig),
-    [],
-  );
-
-  const getConfig = useCallback(() => newConfig ?? config, [newConfig, config]);
-
   const saveConfig = useCallback(async () => {
-    // TODO: Save config to Server
     setIsSaving(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setConfig(newConfig);
-    setNewConfig(undefined);
-    setIsSaving(false);
-    return true;
+    try {
+      if (!newConfig) return false;
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/config`, {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          TeacherGroup: newConfig.teacherGroupId,
+          DomainSid: newConfig.domainSid,
+          CASubject: newConfig.caSubject,
+          SchoolYear: {
+            Name: newConfig.schoolYear.name,
+            StartDate: newConfig.schoolYear.startDate.toISOString(),
+            EndDate: newConfig.schoolYear.endDate.toISOString(),
+          },
+          AzureGroupPattern: newConfig.azureGroupPattern,
+        }),
+      });
+      if (!result.ok) {
+        setIsSaving(false);
+        return false;
+      }
+      setConfig(newConfig);
+      setNewConfig(undefined);
+      setIsSaving(false);
+      return true;
+    } catch (error) {
+      setIsSaving(false);
+      return false;
+    }
   }, [newConfig]);
 
-  useEffect(() => {
-    // TODO: Fetch config from Server
-    setConfig({
-      teacherGroupId: "e4816e17-4c37-8306-6fe6-9f96d74c4b25",
-      domainSid: "S-3-8-23-5892810687-2502163817-4270430042",
-      domainName: "projekt.local",
-      caSubject: "projekt-DC01PROJEKT-CA",
-      schoolYear: {
-        name: "2023/2024",
-        startDate: new Date(2023, 9, 10),
-        endDate: new Date(2024, 7, 6),
-      },
-      azureGroupPattern: "YEAR_CLASS",
-    });
-  }, []);
+  if (loading) return <Loading />;
 
   return (
     <ConfigContext.Provider
