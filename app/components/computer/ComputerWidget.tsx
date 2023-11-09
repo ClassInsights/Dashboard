@@ -4,70 +4,125 @@ import { useAlert } from "@/app/contexts/AlertContext";
 import ComputerAction from "./ComputerAction";
 import ComputerDetail from "./ComputerDetail";
 import { useCallback } from "react";
+import { useData } from "@/app/contexts/DataContext";
 
-type ComputerWidgetProps = {
-  computer: Computer;
-};
+enum Action {
+  SHUTDOWN = "shutdown",
+  RESTART = "restart",
+  LOGOUT = "logout",
+}
 
-const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
+const ComputerWidget = ({ computer }: { computer: Computer }) => {
   const alert = useAlert();
+  const data = useData();
+
+  const translateAction = useCallback(
+    (action: Action) =>
+      action === Action.SHUTDOWN
+        ? "heruntergefahren"
+        : action === Action.RESTART
+        ? "neugestartet"
+        : "abgemeldet",
+    [],
+  );
+
+  const performAction = useCallback(
+    async (action: Action) => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/computers/${computer.id}/${action}`,
+          {
+            method: "PATCH",
+          },
+        );
+
+        if (response.status === 200) {
+          alert.show(
+            `Computer ${computer.name} wurde erfolgreich ${translateAction(
+              action,
+            )}`,
+          );
+          return true;
+        } else
+          alert.show(
+            `Computer ${computer.name} konnte nicht ${translateAction(
+              action,
+            )} werden (${response.status}))`,
+          );
+        return false;
+      } catch (error) {
+        alert.show("Ein unerwarteter Fehler ist aufgetreten");
+        return false;
+      }
+    },
+    [alert, computer.id, computer.name],
+  );
 
   const shutdownAction = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (event.ctrlKey) console.log("instant shutdown");
+      if (event.ctrlKey) performAction(Action.SHUTDOWN);
       else
         alert.show(
           `Möchtest du den Computer ${computer?.name} wirklich herunterfahren?`,
           [
             {
               value: "Ja",
-              onClick: () => console.log("shutdown"),
+              onClick: async () => {
+                if (await performAction(Action.SHUTDOWN)) {
+                  const newComputer = computer;
+                  newComputer.isOnline = false;
+                  data.updateComputer(newComputer);
+                }
+              },
             },
             {
               value: "Nein",
-              onClick: () => console.log("no shutdown"),
             },
           ],
         );
     },
-    [alert, computer?.name],
+    [alert, computer, data, performAction],
   );
 
   const restartAction = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (event.ctrlKey) console.log("instant restart");
+      if (event.ctrlKey) performAction(Action.RESTART);
       else
         alert.show(
           `Möchtest du den Computer ${computer?.name} wirklich neustarten?`,
           [
             {
               value: "Ja",
-              onClick: () => console.log("restart"),
+              onClick: async () => {
+                if (await performAction(Action.SHUTDOWN)) {
+                  const newComputer = computer;
+                  newComputer.isOnline = false;
+                  data.updateComputer(newComputer);
+                }
+              },
             },
             {
               value: "Nein",
-              onClick: () => console.log("no restart"),
             },
           ],
         );
     },
-    [alert, computer?.name],
+    [alert, computer, data, performAction],
   );
 
   const logoutAction = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (event.ctrlKey) console.log("instant logout");
+      if (event.ctrlKey) performAction(Action.LOGOUT);
       else
         alert.show(
           `Möchtest du den Computer ${computer?.name} wirklich abmelden?`,
           [
             {
               value: "Ja",
-              onClick: () => console.log("logout"),
+              onClick: () => performAction(Action.LOGOUT),
             },
             {
               value: "Nein",
-              onClick: () => console.log("no logout"),
             },
           ],
         );
@@ -76,24 +131,7 @@ const ComputerWidget: React.FC<ComputerWidgetProps> = ({ computer }) => {
   );
 
   return (
-    <Container
-      disabled={!computer.isOnline}
-      onClick={
-        !computer.isOnline
-          ? () =>
-              alert.show(
-                `Möchtest du den Computer ${computer?.name} wirklich starten?`,
-                [
-                  { value: "Ja", onClick: () => console.log("Pc Start") },
-                  {
-                    value: "Nein",
-                    onClick: () => console.log("Start canceled"),
-                  },
-                ],
-              )
-          : undefined
-      }
-    >
+    <Container disabled={!computer.isOnline} key={computer.id}>
       <div className="mb-1.5 flex justify-between">
         <h3 className="select-none">{computer.name}</h3>
         {computer.isOnline && (

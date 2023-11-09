@@ -88,7 +88,7 @@ export default function RoomOverviewPage() {
         <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
           {data.rooms?.map((room, index) => (
             <ContainerPreset
-              key={index}
+              key={room.id}
               label={`${room.deviceCount} ${
                 room.deviceCount <= 1 ? "Gerät" : "Geräte"
               }`}
