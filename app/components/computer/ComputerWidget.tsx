@@ -5,6 +5,7 @@ import ComputerAction from "./ComputerAction";
 import ComputerDetail from "./ComputerDetail";
 import { useCallback } from "react";
 import { useData } from "@/app/contexts/DataContext";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 enum Action {
   SHUTDOWN = "shutdown",
@@ -13,9 +14,9 @@ enum Action {
 }
 
 const ComputerWidget = ({ computer }: { computer: Computer }) => {
+  const auth = useAuth();
   const alert = useAlert();
   const data = useData();
-
   const translateAction = useCallback(
     (action: Action) =>
       action === Action.SHUTDOWN
@@ -33,6 +34,9 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
           `${process.env.NEXT_PUBLIC_API_URL}/computers/${computer.id}/${action}`,
           {
             method: "PATCH",
+            headers: {
+              authorization: `Bearer ${auth.token}`,
+            },
           },
         );
 
