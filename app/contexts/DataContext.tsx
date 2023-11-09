@@ -29,6 +29,7 @@ export type DataContextType = {
     id: number,
     skipRatelimit?: boolean,
   ) => Promise<FetchError | undefined>;
+  updateComputer: (computer: Computer) => void;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -169,6 +170,15 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     [auth, computers, failer, ratelimit],
   );
 
+  const updateComputer = useCallback(
+    (computer: Computer) => {
+      setComputers((computers) =>
+        computers.map((c) => (c.id === computer.id ? computer : c)),
+      );
+    },
+    [computers],
+  );
+
   useEffect(
     () => setParentLoading(theme.loading || auth.loading),
     [loading, theme.loading, auth.loading],
@@ -178,7 +188,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <DataContext.Provider
-      value={{ rooms, fetchRooms, computers, fetchComputers }}
+      value={{ rooms, fetchRooms, computers, fetchComputers, updateComputer }}
     >
       {children}
     </DataContext.Provider>
