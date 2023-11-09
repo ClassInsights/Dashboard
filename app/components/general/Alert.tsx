@@ -47,7 +47,7 @@ const Alert = () => {
               key={index}
               className="rounded-md border border-background px-3 py-0.5 text-background dark:border-dark-background dark:text-dark-background"
               onClick={() => {
-                action.onClick();
+                if (action.onClick) action.onClick();
                 alert.hide();
               }}
             >

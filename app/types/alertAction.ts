@@ -1,6 +1,6 @@
 type Action = {
   value: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export default Action;
