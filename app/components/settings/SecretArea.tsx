@@ -1,19 +1,36 @@
 import { useCallback, useMemo, useState } from "react";
 import TextInput from "../forms/TextInput";
 import { useAlert } from "@/app/contexts/AlertContext";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const SecretArea = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [azureSecret, setAzureSecret] = useState("");
 
   const alert = useAlert();
+  const auth = useAuth();
 
   const submitAzureSecret = useCallback(async () => {
-    setAzureSecret("");
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // TODO send secret in body
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/config/graph/credentials`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (!response.ok) alert.show("Speichern von Secret fehlgeschlagen");
+      setAzureSecret("");
+      alert.show("Azure Secret wurde gespeichert");
+    } catch (error) {
+      alert.show("Speichern von Secret fehlgeschlagen");
+    }
     setIsSubmitting(false);
-    alert.show("Azure Secret wurde gespeichert");
   }, [alert]);
 
   const disableSubmit = useMemo(
@@ -22,7 +39,7 @@ const SecretArea = () => {
   );
 
   return (
-    <div className="flex w-max flex-col gap-2 sm:flex-row sm:gap-4">
+    <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
       <TextInput
         placeholder="ClientSecret"
         initialValue={azureSecret}
