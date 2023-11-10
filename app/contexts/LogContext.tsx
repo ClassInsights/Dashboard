@@ -15,7 +15,7 @@ import { useRatelimit } from "./RatelimitContext";
 
 type LogContextType = {
   logs: LogEntry[];
-  fetchLogs: (skipRatelimit: boolean) => Promise<FetchError | undefined>;
+  fetchLogs: (skipRatelimit?: boolean) => Promise<FetchError | undefined>;
   isLoading: boolean;
 };
 
