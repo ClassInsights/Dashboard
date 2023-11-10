@@ -7,12 +7,52 @@ import Header from "./components/general/Header";
 import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
 import ContainerPreset from "./components/containers/ContainerPreset";
+import { useLog } from "./contexts/LogContext";
+import { useAlert } from "./contexts/AlertContext";
+import { useRatelimit } from "./contexts/RatelimitContext";
+import { useFail } from "./contexts/FailContext";
+import { useCallback } from "react";
 
 export default function Home() {
   const router = useRouter();
 
+  const failer = useFail();
   const data = useData();
+  const alert = useAlert();
+  const logData = useLog();
+  const ratelimit = useRatelimit();
   const auth = useAuth();
+
+  const reloadApplication = useCallback(async () => {
+    const limit = ratelimit.getRatelimit("appReload");
+    if (limit) {
+      const secondsLeft = Math.ceil(
+        (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
+      );
+      alert.show(
+        `Warte noch ${secondsLeft} ${
+          secondsLeft === 1 ? "Sekunde" : "Sekunden"
+        } zum Aktualisieren`,
+      );
+      return;
+    }
+
+    const reloadAuth = async () => {
+      await auth.reload();
+      return failer.hasFailed;
+    };
+
+    if (
+      (await data.fetchRooms(true)) ||
+      (await logData.fetchLogs(true)) ||
+      (await reloadAuth())
+    )
+      alert.show("Fehler beim Aktualisieren der Daten");
+    else {
+      ratelimit.addRateLimit("appReload", 1000 * 30);
+      alert.show("Daten wurden aktualisiert");
+    }
+  }, [ratelimit, alert, auth, failer, data, logData]);
 
   return (
     <>
@@ -23,6 +63,7 @@ export default function Home() {
         subtitle="Hier kannst du alle nötigen Einstellungen für eine reibungslose
   Funktionalität der App ClassInsights und den damit verbundenen Diensten
   tätigen."
+        reloadAction={window.innerWidth > 800 ? reloadApplication : undefined}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <ContainerPreset
