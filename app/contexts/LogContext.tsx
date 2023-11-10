@@ -31,7 +31,7 @@ export const LogProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchLogs = useCallback(
     async (skipRatelimit = false) => {
-      if (!auth.token) return;
+      if (failer.hasFailed || !auth.token) return FetchError.Unauthorized;
       if (!skipRatelimit && ratelimit.isRateLimited("fetchLogs"))
         return FetchError.Ratelimited;
       try {
@@ -66,9 +66,7 @@ export const LogProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         if (
-          logs.every((log) =>
-            entries.some((entry) => entry.logId === log.logId),
-          )
+          entries.every((log, index, _) => logs.at(index)?.logId === log.logId)
         )
           return;
 
