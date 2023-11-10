@@ -31,6 +31,12 @@ export default function Home() {
           showArrow
           onClick={() => router.push("/rooms")}
         />
+        <ContainerPreset
+          label="Logbuch"
+          title="Öffnen"
+          showArrow
+          onClick={() => router.push("/logs")}
+        />
       </div>
       <section className="mt-10 select-none flex-col xs:flex-row">
         <h2>Konfiguration verwalten</h2>
