@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "../general/Header";
-import { FetchError, useData } from "@/app/contexts/DataContext";
+import { useData } from "@/app/contexts/DataContext";
 import Computer from "../../types/computer";
 import Image from "next/image";
 import ComputerWidget from "./ComputerWidget";
 import { useAlert } from "@/app/contexts/AlertContext";
 import { useRatelimit } from "@/app/contexts/RatelimitContext";
+import FetchError from "@/app/enums/fetchError";
 
 const PageContent = ({ roomId }: { roomId: number }) => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);

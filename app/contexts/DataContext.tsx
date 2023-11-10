@@ -8,18 +8,11 @@ import {
   useEffect,
 } from "react";
 import Room from "../types/room";
-import { useTheme } from "./ThemeContext";
 import { useAuth } from "./AuthContext";
 import Computer from "../types/computer";
-import Loading from "../components/Loading";
 import { useFail } from "./FailContext";
 import { useRatelimit } from "./RatelimitContext";
-
-export enum FetchError {
-  Unknown,
-  Ratelimited,
-  Unauthorized,
-}
+import FetchError from "../enums/fetchError";
 
 export type DataContextType = {
   rooms: Room[];
@@ -62,7 +55,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (result.status === 401) {
           failer.fail(
-            "Fehler beim Aktualisieren der Computer",
+            "Fehler beim Laden der Räume",
             "Request finished with Code 401 (Unauthorized)",
           );
           return FetchError.Unauthorized;
@@ -123,7 +116,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (result.status === 401) {
           failer.fail(
-            "Fehler beim Aktualisieren der Computer",
+            "Fehler beim Laden der Computer",
             "Request finished with Code 401 (Unauthorized)",
           );
           return FetchError.Unauthorized;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FetchError, useData } from "@/app/contexts/DataContext";
+import { useData } from "@/app/contexts/DataContext";
 import Header from "../../components/general/Header";
 import { useRouter, useSearchParams } from "next/navigation";
 import PageContent from "@/app/components/computer/RoomPageContent";
@@ -9,6 +9,7 @@ import ContainerPreset from "@/app/components/containers/ContainerPreset";
 import Image from "next/image";
 import { useAlert } from "@/app/contexts/AlertContext";
 import { useRatelimit } from "@/app/contexts/RatelimitContext";
+import FetchError from "@/app/enums/fetchError";
 
 export default function RoomOverviewPage() {
   const [loading, setLoading] = useState(true);
