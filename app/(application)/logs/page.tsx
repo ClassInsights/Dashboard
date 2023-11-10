@@ -1,17 +1,47 @@
 "use client";
 
 import Header from "@/app/components/general/Header";
+import { useAlert } from "@/app/contexts/AlertContext";
 import { useLog } from "@/app/contexts/LogContext";
+import { useRatelimit } from "@/app/contexts/RatelimitContext";
+import FetchError from "@/app/enums/fetchError";
 import Image from "next/image";
 
 export default function LogPage() {
+  const alert = useAlert();
+  const ratelimit = useRatelimit();
   const logData = useLog();
+
   return (
     <>
       <Header
         title="Logbuch"
         subtitle="Hier werden alle administrativen Tätigkeiten aufgezeichnet"
         previousPath="/"
+        reloadAction={async () => {
+          const result = await logData.fetchLogs();
+          if (result === FetchError.Unknown) {
+            alert.show("Etwas ist schiefgelaufen");
+            return;
+          }
+          if (result === FetchError.Ratelimited) {
+            const limit = ratelimit.getRatelimit("fetchLogs");
+            if (!limit) {
+              alert.show("Etwas ist schiefgelaufen");
+              return;
+            }
+            const secondsLeft = Math.ceil(
+              (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
+            );
+            alert.show(
+              `Warte noch ${secondsLeft} ${
+                secondsLeft === 1 ? "Sekunde" : "Sekunden"
+              } zum Aktualisieren`,
+            );
+            return;
+          }
+          alert.show("Logeinträge wurden aktualisiert");
+        }}
       />
       <div className="verflow-hidden flex select-none flex-col rounded-xl bg-secondary dark:bg-dark-secondary md:hidden">
         {logData.logs.map((log, index) => (
