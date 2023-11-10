@@ -7,6 +7,8 @@ import Alert from "./components/general/Alert";
 import { AlertProvider } from "./contexts/AlertContext";
 import { RatelimitProvider } from "./contexts/RatelimitContext";
 import { FailProvider } from "./contexts/FailContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
+import { LogProvider } from "./contexts/LogContext";
 
 export const metadata: Metadata = {
   title: "ClassInsights",
@@ -37,10 +39,14 @@ export default function RootLayout({
               <AuthProvider>
                 <RatelimitProvider>
                   <DataProvider>
-                    <AlertProvider>
-                      <Alert />
-                      <div className="h-full min-h-screen">{children}</div>
-                    </AlertProvider>
+                    <LogProvider>
+                      <LoadingProvider>
+                        <AlertProvider>
+                          <Alert />
+                          <div className="h-full min-h-screen">{children}</div>
+                        </AlertProvider>
+                      </LoadingProvider>
+                    </LogProvider>
                   </DataProvider>
                 </RatelimitProvider>
               </AuthProvider>

@@ -14,7 +14,7 @@ import { useFail } from "./FailContext";
 export type AuthContextType = {
   token: String | undefined;
   data: AuthData | undefined;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -30,13 +30,13 @@ enum DecodeError {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<String | undefined>();
   const [data, setData] = useState<AuthData | undefined>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const failer = useFail();
 
   const failAuth = useCallback(() => {
     failer.failAuth();
-    setLoading(false);
+    setIsLoading(false);
     localStorage.removeItem("accessToken");
   }, [failer]);
 
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setData(authData);
       localStorage.setItem("accessToken", body);
       setToken(body);
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     setData(authData);
     setToken(token);
-    setLoading(false);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         token,
         data,
-        loading,
+        isLoading,
       }}
     >
       {children}

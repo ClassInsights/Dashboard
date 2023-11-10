@@ -30,6 +30,7 @@ export type DataContextType = {
     skipRatelimit?: boolean,
   ) => Promise<FetchError | undefined>;
   updateComputer: (computer: Computer) => void;
+  isLoading: boolean;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -38,11 +39,9 @@ export const DataContext = createContext<DataContextType | undefined>(
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [parentLoading, setParentLoading] = useState<boolean>(true);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [computers, setComputers] = useState<Computer[]>([]);
 
-  const theme = useTheme();
   const auth = useAuth();
   const ratelimit = useRatelimit();
   const failer = useFail();
@@ -179,16 +178,16 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     [computers],
   );
 
-  useEffect(
-    () => setParentLoading(theme.loading || auth.loading),
-    [loading, theme.loading, auth.loading],
-  );
-
-  if (loading || parentLoading) return <Loading />;
-
   return (
     <DataContext.Provider
-      value={{ rooms, fetchRooms, computers, fetchComputers, updateComputer }}
+      value={{
+        rooms,
+        fetchRooms,
+        computers,
+        fetchComputers,
+        updateComputer,
+        isLoading: loading,
+      }}
     >
       {children}
     </DataContext.Provider>

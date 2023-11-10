@@ -16,7 +16,7 @@ export enum ThemeMode {
 export type ThemeContextType = {
   themeMode?: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(
@@ -25,14 +25,14 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [themeMode, setTheme] = useState<ThemeMode | undefined>(undefined);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const initializeTheme = useCallback(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === ThemeMode.Dark || savedTheme === ThemeMode.Light) {
       document.documentElement.classList.add(savedTheme);
       setTheme(savedTheme as ThemeMode);
-      setLoading(false);
+      setIsLoading(false);
     } else {
       const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? ThemeMode.Dark
@@ -40,7 +40,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       document.documentElement.classList.add(theme);
       localStorage.setItem("theme", theme);
       setTheme(theme);
-      setLoading(false);
+      setIsLoading(false);
     }
   }, []);
 
@@ -58,7 +58,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         themeMode,
         setTheme: setThemeMode,
-        loading,
+        isLoading,
       }}
     >
       {children}
