@@ -14,6 +14,7 @@ import { useFail } from "./FailContext";
 export type AuthContextType = {
   token: String | undefined;
   data: AuthData | undefined;
+  reload: () => Promise<void>;
   isLoading: boolean;
 };
 
@@ -123,6 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         token,
         data,
         isLoading,
+        reload: initializeToken,
       }}
     >
       {children}
