@@ -24,13 +24,14 @@ const PageContent = ({ roomId }: { roomId: number }) => {
 
   useEffect(() => {
     if (!room) return;
+    if (data.computers.find((computer) => computer.roomId === room.id)) return;
     data.fetchComputers(room?.id, true).then((response) => {
       if (response === FetchError.Unknown)
         alert.show("Etwas ist schiefgelaufen");
       else if (response === FetchError.Ratelimited)
         alert.show("Du hast zu oft aktualisiert");
     });
-  }, [room, alert]);
+  }, [room, alert, data]);
 
   const computers = useMemo(
     () => data.computers?.filter((computer) => computer.roomId === room?.id),
@@ -100,7 +101,7 @@ const PageContent = ({ roomId }: { roomId: number }) => {
       return;
     }
     alert.show("Computer wurden aktualisiert");
-  }, [room, data, alert, ratelimit]);
+  }, [room, data, alert, ratelimit, roomId]);
 
   if (!room) {
     alert.show("Raum nicht gefunden");

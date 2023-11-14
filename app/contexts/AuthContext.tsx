@@ -64,22 +64,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } as AuthData;
   }, []);
 
-  const initializeToken = useCallback(async (refetchToken = false) => {
-    const token = localStorage.getItem("accessToken");
+  const initializeToken = useCallback(
+    async (refetchToken = false) => {
+      const token = localStorage.getItem("accessToken");
 
-    if (refetchToken || token === null) {
-      const result = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/login/pc`,
-        {
-          credentials: "include",
-        },
-      );
+      if (refetchToken || token === null) {
+        const result = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/login/pc`,
+          {
+            credentials: "include",
+          },
+        );
 
-      if (result.status === 401) return failAuth();
-      else if (!result.ok) return failAuth();
+        if (result.status === 401) return failAuth();
+        else if (!result.ok) return failAuth();
 
-      const body = await result.text();
-      const authData = decodeToken(body);
+        const body = await result.text();
+        const authData = decodeToken(body);
+
+        if (
+          authData === DecodeError.Invalid ||
+          authData === DecodeError.Permission
+        )
+          return failAuth();
+        else if (authData === DecodeError.Expired) {
+          localStorage.removeItem("accessToken");
+          await initializeToken(true);
+          return;
+        }
+
+        setData(authData);
+        localStorage.setItem("accessToken", body);
+        setToken(body);
+        setIsLoading(false);
+        return;
+      }
+
+      const authData = decodeToken(token);
 
       if (
         authData === DecodeError.Invalid ||
@@ -93,30 +114,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setData(authData);
-      localStorage.setItem("accessToken", body);
-      setToken(body);
+      setToken(token);
       setIsLoading(false);
-      return;
-    }
-
-    const authData = decodeToken(token);
-
-    if (authData === DecodeError.Invalid || authData === DecodeError.Permission)
-      return failAuth();
-    else if (authData === DecodeError.Expired) {
-      localStorage.removeItem("accessToken");
-      await initializeToken(true);
-      return;
-    }
-
-    setData(authData);
-    setToken(token);
-    setIsLoading(false);
-  }, []);
+    },
+    [decodeToken, failAuth],
+  );
 
   useEffect(() => {
     initializeToken();
-  }, []);
+  }, [initializeToken]);
 
   return (
     <AuthContext.Provider

@@ -65,11 +65,11 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       failer.fail("Fehler beim Laden der Konfiguration", error.toString());
     }
-  }, []);
+  }, [auth.token, failer]);
 
   useEffect(() => {
     fetchConfig().then(() => setLoading(false));
-  }, []);
+  }, [fetchConfig]);
 
   const getConfig = useCallback(() => newConfig ?? config, [newConfig, config]);
 
@@ -122,7 +122,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
       setIsSaving(false);
       return false;
     }
-  }, [newConfig]);
+  }, [newConfig, auth.token]);
 
   if (loading) return <Loading />;
 

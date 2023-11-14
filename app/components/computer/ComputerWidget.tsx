@@ -59,7 +59,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
         return false;
       }
     },
-    [alert, computer.id, computer.name],
+    [alert, computer.id, computer.name, auth.token, translateAction],
   );
 
   const shutdownAction = useCallback(
@@ -131,7 +131,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
           ],
         );
     },
-    [alert, computer?.name],
+    [alert, computer?.name, performAction],
   );
 
   return (

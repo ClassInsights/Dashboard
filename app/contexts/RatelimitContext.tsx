@@ -45,7 +45,7 @@ export const RatelimitProvider = ({
         duration,
       );
     },
-    [ratelimits],
+    [isRateLimited],
   );
 
   const getRatelimit = useCallback(

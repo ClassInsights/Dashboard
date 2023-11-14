@@ -95,6 +95,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!auth.token || auth.token === "") return;
     fetchRooms(true).then(() => setLoading(false));
+    // don't add fetchRooms to the dependency array, otherwise the application loops
   }, [auth]);
 
   const fetchComputers = useCallback(
@@ -162,14 +163,11 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     [auth, computers, failer, ratelimit],
   );
 
-  const updateComputer = useCallback(
-    (computer: Computer) => {
-      setComputers((computers) =>
-        computers.map((c) => (c.id === computer.id ? computer : c)),
-      );
-    },
-    [computers],
-  );
+  const updateComputer = useCallback((computer: Computer) => {
+    setComputers((computers) =>
+      computers.map((c) => (c.id === computer.id ? computer : c)),
+    );
+  }, []);
 
   return (
     <DataContext.Provider

@@ -80,9 +80,10 @@ export const LogProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   useEffect(() => {
-    setIsLoading(true);
+    if (!auth.token || auth.token === "") return;
     fetchLogs().then(() => setIsLoading(false));
-  }, [auth.token]);
+    // don't add fetchLogs to the dependency array, otherwise the application loops
+  }, [auth]);
 
   return (
     <LogContext.Provider value={{ logs, fetchLogs, isLoading }}>

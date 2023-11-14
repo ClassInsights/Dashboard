@@ -31,7 +31,7 @@ const SecretArea = () => {
       alert.show("Speichern von Secret fehlgeschlagen");
     }
     setIsSubmitting(false);
-  }, [alert]);
+  }, [alert, auth.token]);
 
   const disableSubmit = useMemo(
     () => azureSecret === "" || isSubmitting,
