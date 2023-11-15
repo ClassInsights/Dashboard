@@ -13,7 +13,10 @@ const SecretArea = () => {
   const submitAzureSecret = useCallback(async () => {
     setIsSubmitting(true);
     try {
-      // TODO send secret in body
+      if (azureSecret === "") {
+        alert.show("Du kannst kein leeres Secret speichern");
+        return;
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/config/graph/credentials`,
         {
@@ -22,6 +25,10 @@ const SecretArea = () => {
             Authorization: `Bearer ${auth.token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            SourceType: "ClientSecret",
+            ClientSecret: azureSecret,
+          }),
         },
       );
       if (!response.ok) alert.show("Speichern von Secret fehlgeschlagen");
