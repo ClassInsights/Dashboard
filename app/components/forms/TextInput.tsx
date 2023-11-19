@@ -27,9 +27,7 @@ const TextInput: React.FC<TextInputProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(initialValue ?? "");
 
-  useEffect(() => {
-    if (reset) setInputValue(initialValue ?? "");
-  }, [reset, initialValue]);
+  useEffect(() => setInputValue(initialValue ?? ""), [reset, initialValue]);
 
   const submitValue = useCallback(
     (value: string) => {
