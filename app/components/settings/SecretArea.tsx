@@ -25,10 +25,12 @@ const SecretArea = () => {
             Authorization: `Bearer ${auth.token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            SourceType: "ClientSecret",
-            ClientSecret: azureSecret,
-          }),
+          body: JSON.stringify([
+            {
+              SourceType: "ClientSecret",
+              ClientSecret: azureSecret,
+            },
+          ]),
         },
       );
       if (!response.ok) alert.show("Speichern von Secret fehlgeschlagen");
