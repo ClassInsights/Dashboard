@@ -14,7 +14,7 @@ export default function LogPage() {
   const logData = useLog();
 
   const hasLogs = useMemo(
-    () => !logData.logs || logData.logs.length !== 0,
+    () => logData.logs && logData.logs.length !== 0,
     [logData],
   );
 
