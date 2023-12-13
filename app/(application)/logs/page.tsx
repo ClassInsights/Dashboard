@@ -53,56 +53,58 @@ export default function LogPage() {
       {hasLogs && (
         <>
           <div className="flex select-none flex-col overflow-hidden rounded-xl bg-secondary dark:bg-dark-secondary md:hidden">
-            {logData.logs.map((log, index) => (
-              <div
-                key={log.logId}
-                className={`flex flex-col px-3 py-2 ${
-                  index % 2 !== 0 ? "bg-tertiary dark:bg-dark-tertiary" : ""
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Image
-                    src="/message.svg"
-                    height={15}
-                    width={15}
-                    alt="Message Icon"
-                    draggable={false}
-                    className="onBackground-light dark:onBackground-dark h-4 w-4"
-                  />
-                  <p>{log.message}</p>
+            {logData.logs
+              .sort((a, b) => +(a.date < b.date))
+              .map((log, index) => (
+                <div
+                  key={log.logId}
+                  className={`flex flex-col px-3 py-2 ${
+                    index % 2 !== 0 ? "bg-tertiary dark:bg-dark-tertiary" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/message.svg"
+                      height={15}
+                      width={15}
+                      alt="Message Icon"
+                      draggable={false}
+                      className="onBackground-light dark:onBackground-dark h-4 w-4"
+                    />
+                    <p>{log.message}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/user.svg"
+                      height={15}
+                      width={15}
+                      alt="User Icon"
+                      draggable={false}
+                      className="onBackground-light dark:onBackground-dark h-4 w-4"
+                    />
+                    <p>{log.username}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/calendar.svg"
+                      height={15}
+                      width={15}
+                      alt="Date Icon"
+                      draggable={false}
+                      className="onBackground-light dark:onBackground-dark h-4 w-4"
+                    />
+                    <p>
+                      {log.date.toLocaleDateString("de-AT", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Image
-                    src="/user.svg"
-                    height={15}
-                    width={15}
-                    alt="User Icon"
-                    draggable={false}
-                    className="onBackground-light dark:onBackground-dark h-4 w-4"
-                  />
-                  <p>{log.username}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Image
-                    src="/calendar.svg"
-                    height={15}
-                    width={15}
-                    alt="Date Icon"
-                    draggable={false}
-                    className="onBackground-light dark:onBackground-dark h-4 w-4"
-                  />
-                  <p>
-                    {log.date.toLocaleDateString("de-AT", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div className="hidden overflow-hidden rounded-xl bg-secondary pt-2 dark:bg-dark-secondary md:block">
             <table className="w-full table-auto select-none">
