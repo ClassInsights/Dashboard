@@ -34,7 +34,10 @@ const PageContent = ({ roomId }: { roomId: number }) => {
   }, [room, alert, data]);
 
   const computers = useMemo(
-    () => data.computers?.filter((computer) => computer.roomId === room?.id),
+    () =>
+      data.computers
+        ?.filter((computer) => computer.roomId === room?.id)
+        .sort((a, b) => +(+a.isOnline < +b.isOnline)),
     [data.computers, room],
   );
 
