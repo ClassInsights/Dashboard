@@ -30,6 +30,7 @@ const Navbar = () => {
           width={25}
           height={25}
           className="h-8 w-8"
+          priority={true}
           draggable={false}
         />
         <h3 className="ml-4 select-none text-xl">ClassInsights</h3>
