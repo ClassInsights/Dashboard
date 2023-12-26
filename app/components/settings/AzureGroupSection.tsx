@@ -1,7 +1,7 @@
 "use client";
 
 import { useAzure } from "@/app/contexts/AzureContext";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import DropDownList from "../forms/DropDownList";
 import SchoolClass from "@/app/types/schoolClass";
 import Divider from "./Divider";

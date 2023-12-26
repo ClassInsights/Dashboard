@@ -12,7 +12,6 @@ import AzureGroup from "../types/azureGroup";
 import SchoolClass from "../types/schoolClass";
 import { useAuth } from "./AuthContext";
 import { useFail } from "./FailContext";
-import Loading from "../components/Loading";
 import JsonOperation from "../types/jsonOperation";
 
 type AzureContextType = {
@@ -25,6 +24,8 @@ type AzureContextType = {
   getClassById: (classId: number | undefined) => SchoolClass | undefined;
   getAzureGroupById: (groupId: String | undefined) => AzureGroup | undefined;
   isSaving: boolean;
+  isLoading: boolean;
+  refreshAzureData: () => Promise<boolean>;
 };
 
 const AzureContext = createContext<AzureContextType | undefined>(undefined);
@@ -57,7 +58,7 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!response.ok) {
         failer.fail("Fehler beim Laden der Klassen", await response.text());
-        return;
+        return false;
       }
       const schoolClasses = await response.json();
 
@@ -70,11 +71,13 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
         } as SchoolClass;
       }) as SchoolClass[];
 
-      if (data.length === 0) return;
+      if (data.length === 0) return false;
       setClasses(data);
     } catch (error: any) {
       failer.fail("Fehler beim Laden der Klassen", error.toString());
+      return false;
     }
+    return true;
   }, [auth.token, failer]);
 
   const fetchAzureGroups = useCallback(async () => {
@@ -93,12 +96,12 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
           "Fehler beim Laden der Azure Gruppen",
           await response.text(),
         );
-        return;
+        return false;
       }
 
       const azureGroups = await response.json();
 
-      if (azureGroups.length === 0) return;
+      if (azureGroups.length === 0) return false;
       azureGroups.sort((a: AzureGroup, b: AzureGroup) => {
         if (a.displayName < b.displayName) return -1;
         if (a.displayName > b.displayName) return 1;
@@ -107,7 +110,9 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
       setGroups(azureGroups);
     } catch (error: any) {
       failer.fail("Fehler beim Laden der Azure Gruppen", error.toString());
+      return false;
     }
+    return true;
   }, [auth.token, failer]);
 
   useEffect(() => {
@@ -209,6 +214,11 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [newMappings, jsonPatch, auth.token]);
 
+  const refreshAzureData = useCallback(
+    async () => (await fetchSchoolClasses()) && (await fetchAzureGroups()),
+    [fetchSchoolClasses, fetchAzureGroups],
+  );
+
   const getClassById = useCallback(
     (classId: number | undefined) => {
       if (!classId) return undefined;
@@ -225,8 +235,6 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
     [groups],
   );
 
-  if (isLoading) return <Loading />;
-
   return (
     <AzureContext.Provider
       value={{
@@ -239,6 +247,8 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
         getClassById,
         getAzureGroupById,
         isSaving,
+        isLoading,
+        refreshAzureData,
       }}
     >
       {children}

@@ -10,7 +10,6 @@ import {
 } from "react";
 import Config from "../types/config";
 import { useFail } from "./FailContext";
-import Loading from "../components/Loading";
 import { useAuth } from "./AuthContext";
 
 type ConfigContextType = {
@@ -18,21 +17,24 @@ type ConfigContextType = {
   updateConfig: (updatedConfig: Config) => void;
   hasUnsavedChanges: boolean;
   isSaving: boolean;
+  isLoading: boolean;
   saveConfig: () => Promise<boolean>;
+  fetchConfig: () => Promise<boolean>;
 };
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | undefined>(undefined);
   const [newConfig, setNewConfig] = useState<Config | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   const auth = useAuth();
   const failer = useFail();
 
   const fetchConfig = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/config`,
@@ -47,7 +49,8 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
           "Fehler beim Laden der Konfiguration",
           await response.text(),
         );
-        return;
+        setIsLoading(false);
+        return false;
       }
       const config = await response.json();
       setConfig({
@@ -64,11 +67,15 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (error: any) {
       failer.fail("Fehler beim Laden der Konfiguration", error.toString());
+      setIsLoading(false);
+      return false;
     }
+    setIsLoading(false);
+    return true;
   }, [auth.token, failer]);
 
   useEffect(() => {
-    fetchConfig().then(() => setLoading(false));
+    fetchConfig();
   }, [fetchConfig]);
 
   const getConfig = useCallback(() => newConfig ?? config, [newConfig, config]);
@@ -124,8 +131,6 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [newConfig, auth.token]);
 
-  if (loading) return <Loading />;
-
   return (
     <ConfigContext.Provider
       value={{
@@ -133,7 +138,9 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
         updateConfig,
         hasUnsavedChanges,
         isSaving,
+        isLoading,
         saveConfig,
+        fetchConfig,
       }}
     >
       {children}
