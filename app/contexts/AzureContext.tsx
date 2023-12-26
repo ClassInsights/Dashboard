@@ -146,9 +146,6 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
         setNewMappings(updatedMappings);
         return;
       }
-      updatedMappings.forEach((value, key) => {
-        if (value === groupId) updatedMappings.set(key, undefined);
-      });
       updatedMappings.set(classId, groupId);
       setNewMappings(updatedMappings);
     },
