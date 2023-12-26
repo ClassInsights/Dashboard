@@ -23,12 +23,12 @@ const AzureGroupSection = () => {
 
   const firstHalf = useMemo(
     () => classes.slice(0, Math.ceil(classes.length / 2)),
-    [classes, mapping],
+    [classes],
   );
 
   const secondHalf = useMemo(
     () => classes.slice(Math.ceil(classes.length / 2)),
-    [classes, mapping],
+    [classes],
   );
 
   const generateColumn = useCallback(
