@@ -65,15 +65,13 @@ const AzureGroupSection = () => {
     return <p>Es wurden keine Webuntis Klassen gefunden.</p>;
 
   return (
-    <section className="flex flex-col">
-      <div className="flex w-full items-start justify-between">
-        <div>
-          <h2 className="select-none pb-2 ">Klassen verknüpfen</h2>
-          <p className="select-none pb-10">
-            Hier kannst du die Webuntis Klassen mit den Azure Gruppen händisch
-            verknüpfen
-          </p>
-        </div>
+    <section className="flex select-none flex-col">
+      <h2 className="select-none pb-2 ">Klassen verknüpfen</h2>
+      <div className="flex w-full items-start justify-between gap-4 pb-10">
+        <p>
+          Hier kannst du die Webuntis Klassen mit den Azure Gruppen händisch
+          verknüpfen
+        </p>
         <button
           disabled={disableSubmit}
           className={`rounded-md bg-tertiary px-4 py-2 transition-opacity dark:bg-dark-tertiary ${

@@ -13,7 +13,7 @@ import SchoolClass from "../types/schoolClass";
 import { useAuth } from "./AuthContext";
 import { useFail } from "./FailContext";
 import Loading from "../components/Loading";
-import * as jsonpatch from "fast-json-patch";
+import JsonOperation from "../types/jsonOperation";
 
 type AzureContextType = {
   classes: SchoolClass[];
@@ -112,13 +112,12 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!classes || !groups) return;
-    const generatedMappings = new Map<number, String>();
+    const generatedMappings = new Map<number, String | undefined>();
     classes.forEach((schoolClass) => {
       const azureGroup = groups.find(
         (group) => group.id === schoolClass.azureGroupId,
       );
-      if (!azureGroup) return;
-      generatedMappings.set(schoolClass.id, azureGroup.id);
+      generatedMappings.set(schoolClass.id, azureGroup?.id);
     });
     setMappings(generatedMappings);
   }, [classes, groups]);
@@ -138,7 +137,7 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
     (classId: number, groupId: String | undefined) => {
       const updatedMappings = new Map(newMappings ?? mappings);
       if (groupId === undefined) {
-        updatedMappings.delete(classId);
+        updatedMappings.set(classId, undefined);
         setNewMappings(updatedMappings);
         return;
       }
@@ -151,31 +150,48 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
     [newMappings, mappings],
   );
 
-  const patch = useMemo(() => {
+  const jsonPatch = useMemo(() => {
     if (!mappings || !newMappings) return undefined;
-    const newPatch = jsonpatch.compare(
-      Array.from(mappings),
-      Array.from(newMappings),
-    );
-    return newPatch;
+
+    const operations: JsonOperation[] = [];
+    Array.from(mappings).forEach((value, index) => {
+      const classId = value[0];
+      const groupId = value[1];
+
+      const newGroupId = newMappings.get(classId);
+      if (groupId === newGroupId) return;
+      operations.push({
+        op: "replace",
+        path: `/${index}/AzureGroupID`,
+        value: newGroupId ?? null,
+      });
+    });
+
+    return operations;
   }, [mappings, newMappings]);
 
   const hasUnsavedChanges = useMemo(
-    () => patch !== undefined && patch.length > 0,
-    [newMappings],
+    () => jsonPatch !== undefined && jsonPatch.length > 0,
+    [jsonPatch],
   );
 
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
-      if (!newMappings || !patch || patch.length === 0) return false;
+      if (!newMappings || !jsonPatch || jsonPatch.length === 0) return false;
+      const newPatch = jsonPatch.map((operation) => {
+        return {
+          ...operation,
+          path: operation.path.split("/")[1] + "/AzureGroupId",
+        };
+      });
       const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/classes`, {
         method: "PATCH",
         headers: {
           authorization: `Bearer ${auth.token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(Array.from(newMappings)),
+        body: JSON.stringify(newPatch),
       });
 
       if (!result.ok) {
@@ -191,7 +207,7 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsSaving(false);
     }
-  }, [newMappings, patch, auth.token]);
+  }, [newMappings, jsonPatch, auth.token]);
 
   const getClassById = useCallback(
     (classId: number | undefined) => {
