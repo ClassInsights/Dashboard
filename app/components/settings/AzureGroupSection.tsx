@@ -5,8 +5,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import DropDownList from "../forms/DropDownList";
 import SchoolClass from "@/app/types/schoolClass";
 import Divider from "./Divider";
+import { useAlert } from "@/app/contexts/AlertContext";
 
 const AzureGroupSection = () => {
+  const alert = useAlert();
   const azure = useAzure();
 
   const classes = useMemo(() => azure.classes, [azure]);
@@ -77,7 +79,12 @@ const AzureGroupSection = () => {
           className={`rounded-md bg-tertiary px-4 py-2 transition-opacity dark:bg-dark-tertiary ${
             disableSubmit ? "cursor-not-allowed opacity-50" : "cursor-pointer"
           }`}
-          onClick={() => azure.saveChanges()}
+          onClick={async () => {
+            const success = await azure.saveChanges();
+            success
+              ? alert.show("Verknüpfungen erfolgreich gespeichert")
+              : alert.show("Fehler beim Speichern der Verknüpfungen");
+          }}
         >
           Speichern
         </button>

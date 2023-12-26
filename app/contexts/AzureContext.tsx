@@ -38,7 +38,6 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
   const [newMappings, setNewMappings] = useState<
     Map<number, String | undefined> | undefined
   >(undefined);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -144,13 +143,7 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
       updatedMappings.forEach((value, key) => {
-        if (value === groupId) {
-          console.log(
-            "Deleted: ",
-            groups.find((group) => group.id === value)?.displayName,
-          );
-          updatedMappings.set(key, undefined);
-        }
+        if (value === groupId) updatedMappings.set(key, undefined);
       });
       updatedMappings.set(classId, groupId);
       setNewMappings(updatedMappings);
@@ -160,45 +153,44 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
 
   const patch = useMemo(() => {
     if (!mappings || !newMappings) return undefined;
-    setHasUnsavedChanges(true);
     const newPatch = jsonpatch.compare(
       Array.from(mappings),
       Array.from(newMappings),
     );
-    console.log("Patch: ", JSON.stringify(newPatch));
     return newPatch;
   }, [mappings, newMappings]);
 
+  const hasUnsavedChanges = useMemo(
+    () => patch !== undefined && patch.length > 0,
+    [newMappings],
+  );
+
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
-    console.log("Patch: ", patch);
-    setIsSaving(false);
-    return true;
-    // try {
-    //   if (!newMappings || !patch || patch.length === 0) return false;
-    //   const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/classes`, {
-    //     method: "PATCH",
-    //     headers: {
-    //       authorization: `Bearer ${auth.token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(Array.from(newMappings)),
-    //   });
+    try {
+      if (!newMappings || !patch || patch.length === 0) return false;
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/classes`, {
+        method: "PATCH",
+        headers: {
+          authorization: `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Array.from(newMappings)),
+      });
 
-    //   if (!result.ok) {
-    //     setIsSaving(false);
-    //     return false;
-    //   }
+      if (!result.ok) {
+        setIsSaving(false);
+        return false;
+      }
 
-    //   setMappings(newMappings);
-    //   setNewMappings(undefined);
-
-    //   setIsSaving(false);
-    //   return true;
-    // } catch (e) {
-    //   setIsSaving(false);
-    //   return false;
-    // }
+      setMappings(newMappings);
+      setNewMappings(undefined);
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
   }, [newMappings, patch, auth.token]);
 
   const getClassById = useCallback(
