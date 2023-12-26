@@ -93,7 +93,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
 
   const hasUnsavedChanges = useMemo(() => {
     if (!config || !newConfig) return false;
-    return config !== newConfig;
+    return JSON.stringify(config) !== JSON.stringify(newConfig);
   }, [config, newConfig]);
 
   const saveConfig = useCallback(async () => {
