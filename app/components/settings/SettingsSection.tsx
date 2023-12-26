@@ -17,7 +17,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
       <div className="flex w-full flex-col items-start justify-between gap-8 sm:flex-row">
         <div className="w-full">
           <p className="select-none">{description}</p>
-          <div className="pt-4">{info}</div>
+          {info !== null && <div className="pt-4">{info}</div>}
         </div>
         <div className="w-full sm:w-1/3">{input}</div>
       </div>

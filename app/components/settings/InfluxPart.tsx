@@ -20,14 +20,14 @@ const InfluxPart: React.FC<InfluxPartProps> = ({
       <h3 className="select-none pb-1.5">{title}</h3>
       <div
         className={`flex w-full items-start justify-between
-        ${inline ? "flex-col sm:flex-row" : "flex-col"}
+        ${inline ? "flex-col md:flex-row" : "flex-col"}
         ${gap}`}
       >
         <div className="w-full select-none lg:w-3/4">
           <p>{description}</p>
           {info !== undefined && <div className="pt-1">{info}</div>}
         </div>
-        <div className={inline ? "w-full sm:w-1/3" : "w-full"}>{input}</div>
+        <div className={inline ? "w-full md:w-1/3" : "w-full"}>{input}</div>
       </div>
     </div>
   );
