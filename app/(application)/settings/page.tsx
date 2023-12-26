@@ -12,9 +12,13 @@ import Divider from "@/app/components/settings/Divider";
 import Container from "@/app/components/containers/Container";
 import SecretArea from "@/app/components/settings/SecretArea";
 import DropDownList from "@/app/components/forms/DropDownList";
+import AzureGroupSection from "@/app/components/settings/AzureGroupSection";
+import Loading from "@/app/components/Loading";
+import { useAzure } from "@/app/contexts/AzureContext";
 
 const SettingsPage = () => {
   const config = useConfig();
+  const azure = useAzure();
   const alert = useAlert();
 
   const currentConfig = useMemo(() => config.getConfig(), [config]);
@@ -38,7 +42,7 @@ const SettingsPage = () => {
     },
   ];
 
-  if (!currentConfig) return;
+  if (!currentConfig) return <Loading />;
 
   return (
     <>
@@ -74,41 +78,30 @@ const SettingsPage = () => {
         </div>
       </section>
       <div className="h-20 w-full" />
-      <SettingsSection
-        title="Azure Lehrergruppe"
-        description="Hier kannst du die Azure Gruppe für die Lehrer festlegen."
-        input={
-          <DropDownList
-            options={[
-              {
-                displayName: "2019KK",
-                value: "e4816e17-4c37-8306-6fe6-9f96d74c4b25",
-              },
-              {
-                displayName: "2020KK",
-                value: "e4816e17-4c37-8306-6fe6-6f98d32c2b34",
-              },
-              {
-                displayName: "2021KK",
-                value: "e4816e17-4c37-8306-6fe6-2f93d72d4c82",
-              },
-              {
-                displayName: "Teacher",
-                value: "e4816e17-4c37-8306-6fe6-2f93b35d6c49",
-              },
-            ]}
-            selected={currentConfig.teacherGroupId}
-            title="Aktuelle Lehrergruppe"
-            disabled={config.isSaving}
-            onChange={(element) =>
-              config.updateConfig({
-                ...currentConfig,
-                teacherGroupId: element.value,
-              })
-            }
-          />
-        }
-      />
+      <section>
+        <h2 className="select-none pb-2 ">Azure Lehrergruppe</h2>
+        <div className="flex w-full flex-col items-start justify-between gap-8 sm:flex-row">
+          <p className="w-full select-none">
+            Hier kannst du die Azure Gruppe für die Lehrer festlegen.
+          </p>
+          <div className="w-full sm:w-4/5">
+            <DropDownList
+              options={azure.groups.map((group) => {
+                return { displayName: group.displayName, value: group.id };
+              })}
+              selected={currentConfig.teacherGroupId}
+              title="Aktuelle Lehrergruppe"
+              disabled={config.isSaving}
+              onChange={(element) =>
+                config.updateConfig({
+                  ...currentConfig,
+                  teacherGroupId: element.value.toString(),
+                })
+              }
+            />
+          </div>
+        </div>
+      </section>
       <Divider />
       <SettingsSection
         title="Azure Gruppen Pattern"
@@ -224,6 +217,8 @@ const SettingsPage = () => {
           />
         }
       />
+      <Divider />
+      <AzureGroupSection />
     </>
   );
 };

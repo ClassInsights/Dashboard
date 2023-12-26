@@ -1,4 +1,5 @@
 import ChangesBanner from "@/app/components/settings/ChangesBanner";
+import { AzureProvider } from "@/app/contexts/AzureContext";
 import { ConfigProvider } from "@/app/contexts/ConfigContext";
 
 export default function SettingsLayout({
@@ -8,8 +9,10 @@ export default function SettingsLayout({
 }) {
   return (
     <ConfigProvider>
-      <ChangesBanner />
-      {children}
+      <AzureProvider>
+        <ChangesBanner />
+        {children}
+      </AzureProvider>
     </ConfigProvider>
   );
 }
