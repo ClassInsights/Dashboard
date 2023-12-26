@@ -3,6 +3,7 @@ import TextInput from "../forms/TextInput";
 import InfluxPart from "./InfluxPart";
 import { useMemo } from "react";
 import QueryArea from "./QueryArea";
+import Link from "next/link";
 
 const InfluxSection = () => {
   const config = useConfig();
@@ -94,6 +95,15 @@ const InfluxSection = () => {
         <InfluxPart
           title="Datenbank Abfrage"
           description="Diese Query wird an InfluxDB gesendet, um die gewünschten Daten abzufragen."
+          info={
+            <Link
+              href="https://docs.influxdata.com/influxdb/v2/query-data/flux/"
+              className="text-sm font-bold text-primary dark:text-dark-primary"
+              target="_blank"
+            >
+              Dokumentation
+            </Link>
+          }
           gap="gap-3"
           input={<QueryArea />}
         />
