@@ -15,6 +15,7 @@ import DropDownList from "@/app/components/forms/DropDownList";
 import AzureGroupSection from "@/app/components/settings/AzureGroupSection";
 import { useAzure } from "@/app/contexts/AzureContext";
 import { useRatelimit } from "@/app/contexts/RatelimitContext";
+import InfluxSection from "@/app/components/settings/InfluxSection";
 
 const SettingsPage = () => {
   const alert = useAlert();
@@ -54,18 +55,19 @@ const SettingsPage = () => {
   const details = [
     {
       name: "Aktuelles Jahr",
-      value: config.getConfig()?.schoolYear.name ?? "Unbekannt",
+      value: config.getConfig()?.schoolYear?.name ?? "Unbekannt",
     },
     {
       name: "Start",
       value:
-        config.getConfig()?.schoolYear.startDate.toLocaleDateString("de-AT") ??
-        "Unbekannt",
+        config
+          .getConfig()
+          ?.schoolYear?.startDate?.toLocaleDateString("de-AT") ?? "Unbekannt",
     },
     {
       name: "Ende",
       value:
-        config.getConfig()?.schoolYear.endDate.toLocaleDateString("de-AT") ??
+        config.getConfig()?.schoolYear?.endDate?.toLocaleDateString("de-AT") ??
         "Unbekannt",
     },
   ];
@@ -257,6 +259,8 @@ const SettingsPage = () => {
               />
             }
           />
+          <Divider />
+          <InfluxSection />
           <Divider />
           <AzureGroupSection />
         </>

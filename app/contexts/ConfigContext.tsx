@@ -59,9 +59,15 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
         domainName: config.DomainName,
         caSubject: config.CASubject,
         schoolYear: {
-          name: config.SchoolYear.Name,
-          startDate: new Date(config.SchoolYear.StartDate),
-          endDate: new Date(config.SchoolYear.EndDate),
+          name: config.SchoolYear?.Name,
+          startDate: new Date(config.SchoolYear?.StartDate),
+          endDate: new Date(config.SchoolYear?.EndDate),
+        },
+        influx: {
+          query: config.Influx?.Query,
+          token: config.Influx?.Token,
+          server: config.Influx?.Server,
+          organisation: config.Influx?.Organisation,
         },
         azureGroupPattern: config.AzureGroupPattern,
       });
@@ -87,12 +93,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
 
   const hasUnsavedChanges = useMemo(() => {
     if (!config || !newConfig) return false;
-    return !(
-      config.teacherGroupId === newConfig.teacherGroupId &&
-      config.domainSid === newConfig.domainSid &&
-      config.caSubject === newConfig.caSubject &&
-      config.azureGroupPattern === newConfig.azureGroupPattern
-    );
+    return config !== newConfig;
   }, [config, newConfig]);
 
   const saveConfig = useCallback(async () => {
@@ -110,9 +111,15 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
           DomainSid: newConfig.domainSid,
           CASubject: newConfig.caSubject,
           SchoolYear: {
-            Name: newConfig.schoolYear.name,
-            StartDate: newConfig.schoolYear.startDate.toISOString(),
-            EndDate: newConfig.schoolYear.endDate.toISOString(),
+            Name: newConfig.schoolYear?.name,
+            StartDate: newConfig.schoolYear?.startDate?.toISOString(),
+            EndDate: newConfig.schoolYear?.endDate?.toISOString(),
+          },
+          Influx: {
+            Query: newConfig.influx?.query,
+            Token: newConfig.influx?.token,
+            Server: newConfig.influx?.server,
+            Organisation: newConfig.influx?.organisation,
           },
           AzureGroupPattern: newConfig.azureGroupPattern,
         }),
