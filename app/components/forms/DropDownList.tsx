@@ -2,14 +2,14 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 
 type ListElement = {
-  displayName?: string;
-  value: string;
+  displayName?: String;
+  value: String;
 };
 
 type DropDownListProps = {
   options: ListElement[];
-  selected?: string;
-  title?: string;
+  selected?: String;
+  title?: String;
   disabled?: boolean;
   onChange: (element: ListElement) => void;
 };
@@ -38,7 +38,7 @@ const DropDownList: React.FC<DropDownListProps> = ({
           className={`flex w-full items-center justify-between bg-secondary px-4 py-2 dark:bg-dark-secondary
           ${isOpen ? "rounded-t-md" : "rounded-md"}`}
         >
-          <p>
+          <p className="overflow-hidden whitespace-nowrap">
             {options.find((option) => option.value === selected)?.displayName ??
               "Bitte wähle aus"}
           </p>
@@ -59,15 +59,15 @@ const DropDownList: React.FC<DropDownListProps> = ({
         )}
         {isOpen && options.length > 0 && (
           <div
-            className={`absolute z-30 w-full overflow-y-scroll rounded-b-md bg-secondary shadow-md dark:bg-dark-secondary
+            className={`scrollbar scrollbar-thumb-onBackground dark:scrollbar-thumb-dark-onBackground scrollbar-track-secondary dark:scrollbar-track-dark-secondary absolute z-30 w-full overflow-x-hidden overflow-y-scroll rounded-b-md bg-secondary shadow-md dark:bg-dark-secondary
           ${
             options.length <= 1 ? "h-8" : options.length === 2 ? "h-16" : "h-24"
           }`}
           >
             {options.map((option) => (
               <p
-                key={option.value}
-                className="flex h-8 cursor-pointer items-center border-t border-tertiary bg-secondary px-4 transition-colors hover:bg-tertiary dark:border-dark-tertiary dark:bg-dark-secondary dark:hover:bg-dark-tertiary"
+                key={option.value.toString()}
+                className="flex h-8 cursor-pointer items-center overflow-hidden whitespace-nowrap border-t border-tertiary bg-secondary px-4 transition-colors hover:bg-tertiary dark:border-dark-tertiary dark:bg-dark-secondary dark:hover:bg-dark-tertiary"
                 onClick={() => {
                   onChange(option);
                   setIsOpen(false);
