@@ -5,7 +5,7 @@ const QueryArea = () => {
   const config = useConfig();
 
   const query = useMemo(
-    () => config.getConfig()?.influx?.query?.replaceAll(" |>", "\n    |>"),
+    () => config.getConfig()?.influx?.query?.replaceAll(" |>", "\n     |>"),
     [config],
   );
 
