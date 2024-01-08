@@ -76,8 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           },
         );
 
-        if (result.status === 401) return failAuth();
-        else if (!result.ok) return failAuth();
+        if (!result.ok) return failAuth();
 
         const body = await result.text();
         const authData = decodeToken(body);
