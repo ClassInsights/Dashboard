@@ -180,7 +180,7 @@ const SettingsPage = () => {
           <Divider />
           <SettingsSection
             title="CASubject (Clientzertifikat)"
-            description="Das CASubject ist der Name der Zertifizierungsstelle, die das Clientztertifikat erstellt hat."
+            description="Das CASubject ist der Name der Zertifizierungsstelle, die das Clientzertifikat erstellt hat."
             input={
               <TextInput
                 initialValue={currentConfig!.caSubject}
