@@ -63,7 +63,7 @@ export default function Home() {
         subtitle="Hier kannst du alle nötigen Einstellungen für eine reibungslose
   Funktionalität der App ClassInsights und den damit verbundenen Diensten
   tätigen."
-        reloadAction={window.innerWidth > 800 ? reloadApplication : undefined}
+        reloadAction={reloadApplication}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <ContainerPreset

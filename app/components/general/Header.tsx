@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ContainerPreset from "../containers/ContainerPreset";
 
 type HeaderProps = {
   title: string;
@@ -42,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         {reloadAction && (
           <div
-            className="dark:bg-primary-dark cursor-pointer rounded-md bg-primary p-1.5"
+            className="dark:bg-primary-dark hidden shrink-0 cursor-pointer rounded-md bg-primary p-1.5 sm:block"
             onClick={reloadAction}
           >
             <Image
@@ -57,6 +58,16 @@ const Header: React.FC<HeaderProps> = ({
         )}
       </div>
       {subtitle && <p className="mt-3 sm:w-3/4 lg:w-3/5">{subtitle}</p>}
+      {reloadAction && (
+        <button
+          onClick={reloadAction}
+          className="mt-4 w-full rounded-lg bg-primary px-4 py-3 dark:bg-dark-primary sm:hidden"
+        >
+          <span className="text-background dark:text-dark-background">
+            Aktualisieren
+          </span>
+        </button>
+      )}
     </div>
   );
 };
