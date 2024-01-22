@@ -11,18 +11,10 @@ import { LoadingProvider } from "./contexts/LoadingContext";
 import { LogProvider } from "./contexts/LogContext";
 
 export const metadata: Metadata = {
-  title: "ClassInsights",
+  title: "ClassInsights Dashboard",
   description: "Admin Dashboard for ClassInsights",
-  publisher: "HAK/HLW/HAS Landeck",
-  applicationName: "ClassInsights",
-  keywords: [
-    "ClassInsights",
-    "Admin",
-    "Dashboard",
-    "HAK Landeck",
-    "Landeck",
-    "HAK",
-  ],
+  publisher: "ClassInsights",
+  applicationName: "ClassInsights Dashboard",
 };
 
 export default function RootLayout({
