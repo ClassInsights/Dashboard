@@ -13,6 +13,7 @@ import SchoolClass from "../types/schoolClass";
 import { useAuth } from "./AuthContext";
 import { useFail } from "./FailContext";
 import JsonOperation from "../types/jsonOperation";
+import { useResponse } from "./ResponseContext";
 
 type AzureContextType = {
   classes: SchoolClass[];
@@ -44,6 +45,7 @@ export const AzureProvider = ({ children }: { children: React.ReactNode }) => {
 
   const auth = useAuth();
   const failer = useFail();
+  const response = useResponse();
 
   const fetchSchoolClasses = useCallback(async () => {
     try {

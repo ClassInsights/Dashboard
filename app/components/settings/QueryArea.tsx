@@ -49,7 +49,7 @@ const QueryArea = () => {
         placeholder="Aktuelle Query"
         className={`w-full resize-none overflow-auto overflow-x-scroll whitespace-pre rounded-md bg-secondary px-4 py-2 placeholder-onBackground outline-none transition-opacity placeholder:opacity-40 dark:bg-dark-secondary dark:placeholder-dark-onBackground
         ${config.isLoading ? "cursor-not-allowed opacity-50" : ""}`}
-        onBlur={() => onSubmit()}
+        onBlur={onSubmit}
       />
     </div>
   );

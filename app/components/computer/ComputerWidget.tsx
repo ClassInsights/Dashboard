@@ -4,8 +4,8 @@ import { useAlert } from "@/app/contexts/AlertContext";
 import ComputerAction from "./ComputerAction";
 import ComputerDetail from "./ComputerDetail";
 import { useCallback } from "react";
-import { useData } from "@/app/contexts/DataContext";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { useComputers as useComputers } from "@/app/contexts/ComputerContext";
 
 enum Action {
   SHUTDOWN = "shutdown",
@@ -16,7 +16,8 @@ enum Action {
 const ComputerWidget = ({ computer }: { computer: Computer }) => {
   const auth = useAuth();
   const alert = useAlert();
-  const data = useData();
+  const computerData = useComputers();
+
   const translateAction = useCallback(
     (action: Action) =>
       action === Action.SHUTDOWN
@@ -75,7 +76,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
                 if (await performAction(Action.SHUTDOWN)) {
                   const newComputer = computer;
                   newComputer.isOnline = false;
-                  data.updateComputer(newComputer);
+                  computerData.updateComputer(newComputer);
                 }
               },
             },
@@ -85,7 +86,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
           ],
         );
     },
-    [alert, computer, data, performAction],
+    [alert, computer, computerData, performAction],
   );
 
   const restartAction = useCallback(
@@ -101,7 +102,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
                 if (await performAction(Action.SHUTDOWN)) {
                   const newComputer = computer;
                   newComputer.isOnline = false;
-                  data.updateComputer(newComputer);
+                  computerData.updateComputer(newComputer);
                 }
               },
             },
@@ -111,7 +112,7 @@ const ComputerWidget = ({ computer }: { computer: Computer }) => {
           ],
         );
     },
-    [alert, computer, data, performAction],
+    [alert, computer, performAction, computerData],
   );
 
   const logoutAction = useCallback(

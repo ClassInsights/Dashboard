@@ -1,17 +1,18 @@
 "use client";
 
 import Header from "@/app/components/general/Header";
-import { useAlert } from "@/app/contexts/AlertContext";
+import { useAuth } from "@/app/contexts/AuthContext";
 import { useLog } from "@/app/contexts/LogContext";
-import { useRatelimit } from "@/app/contexts/RatelimitContext";
-import FetchError from "@/app/enums/fetchError";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function LogPage() {
-  const alert = useAlert();
-  const ratelimit = useRatelimit();
+  const authData = useAuth();
   const logData = useLog();
+
+  useEffect(() => {
+    if (authData.token) logData.fetchLogs();
+  }, [authData.token]);
 
   const hasLogs = useMemo(
     () => logData.logs && logData.logs.length !== 0,
@@ -24,33 +25,26 @@ export default function LogPage() {
         title="Logbuch"
         subtitle="Hier werden alle administrativen Tätigkeiten aufgezeichnet"
         previousPath="/"
-        reloadAction={async () => {
-          const result = await logData.fetchLogs();
-          if (result === FetchError.Unknown) {
-            alert.show("Etwas ist schiefgelaufen");
-            return;
-          }
-          if (result === FetchError.Ratelimited) {
-            const limit = ratelimit.getRatelimit("fetchLogs");
-            if (!limit) {
-              alert.show("Etwas ist schiefgelaufen");
-              return;
-            }
-            const secondsLeft = Math.ceil(
-              (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
-            );
-            alert.show(
-              `Warte noch ${secondsLeft} ${
-                secondsLeft === 1 ? "Sekunde" : "Sekunden"
-              } zum Aktualisieren`,
-            );
-            return;
-          }
-          alert.show("Logeinträge wurden aktualisiert");
-        }}
+        reloadAction={logData.refreshLogs}
       />
-      {!hasLogs && <p>Es sind noch keine Logeinträge vorhanden.</p>}
-      {hasLogs && (
+      {logData.isLoading && (
+        <div className="flex h-32 w-full items-center justify-center">
+          <Image
+            src="/progress.svg"
+            height={20}
+            width={20}
+            alt="progess indicator"
+            draggable={false}
+            className="onBackground-light dark:onBackground-dark h-10 w-10 animate-spin"
+          />
+        </div>
+      )}
+      {!logData.isLoading && !hasLogs && (
+        <p className="text-primary dark:text-dark-primary">
+          Es sind noch keine Logeinträge vorhanden.
+        </p>
+      )}
+      {!logData.isLoading && hasLogs && (
         <>
           <div className="flex select-none flex-col overflow-hidden rounded-xl bg-secondary dark:bg-dark-secondary md:hidden">
             {logData.logs
@@ -96,10 +90,10 @@ export default function LogPage() {
                     <p>
                       {log.date.toLocaleDateString("de-AT", {
                         year: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </p>
                   </div>
@@ -126,10 +120,10 @@ export default function LogPage() {
                     <td className="py-2 pr-5">
                       {log.date.toLocaleDateString("de-AT", {
                         year: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </td>
                   </tr>

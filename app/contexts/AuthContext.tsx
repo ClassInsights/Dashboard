@@ -10,6 +10,7 @@ import {
 import AuthData from "../types/authData";
 import { decode } from "jsonwebtoken";
 import { useFail } from "./FailContext";
+import Loading from "../components/Loading";
 
 export type AuthContextType = {
   token: String | undefined;
@@ -69,34 +70,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const token = localStorage.getItem("accessToken");
 
       if (refetchToken || token === null) {
-        const result = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/login/pc`,
-          {
-            credentials: "include",
-          },
-        );
+        try {
+          const result = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/login/pc`,
+            {
+              credentials: "include",
+            },
+          );
 
-        if (!result.ok) return failAuth();
+          if (!result.ok) return failAuth();
 
-        const body = await result.text();
-        const authData = decodeToken(body);
+          const body = await result.text();
+          const authData = decodeToken(body);
 
-        if (
-          authData === DecodeError.Invalid ||
-          authData === DecodeError.Permission
-        )
-          return failAuth();
-        else if (authData === DecodeError.Expired) {
-          localStorage.removeItem("accessToken");
-          await initializeToken(true);
+          if (
+            authData === DecodeError.Invalid ||
+            authData === DecodeError.Permission
+          )
+            return failAuth();
+          else if (authData === DecodeError.Expired) {
+            localStorage.removeItem("accessToken");
+            await initializeToken(true);
+            return;
+          }
+
+          localStorage.setItem("accessToken", body);
+          setData(authData);
+          setToken(body);
+          setIsLoading(false);
           return;
+        } catch (e) {
+          return failAuth();
         }
-
-        setData(authData);
-        localStorage.setItem("accessToken", body);
-        setToken(body);
-        setIsLoading(false);
-        return;
       }
 
       const authData = decodeToken(token);
@@ -132,7 +137,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         reload: initializeToken,
       }}
     >
-      {children}
+      {isLoading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 };

@@ -59,7 +59,7 @@ const DropDownList: React.FC<DropDownListProps> = ({
         )}
         {isOpen && options.length > 0 && (
           <div
-            className={`scrollbar scrollbar-thumb-onBackground dark:scrollbar-thumb-dark-onBackground scrollbar-track-secondary dark:scrollbar-track-dark-secondary absolute z-30 w-full overflow-x-hidden overflow-y-scroll rounded-b-md bg-secondary shadow-md dark:bg-dark-secondary
+            className={`absolute z-30 w-full overflow-x-hidden overflow-y-scroll rounded-b-md bg-secondary shadow-md dark:bg-dark-secondary
           ${
             options.length <= 1 ? "h-8" : options.length === 2 ? "h-16" : "h-24"
           }`}

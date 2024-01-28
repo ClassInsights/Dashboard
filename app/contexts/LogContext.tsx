@@ -1,92 +1,108 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import LogEntry from "../types/logEntry";
-import { useFail } from "./FailContext";
 import { useAuth } from "./AuthContext";
-import FetchError from "../enums/fetchError";
 import { useRatelimit } from "./RatelimitContext";
+import { FetchResponse, ResponseType } from "../types/response";
+import { useResponse } from "./ResponseContext";
 
 type LogContextType = {
   logs: LogEntry[];
-  fetchLogs: (skipRatelimit?: boolean) => Promise<FetchError | undefined>;
+  fetchLogs: () => Promise<FetchResponse>;
+  refreshLogs: () => Promise<void>;
   isLoading: boolean;
 };
 
 const LogContext = createContext<LogContextType | undefined>(undefined);
 
 export const LogProvider = ({ children }: { children: React.ReactNode }) => {
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [logs, setLogs] = useState<LogEntry[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const auth = useAuth();
   const ratelimit = useRatelimit();
-  const failer = useFail();
+  const response = useResponse();
 
-  const fetchLogs = useCallback(
-    async (skipRatelimit = false) => {
-      if (failer.hasFailed || !auth.token) return FetchError.Unauthorized;
-      if (!skipRatelimit && ratelimit.isRateLimited("fetchLogs"))
-        return FetchError.Ratelimited;
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/logs`,
-          {
-            headers: {
-              authorization: `Bearer ${auth.token}`,
-            },
-          },
+  const fetchLogs = useCallback(async () => {
+    if (ratelimit.isRateLimited("logs")) {
+      setIsLoading(false);
+      return {
+        type: ResponseType.ClientRatelimited,
+        message: "logs",
+      };
+    }
+
+    var result: FetchResponse;
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logs`, {
+        headers: {
+          authorization: `Bearer ${auth.token}`,
+        },
+      });
+
+      if (logs) ratelimit.addRateLimit("logs");
+
+      result = response.buildResponse(
+        res.status,
+        "Logeinträge wurden erfolgreich aktualisiert",
+      );
+
+      if (result.type !== ResponseType.Success) {
+        setIsLoading(false);
+        return result;
+      }
+
+      const json = await res.json();
+      const entries: LogEntry[] = json.map((entry: any) => {
+        return {
+          logId: entry.logId,
+          message: entry.message,
+          username: entry.username,
+          date: new Date(entry.date),
+        };
+      });
+
+      const isEqual =
+        entries.length === logs?.length &&
+        entries.every(
+          (entry, index) =>
+            entry.logId === logs[index].logId &&
+            entry.message === logs[index].message &&
+            entry.username === logs[index].username &&
+            entry.date.getTime() === logs[index].date.getTime(),
         );
 
-        if (!skipRatelimit) ratelimit.addRateLimit("fetchLogs");
-
-        if (response.status === 401) {
-          failer.fail(
-            "Fehler beim Laden der Logeinträge",
-            "Request finished with Code 401 (Unauthorized)",
-          );
-          return FetchError.Unauthorized;
-        } else if (response.status === 429) return FetchError.Ratelimited;
-        else if (response.status !== 200) return FetchError.Unknown;
-
-        const json = await response.json();
-        const entries: LogEntry[] = json.map((entry: any) => {
-          return {
-            logId: entry.logId,
-            message: entry.message,
-            username: entry.username,
-            date: new Date(entry.date),
-          };
-        });
-
-        if (
-          entries.every((log, index, _) => logs.at(index)?.logId === log.logId)
-        )
-          return;
-
-        setLogs(entries);
-      } catch (error: any) {
-        failer.fail("Fehler beim Laden der Logs", error.toString());
-        return FetchError.Unknown;
+      if (logs && isEqual) {
+        setIsLoading(false);
+        return result;
       }
-    },
-    [auth.token, failer, logs, ratelimit],
-  );
 
-  useEffect(() => {
-    if (!auth.token || auth.token === "") return;
-    fetchLogs().then(() => setIsLoading(false));
-    // don't add fetchLogs to the dependency array, otherwise the application loops
-  }, [auth]);
+      setLogs(entries);
+      setIsLoading(false);
+      return result;
+    } catch (error) {
+      setIsLoading(false);
+      return {
+        type: ResponseType.Unknown,
+      } as FetchResponse;
+    }
+  }, [auth.token, logs, ratelimit, response]);
+
+  const refreshLogs = useCallback(async () => {
+    var hasFinished = false;
+    const timeout = setTimeout(() => !hasFinished && setIsLoading(true), 500);
+    const result = await fetchLogs();
+    hasFinished = true;
+    clearTimeout(timeout);
+    response.handleResponse(result);
+  }, [fetchLogs, response]);
 
   return (
-    <LogContext.Provider value={{ logs, fetchLogs, isLoading }}>
+    <LogContext.Provider
+      value={{ logs: logs ?? [], fetchLogs, refreshLogs, isLoading }}
+    >
       {children}
     </LogContext.Provider>
   );

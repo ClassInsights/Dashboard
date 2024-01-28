@@ -30,13 +30,9 @@ const SettingsPage = () => {
     [currentConfig, config.isLoading, azure.isLoading],
   );
 
-  const refresh = useCallback(async () => {
-    if (limiter.isRateLimited("settings")) {
-      const limit = limiter.getRatelimit("settings");
-      if (!limit) {
-        alert.show("Etwas ist schiefgelaufen");
-        return;
-      }
+  const handleReload = useCallback(async () => {
+    const limit = limiter.getRatelimit("settings");
+    if (limit) {
       const secondsLeft = Math.ceil(
         (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
       );
@@ -49,7 +45,7 @@ const SettingsPage = () => {
       alert.show("Etwas ist schiefgelaufen");
       return;
     }
-    alert.show("Erfolgreich aktualisiert");
+    alert.show("Einstellungen erfolgreich aktualisiert");
   }, [config, limiter, alert, azure]);
 
   const details = [
@@ -78,7 +74,7 @@ const SettingsPage = () => {
         title="Einstellungen"
         subtitle="Hier kannst du das ClassInsights Ökosystem bearbeiten."
         previousPath="/"
-        reloadAction={refresh}
+        reloadAction={handleReload}
       />
       {isLoading ? (
         <div className="flex h-32 w-full items-center justify-center">

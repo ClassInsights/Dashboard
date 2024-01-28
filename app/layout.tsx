@@ -2,13 +2,15 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./globals.css";
 import type { Metadata } from "next";
-import { DataProvider } from "./contexts/DataContext";
 import Alert from "./components/general/Alert";
 import { AlertProvider } from "./contexts/AlertContext";
 import { RatelimitProvider } from "./contexts/RatelimitContext";
 import { FailProvider } from "./contexts/FailContext";
-import { LoadingProvider } from "./contexts/LoadingContext";
 import { LogProvider } from "./contexts/LogContext";
+import { ResponseProvider } from "./contexts/ResponseContext";
+import { RoomProvider } from "./contexts/RoomContext";
+import { ComputerProvider } from "./contexts/ComputerContext";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "ClassInsights Dashboard",
@@ -30,16 +32,20 @@ export default function RootLayout({
             <FailProvider>
               <AuthProvider>
                 <RatelimitProvider>
-                  <DataProvider>
-                    <LogProvider>
-                      <LoadingProvider>
-                        <AlertProvider>
-                          <Alert />
-                          <div className="h-full min-h-screen">{children}</div>
-                        </AlertProvider>
-                      </LoadingProvider>
-                    </LogProvider>
-                  </DataProvider>
+                  <AlertProvider>
+                    <ResponseProvider>
+                      <RoomProvider>
+                        <ComputerProvider>
+                          <LogProvider>
+                            <Alert />
+                            <div className="h-full min-h-screen">
+                              {children}
+                            </div>
+                          </LogProvider>
+                        </ComputerProvider>
+                      </RoomProvider>
+                    </ResponseProvider>
+                  </AlertProvider>
                 </RatelimitProvider>
               </AuthProvider>
             </FailProvider>

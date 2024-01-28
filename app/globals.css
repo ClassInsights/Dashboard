@@ -17,8 +17,31 @@
     font-family: "Roboto-Bold";
     src: url("./fonts/Roboto-Bold.ttf");
   }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(36, 36, 36, 0.5);
+    border-radius: 10px;
+  }
+
+  textarea {
+    cursor: auto;
+  }
   html {
     font-family: "Roboto-Regular", "sans-serif";
+  }
+  body {
+    overflow-y: scroll;
   }
   h1,
   h2 {

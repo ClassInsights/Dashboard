@@ -4,71 +4,65 @@ import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/general/Navbar";
 import Footer from "./components/general/Footer";
 import Header from "./components/general/Header";
-import { useData } from "./contexts/DataContext";
 import { useRouter } from "next/navigation";
 import ContainerPreset from "./components/containers/ContainerPreset";
-import { useLog } from "./contexts/LogContext";
 import { useAlert } from "./contexts/AlertContext";
 import { useRatelimit } from "./contexts/RatelimitContext";
 import { useFail } from "./contexts/FailContext";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { useRooms } from "./contexts/RoomContext";
+import { ResponseType } from "./types/response";
+import { useComputers } from "./contexts/ComputerContext";
+import { useLog } from "./contexts/LogContext";
 
 export default function Home() {
   const router = useRouter();
 
-  const failer = useFail();
-  const data = useData();
-  const alert = useAlert();
+  const roomData = useRooms();
+  const computerData = useComputers();
   const logData = useLog();
-  const ratelimit = useRatelimit();
+  const alert = useAlert();
   const auth = useAuth();
+  const ratelimit = useRatelimit();
 
-  const reloadApplication = useCallback(async () => {
-    const limit = ratelimit.getRatelimit("appReload");
+  const handleReload = useCallback(async () => {
+    const limit = ratelimit.getRatelimit("application");
     if (limit) {
       const secondsLeft = Math.ceil(
         (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
       );
       alert.show(
-        `Warte noch ${secondsLeft} ${
+        `Warte noch ${secondsLeft <= 0 ? 1 : secondsLeft} ${
           secondsLeft === 1 ? "Sekunde" : "Sekunden"
         } zum Aktualisieren`,
       );
       return;
     }
-
-    const reloadAuth = async () => {
-      await auth.reload();
-      return failer.hasFailed;
-    };
-
     if (
-      (await data.fetchRooms(true)) ||
-      (await logData.fetchLogs(true)) ||
-      (await reloadAuth())
-    )
-      alert.show("Fehler beim Aktualisieren der Daten");
-    else {
-      ratelimit.addRateLimit("appReload", 1000 * 30);
-      alert.show("Daten wurden aktualisiert");
-    }
-  }, [ratelimit, alert, auth, failer, data, logData]);
+      (await roomData.fetchRooms()).type === ResponseType.Success &&
+      (await logData.fetchLogs()).type === ResponseType.Success
+    ) {
+      computerData.clearComputers();
+      alert.show("Dashboard wurde erfolgreich aktualisiert");
+      ratelimit.addRateLimit("application", 10000);
+    } else alert.show("Aktualisierung von Dashboard fehlgeschlagen");
+  }, [roomData, ratelimit, alert, computerData, logData]);
 
   return (
     <>
       <Navbar />
       <div className="h-16 w-full" />
       <Header
-        title={`Willkommen, ${auth.data?.name.split(" ")[0] ?? "Unbekannt"}.`}
+        title={`Willkommen, ${auth.data?.name.split(" ")[0] ?? "Unbekann"}.`}
         subtitle="Hier kannst du alle nötigen Einstellungen für eine reibungslose
   Funktionalität der App ClassInsights und den damit verbundenen Diensten
   tätigen."
-        reloadAction={reloadApplication}
+        reloadAction={handleReload}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <ContainerPreset
           label="Registrierte Räume"
-          title={`${data.rooms?.length ?? 0}`}
+          title={`${roomData?.rooms.length ?? 0}`}
           showArrow
           onClick={() => router.push("/rooms")}
         />

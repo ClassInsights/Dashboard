@@ -1,39 +1,30 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useData } from "@/app/contexts/DataContext";
 import Header from "../../components/general/Header";
 import { useRouter, useSearchParams } from "next/navigation";
 import PageContent from "@/app/components/computer/RoomPageContent";
 import ContainerPreset from "@/app/components/containers/ContainerPreset";
-import Image from "next/image";
-import { useAlert } from "@/app/contexts/AlertContext";
-import { useRatelimit } from "@/app/contexts/RatelimitContext";
-import FetchError from "@/app/enums/fetchError";
+import { useRooms } from "@/app/contexts/RoomContext";
+import LoadingCircle from "@/app/components/general/LoadingCircle";
 
 export default function RoomOverviewPage() {
   const [loading, setLoading] = useState(true);
+
   const router = useRouter();
   const query = useSearchParams();
+  const roomData = useRooms();
 
-  const alert = useAlert();
-  const data = useData();
-  const ratelimit = useRatelimit();
+  useEffect(() => {
+    if (roomData.rooms) setLoading(false);
+  }, [roomData.rooms]);
 
   const roomId = useMemo(
     () => (query.get("id") ? parseInt(query.get("id")!) : undefined),
     [query],
   );
 
-  useEffect(() => {
-    if (data.rooms) setLoading(false);
-  }, [data.rooms]);
-
-  if (roomId) {
-    if (!data.rooms?.find((room) => room.id === roomId))
-      window.history.pushState({}, "", "/rooms");
-    else return <PageContent roomId={roomId} />;
-  }
+  if (roomId) return <PageContent roomId={roomId} />;
 
   return (
     <>
@@ -41,53 +32,13 @@ export default function RoomOverviewPage() {
         title="Räume"
         subtitle="Hier siehst du alle Räume der Schule mit registrierten Geräten."
         previousPath="/"
-        reloadAction={async () => {
-          var hasFinished = false;
-          const timeout = setTimeout(
-            () => !hasFinished && setLoading(true),
-            500,
-          );
-          const result = await data.fetchRooms();
-          hasFinished = true;
-          setLoading(false);
-          if (result === FetchError.Unknown) {
-            alert.show("Etwas ist schiefgelaufen");
-            return;
-          }
-          if (result === FetchError.Ratelimited) {
-            const limit = ratelimit.getRatelimit("fetchRooms");
-            if (!limit) {
-              alert.show("Etwas ist schiefgelaufen");
-              return;
-            }
-            const secondsLeft = Math.ceil(
-              (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
-            );
-            alert.show(
-              `Warte noch ${secondsLeft} ${
-                secondsLeft === 1 ? "Sekunde" : "Sekunden"
-              } zum Aktualisieren`,
-            );
-            clearTimeout(timeout);
-            return;
-          }
-          alert.show("Räume wurden aktualisiert");
-        }}
+        reloadAction={roomData.refreshRooms}
       />
       {loading ? (
-        <div className="flex h-32 w-full items-center justify-center">
-          <Image
-            src="/progress.svg"
-            height={20}
-            width={20}
-            alt="progess indicator"
-            draggable={false}
-            className="onBackground-light dark:onBackground-dark h-10 w-10 animate-spin"
-          />
-        </div>
+        <LoadingCircle />
       ) : (
         <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
-          {data.rooms?.map((room, index) => (
+          {roomData.rooms?.map((room) => (
             <ContainerPreset
               key={room.id}
               label={`${room.deviceCount} ${

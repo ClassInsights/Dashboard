@@ -1,45 +1,38 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "../general/Header";
-import { useData } from "@/app/contexts/DataContext";
 import Computer from "../../types/computer";
 import Image from "next/image";
 import ComputerWidget from "./ComputerWidget";
-import { useAlert } from "@/app/contexts/AlertContext";
-import { useRatelimit } from "@/app/contexts/RatelimitContext";
-import FetchError from "@/app/enums/fetchError";
+import { useRooms } from "@/app/contexts/RoomContext";
+import { useComputers } from "@/app/contexts/ComputerContext";
+import LoadingCircle from "../general/LoadingCircle";
+import { useRouter } from "next/navigation";
 
 const PageContent = ({ roomId }: { roomId: number }) => {
   const [leftComputers, setLeftComputers] = useState<Computer[]>([]);
   const [rightComputers, setRightComputers] = useState<Computer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const data = useData();
-  const alert = useAlert();
-  const ratelimit = useRatelimit();
+  const roomData = useRooms();
+  const computerData = useComputers();
+  const router = useRouter();
 
   const room = useMemo(
-    () => data.rooms?.find((room) => room.id === roomId),
-    [data, roomId],
+    () => roomData.rooms?.find((room) => room.id === roomId),
+    [roomData, roomId],
   );
+
+  const computers = useMemo(() => {
+    return computerData.computers.filter(
+      (computer: Computer) => computer.roomId === roomId,
+    );
+  }, [computerData.computers, roomId]);
 
   useEffect(() => {
     if (!room) return;
-    if (data.computers.find((computer) => computer.roomId === room.id)) return;
-    data.fetchComputers(room?.id, true).then((response) => {
-      if (response === FetchError.Unknown)
-        alert.show("Etwas ist schiefgelaufen");
-      else if (response === FetchError.Ratelimited)
-        alert.show("Du hast zu oft aktualisiert");
-    });
-  }, [room, alert, data]);
-
-  const computers = useMemo(
-    () =>
-      data.computers
-        ?.filter((computer) => computer.roomId === room?.id)
-        .sort((a, b) => +(+a.isOnline < +b.isOnline)),
-    [data.computers, room],
-  );
+    if (computers.length > 0) return;
+    computerData.fetchComputers(roomId);
+  }, [roomId, room]);
 
   const weightOfComputer = useCallback((computer: Computer) => {
     const details = [
@@ -47,8 +40,7 @@ const PageContent = ({ roomId }: { roomId: number }) => {
       computer.macAddress,
       computer.lastUser,
     ];
-    const weight = details.filter((detail) => detail !== null).length + 5;
-    return weight;
+    return details.filter((detail) => detail).length + 5;
   }, []);
 
   useEffect(() => {
@@ -57,9 +49,13 @@ const PageContent = ({ roomId }: { roomId: number }) => {
     const newLeftComputers: Computer[] = [];
     const newRightComputers: Computer[] = [];
 
-    const sortedComputers = computers?.sort(
-      (first, second) => weightOfComputer(second) - weightOfComputer(first),
-    );
+    const sortedComputers = computers
+      ?.sort((first, second) =>
+        first.isOnline === second.isOnline ? 0 : first.isOnline ? -1 : 1,
+      )
+      .sort(
+        (first, second) => weightOfComputer(second) - weightOfComputer(first),
+      );
 
     sortedComputers.forEach((computer) => {
       if (leftWeight <= rightWeight) {
@@ -70,66 +66,37 @@ const PageContent = ({ roomId }: { roomId: number }) => {
         rightWeight += weightOfComputer(computer);
       }
     });
+
     setLeftComputers(newLeftComputers);
     setRightComputers(newRightComputers);
-    if (computers) setLoading(false);
+    setIsLoading(false);
   }, [computers, weightOfComputer]);
 
-  const reloadComputers = useCallback(async () => {
-    if (!room) return;
-    var hasFinished = false;
-    const timeout = setTimeout(() => !hasFinished && setLoading(true), 500);
-    const result = await data.fetchComputers(roomId);
-    hasFinished = true;
-    setLoading(false);
-    if (result === FetchError.Unknown) {
-      alert.show("Etwas ist schiefgelaufen");
-      return;
-    }
-    if (result === FetchError.Ratelimited) {
-      const limit = ratelimit.getRatelimit("fetchComputers");
-      if (!limit) {
-        alert.show("Etwas ist schiefgelaufen");
-        return;
-      }
-      const secondsLeft = Math.ceil(
-        (limit.startedAt.getTime() + limit.duration - Date.now()) / 1000,
-      );
-      alert.show(
-        `Warte noch ${secondsLeft} ${
-          secondsLeft === 1 ? "Sekunde" : "Sekunden"
-        } zum Aktualisieren`,
-      );
-      clearTimeout(timeout);
-      return;
-    }
-    alert.show("Computer wurden aktualisiert");
-  }, [room, data, alert, ratelimit, roomId]);
+  useEffect(() => {
+    if (!room && !roomData.isLoading) router.push("/rooms");
+  }, [room, roomData.isLoading, router]);
 
-  if (!room) {
-    alert.show("Raum nicht gefunden");
-    return;
-  }
+  if (!room) return <LoadingCircle />;
 
   return (
-    <>
+    <div key={roomId}>
       <div className="hidden md:block">
         <Header
           title={room.longName}
           previousPath="/rooms"
-          reloadAction={reloadComputers}
+          reloadAction={() => computerData.refreshComputers(room.id)}
         />
       </div>
       <div className="block md:hidden">
         <Header
           title={room.name}
           previousPath="/rooms"
-          reloadAction={reloadComputers}
+          reloadAction={() => computerData.refreshComputers(room.id)}
         />
       </div>
       <h2 className="mb-2 w-full select-none">Registrierte Computer</h2>
       <div className="w-full">
-        {loading ? (
+        {computerData.isLoading || isLoading ? (
           <div className="flex h-32 w-full items-center justify-center">
             <Image
               src="/progress.svg"
@@ -140,7 +107,7 @@ const PageContent = ({ roomId }: { roomId: number }) => {
               className="onBackground-light dark:onBackground-dark h-10 w-10 animate-spin"
             />
           </div>
-        ) : computers.length == 0 ? (
+        ) : computers.length === 0 && !computerData.isLoading && !isLoading ? (
           <h3>Keine Computer gefunden!</h3>
         ) : (
           <div className="w-full">
@@ -164,7 +131,7 @@ const PageContent = ({ roomId }: { roomId: number }) => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
