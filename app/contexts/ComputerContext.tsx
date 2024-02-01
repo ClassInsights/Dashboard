@@ -35,16 +35,14 @@ export const ComputerProvider = ({
   const fetchComputers = useCallback(
     async (roomId: number) => {
       setIsLoading(true);
-      console.log("Fetch Computers for room: ", roomId);
+
       if (ratelimit.isRateLimited("computers")) {
         setIsLoading(false);
         return {
           type: ResponseType.ClientRatelimited,
-          message: "computers",
+          message: `computers-${roomId}`,
         };
       }
-
-      var result: FetchResponse;
 
       try {
         const res = await fetch(
@@ -55,10 +53,9 @@ export const ComputerProvider = ({
             },
           },
         );
+        if (computers) ratelimit.addRateLimit(`computers-${roomId}`);
 
-        if (computers) ratelimit.addRateLimit("computers");
-
-        result = response.buildResponse(
+        const result = response.buildResponse(
           res.status,
           "Computer wurden erfolgreich aktualisiert",
         );
@@ -109,20 +106,18 @@ export const ComputerProvider = ({
         const otherComputers = (computers ?? []).filter(
           (computer) => computer.roomId !== roomId,
         );
-        console.log(`Found ${otherComputers.length} other computers`);
-        console.log(`Found ${newComputers.length} new computers`);
 
         setComputers([...otherComputers, ...newComputers]);
         setIsLoading(false);
         return result;
-      } catch (e) {
+      } catch (error) {
         setIsLoading(false);
         return {
           type: ResponseType.Unknown,
         } as FetchResponse;
       }
     },
-    [auth.token, computers, ratelimit, response],
+    [ratelimit, auth.token, computers, response],
   );
 
   const refreshComputers = useCallback(
