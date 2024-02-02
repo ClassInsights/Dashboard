@@ -13,6 +13,7 @@ import { useResponse } from "./ResponseContext";
 import { useAuth } from "./AuthContext";
 import Room from "../types/room";
 import Loading from "../components/Loading";
+import { useFail } from "./FailContext";
 
 type RoomContextType = {
   rooms: Room[];
@@ -30,6 +31,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
   const ratelimit = useRatelimit();
   const response = useResponse();
+  const failer = useFail();
 
   const fetchRooms = useCallback(async () => {
     if (ratelimit.isRateLimited("rooms")) {
@@ -89,7 +91,11 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
       setRooms(newRooms);
       setIsLoading(false);
       return result;
-    } catch (e) {
+    } catch (e: any) {
+      failer.fail(
+        "Räume konnten nicht geladen werden. Wurde CORS korrekt konfiguriert?",
+        e.toString(),
+      );
       setIsLoading(false);
       return {
         type: ResponseType.Unknown,
