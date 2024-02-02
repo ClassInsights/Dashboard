@@ -53,7 +53,12 @@ export const ComputerProvider = ({
             },
           },
         );
-        if (computers) ratelimit.addRateLimit(`computers-${roomId}`);
+
+        if (
+          computers &&
+          computers.find((computer) => computer.roomId === roomId)
+        )
+          ratelimit.addRateLimit(`computers-${roomId}`);
 
         const result = response.buildResponse(
           res.status,
