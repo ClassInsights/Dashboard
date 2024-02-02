@@ -11,8 +11,8 @@ export default function LogPage() {
   const logData = useLog();
 
   useEffect(() => {
-    if (authData.token) logData.fetchLogs();
-  }, [authData.token]);
+    if (authData.token && !logData.alreadyInitialized) logData.fetchLogs();
+  }, [authData.token, logData.alreadyInitialized]);
 
   const hasLogs = useMemo(
     () => logData.logs && logData.logs.length !== 0,

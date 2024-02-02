@@ -12,6 +12,7 @@ type LogContextType = {
   fetchLogs: () => Promise<FetchResponse>;
   refreshLogs: () => Promise<void>;
   isLoading: boolean;
+  alreadyInitialized: boolean;
 };
 
 const LogContext = createContext<LogContextType | undefined>(undefined);
@@ -19,12 +20,15 @@ const LogContext = createContext<LogContextType | undefined>(undefined);
 export const LogProvider = ({ children }: { children: React.ReactNode }) => {
   const [logs, setLogs] = useState<LogEntry[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [alreadyInitialized, setAlreadyInitialized] = useState<boolean>(false);
 
   const auth = useAuth();
   const ratelimit = useRatelimit();
   const response = useResponse();
 
   const fetchLogs = useCallback(async () => {
+    setIsLoading(true);
+    setAlreadyInitialized(true);
     if (ratelimit.isRateLimited("logs")) {
       setIsLoading(false);
       return {
@@ -101,7 +105,13 @@ export const LogProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <LogContext.Provider
-      value={{ logs: logs ?? [], fetchLogs, refreshLogs, isLoading }}
+      value={{
+        logs: logs ?? [],
+        fetchLogs,
+        refreshLogs,
+        isLoading,
+        alreadyInitialized,
+      }}
     >
       {children}
     </LogContext.Provider>

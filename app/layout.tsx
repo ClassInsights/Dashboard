@@ -10,7 +10,6 @@ import { LogProvider } from "./contexts/LogContext";
 import { ResponseProvider } from "./contexts/ResponseContext";
 import { RoomProvider } from "./contexts/RoomContext";
 import { ComputerProvider } from "./contexts/ComputerContext";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "ClassInsights Dashboard",
