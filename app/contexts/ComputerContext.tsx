@@ -104,7 +104,6 @@ export const ComputerProvider = ({
           );
 
         if (newComputers && isEqual) {
-          console.log("Computers are equal");
           setIsLoading(false);
           return result;
         }
