@@ -33,10 +33,10 @@ export const ComputerProvider = ({
   const response = useResponse();
 
   const fetchComputers = useCallback(
-    async (roomId: number) => {
-      setIsLoading(true);
+    async (roomId: number, isRefresh = false) => {
+      if (!isRefresh) setIsLoading(true);
 
-      if (ratelimit.isRateLimited("computers")) {
+      if (ratelimit.isRateLimited(`computers-${roomId}`)) {
         setIsLoading(false);
         return {
           type: ResponseType.ClientRatelimited,
@@ -104,6 +104,7 @@ export const ComputerProvider = ({
           );
 
         if (newComputers && isEqual) {
+          console.log("Computers are equal");
           setIsLoading(false);
           return result;
         }
@@ -129,7 +130,7 @@ export const ComputerProvider = ({
     async (roomId: number) => {
       var hasFinished = false;
       const timeout = setTimeout(() => !hasFinished && setIsLoading(true), 500);
-      const result = await fetchComputers(roomId);
+      const result = await fetchComputers(roomId, true);
       hasFinished = true;
       response.handleResponse(result);
       clearTimeout(timeout);
