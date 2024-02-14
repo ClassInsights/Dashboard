@@ -17,7 +17,10 @@ const QueryArea = () => {
     const newValue = inputValue
       .replaceAll("\n", "")
       .replace(/(\S)\s*\|>\s*(\S)/g, "$1 |> $2");
-    if (newValue === config.getConfig()?.influx?.query) return;
+    const oldValue = config.getConfig()?.influx?.query;
+
+    if (newValue === oldValue) return;
+
     config.updateConfig({
       ...config.getConfig(),
       influx: {
