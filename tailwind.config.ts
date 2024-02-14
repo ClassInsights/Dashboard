@@ -28,7 +28,7 @@ const config: Config = {
         onBackground: "#e9eaee",
         primary: "#477cfe",
         secondary: "#070c20",
-        tertiary: "#293252",
+        tertiary: "#141C3B",
         error: "#D82325",
       },
     },
