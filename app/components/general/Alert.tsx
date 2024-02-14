@@ -5,37 +5,28 @@ import { useAlert } from "../../contexts/AlertContext";
 
 const Alert = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [isClosing, setIsClosing] = useState<boolean>(false);
+  var timeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const alert = useAlert();
 
-  var timeout = useRef<NodeJS.Timeout>();
-
   useEffect(() => {
-    clearTimeout(timeout.current);
     if (!alert.isVisible) {
-      setIsClosing(true);
-      setTimeout(() => {
-        setIsVisible(false);
-        clearTimeout(timeout.current);
-      }, 100);
+      timeout.current = setTimeout(() => setIsVisible(false), 150);
       return;
     }
-    setIsVisible(true);
-    setIsClosing(false);
-    timeout.current = setTimeout(
-      () => alert.hide(),
-      alert.actions.length === 0 ? 3000 : 8000,
-    );
-    return () => clearTimeout(timeout.current);
-  }, [alert, timeout]);
+
+    clearTimeout(timeout.current);
+    timeout.current = undefined;
+    setIsVisible(alert.isVisible);
+  }, [alert, timeout.current]);
 
   if (!isVisible) return null;
 
   return (
     <div
-      className={`alert-animation fixed left-0 right-0 z-50 mx-auto max-w-max translate-y-1/4 rounded-xl bg-primary px-5 py-2 shadow-md dark:bg-dark-primary
-    ${isClosing ? "alert-close-animation" : ""}`}
+      className={`fixed left-0 right-0 z-50 mx-auto mt-2 max-w-max rounded-xl bg-primary px-5 py-2 shadow-md dark:bg-dark-primary ${
+        alert.isVisible ? "alert-animation" : "alert-close-animation"
+      }`}
     >
       <p className="text-background dark:text-dark-background">
         {alert.message}

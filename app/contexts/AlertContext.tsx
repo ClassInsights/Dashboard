@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import Action from "../types/alertAction";
@@ -25,30 +26,35 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
   const [actions, setActions] = useState<Action[]>([]);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
+  const timeout = useRef<NodeJS.Timeout | undefined>();
+
   const path = usePathname();
   const query = useSearchParams();
 
+  // Hide alert when path or query changes
   useEffect(() => setIsVisible(false), [path, query]);
 
   const show = useCallback(
     (message: string, actions?: Action[]) => {
-      if (isVisible) {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+        timeout.current = undefined;
         setIsVisible(false);
-        setTimeout(() => {
-          setMessage(message);
-          setActions(actions || []);
-          setIsVisible(true);
-        }, 150);
-      } else {
-        setMessage(message);
-        setActions(actions || []);
-        setIsVisible(true);
+        setTimeout(() => show(message, actions), 10);
+        return;
       }
-    },
-    [isVisible],
-  );
 
-  const hide = useCallback(() => setIsVisible(false), []);
+      setMessage(message);
+      setActions(actions || []);
+      setIsVisible(true);
+
+      timeout.current = setTimeout(() => {
+        timeout.current = undefined;
+        setIsVisible(false);
+      }, 3000);
+    },
+    [isVisible, timeout.current],
+  );
 
   return (
     <AlertContext.Provider
@@ -56,7 +62,7 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
         message,
         actions,
         show,
-        hide,
+        hide: () => setIsVisible(false),
         isVisible,
       }}
     >
