@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* roboto-regular - latin */
+  @font-face {
+    font-display: swap;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./assets/fonts/roboto-v32-latin-regular.woff2') format('woff2'),
+      url('./assets/fonts/roboto-v32-latin-regular.ttf') format('truetype');
+  }
+
+  /* roboto-500 - latin */
+  @font-face {
+    font-display: swap;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url('./assets/fonts/roboto-v32-latin-500.woff2') format('woff2'),
+      url('./assets/fonts/roboto-v32-latin-500.ttf') format('truetype');
+  }
+
+  /* roboto-700 - latin */
+  @font-face {
+    font-display: swap;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./assets/fonts/roboto-v32-latin-700.woff2') format('woff2'),
+      url('./assets/fonts/roboto-v32-latin-700.ttf') format('truetype');
+  }
+
+  /* roboto-900 - latin */
+  @font-face {
+    font-display: swap;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 900;
+    src: url('./assets/fonts/roboto-v32-latin-900.woff2') format('woff2'),
+      url('./assets/fonts/roboto-v32-latin-900.ttf') format('truetype');
+  }
+  
+  body {
+    @apply bg-background text-black font-roboto box-border p-0 m-0 overflow-auto;
+  }
+
+  h1 {
+    @apply font-black text-6xl;
+  }
+
+  h2 {
+    @apply font-bold text-4xl;
+  }
+
+  h3 {
+    @apply font-medium text-xl;
+  }
+
+  p,
+  a {
+    @apply font-normal leading-7;
+  }
+
+  b {
+    @apply font-medium;
+  }
+
+  small {
+    @apply font-light text-sm;
+  }
+
+  img {
+    @apply pointer-events-none;
+  }
+
+  a,
+  img,
+  button {
+    @apply select-none;
+  }
+}
+
+@layer components {
+    .page-spacing {
+        @apply mx-auto px-5 md:px-24;
+    }
+
+    .text-print-width {
+        @apply md:w-3/4 xl:w-3/5;
+    }
+
+    .badge-list {
+       @apply flex flex-wrap gap-x-6 gap-y-4;
+    }
+}
