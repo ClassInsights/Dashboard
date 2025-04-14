@@ -14,8 +14,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 	if (isLoading) return <h1>Loading</h1>;
 
 	if (!auth.data) return <h1>Auth failed</h1>;
-	if (!data.computers) return <h1>Computer fetch failed</h1>;
-	if (!data.rooms) return <h1>Rooms fetch failed</h1>;
+	if (!data.computers || !data.rooms || !data.lessons) return <h1>Data fetch failed</h1>;
 
 	return children;
 };

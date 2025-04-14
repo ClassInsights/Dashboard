@@ -30,12 +30,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			},
 		});
 
-		if (!response.ok) throw new Error();
+		if (!response.ok) throw new Error("Failed to fetch user data");
 		const data = await response.json();
-		if (!isAccessTokenResponse(data)) throw new Error();
+		if (!isAccessTokenResponse(data)) throw new Error(`Not a valid AccessTokenResponse, ${JSON.stringify(data)}`);
 
 		const decodedData = jose.decodeJwt(data.access_token);
-		if (!isCustomJWTPayload(decodedData)) throw new Error();
+		if (!isCustomJWTPayload(decodedData))
+			throw new Error(`Not a valid CustomJWTPayload, ${JSON.stringify(decodedData)}`);
 
 		window.history.replaceState({}, "", window.location.pathname);
 
@@ -77,10 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 					},
 				},
 			);
-			if (!response.ok) throw new Error();
+			if (!response.ok) throw new Error("Failed to fetch token exchange data");
 
 			const responseData = await response.json();
-			if (!isTokenExchange(responseData)) throw new Error();
+			if (!isTokenExchange(responseData)) throw new Error(`Not a valid TokenExchange, ${JSON.stringify(responseData)}`);
 
 			return await requestAuthData(responseData, token);
 		},
@@ -126,7 +127,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 		handleToken(token)
 			.then((data) => setData((oldData) => oldData ?? data))
-			.catch(() => console.error("Auth failed"))
+			.catch((error) => console.error("Auth failed", error))
 			.finally(() => setIsLoading(false));
 
 		return () => {
