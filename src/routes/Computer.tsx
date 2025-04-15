@@ -4,9 +4,8 @@ import Spacing from "../components/Spacing";
 import ComputerSVG from "../assets/svg/computer.svg?react";
 import RoomSVG from "../assets/svg/room.svg?react";
 import CloseSVG from "../assets/svg/close.svg?react";
-import ShutDownSVG from "../assets/svg/shutdown.svg?react";
-import RestartSVG from "../assets/svg/restart.svg?react";
 import ComputerList from "../components/ComputerList";
+import ComputerModal from "../components/ComputerModal";
 
 const Computer = () => {
 	const Computer = <ComputerSVG width={20} className="shrink-0 fill-primary" />;
@@ -15,6 +14,7 @@ const Computer = () => {
 
 	return (
 		<>
+			<ComputerModal />
 			<Headline
 				title="Registrierte Computer"
 				mobileTitle="Computer"
@@ -32,12 +32,6 @@ const Computer = () => {
 				<Badge text="OG1-DV4" headIcon={Room} />
 				<Badge text="Aktive Computer" headIcon={Computer} />
 				<Badge text="Online Computer ohne Unterricht" headIcon={Computer} />
-			</div>
-			<Spacing size="md" />
-			<h3>Aktionen</h3>
-			<div className="badge-list">
-				<Badge text="DV6-13 neustarten" headIcon={<RestartSVG className="shrink-0 fill-primary" />} />
-				<Badge text="DV6-13 herunterfahren" headIcon={<ShutDownSVG className="shrink-0 fill-primary" />} />
 			</div>
 			<Spacing size="md" />
 			<ComputerList />

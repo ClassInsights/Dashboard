@@ -95,4 +95,20 @@
     .badge-list {
        @apply flex flex-wrap gap-x-6 gap-y-4;
     }
+
+    .computer-table {
+      grid-template-columns: 2rem minmax(8rem, auto) minmax(5rem, auto) minmax(10rem, auto) minmax(10rem, auto) min-content;
+    }
+
+    .computer-table > * {
+      overflow: hidden; 
+    }
+
+    .computer-stats {
+      grid-template-columns: max-content max-content 3rem max-content max-content;
+    }
+
+    .mobile-computer-stats {
+      grid-template-columns: auto 1fr;
+    }
 }

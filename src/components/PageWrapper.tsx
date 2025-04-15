@@ -6,19 +6,22 @@ import Footer from "./Footer";
 import { AuthProvider } from "../contexts/AuthContext";
 import LoadingHelper from "./LoadingHelper";
 import { DataProvider } from "../contexts/DataContext";
+import { ComputerProvider } from "../contexts/ComputerContext";
 
 const PageWrapper = () => (
 	<main className="page-spacing relative min-h-[100dvh] max-w-screen-xl">
 		<AuthProvider>
 			<DataProvider>
 				<LoadingHelper>
-					<SearchProvider>
-						<Navbar />
-						<Spacing size="xl" />
-						<Outlet />
-						<Spacing size="xl" />
-						<Footer />
-					</SearchProvider>
+					<ComputerProvider>
+						<SearchProvider>
+							<Navbar />
+							<Spacing size="xl" />
+							<Outlet />
+							<Spacing size="xl" />
+							<Footer />
+						</SearchProvider>
+					</ComputerProvider>
 				</LoadingHelper>
 			</DataProvider>
 		</AuthProvider>
