@@ -67,13 +67,7 @@ const ComputerModal = () => {
 							hour12: false,
 						})} Uhr`}</p>
 						<p>Mac:</p>
-						<p>
-							{computer.data.macAddress
-								.toString()
-								.match(/.{1,2}/g)
-								?.reverse()
-								.join(":") ?? ""}
-						</p>
+						<p>{computer.data.macAddress}</p>
 					</div>
 					<Spacing size="md" />
 					<div className="absolute right-0 bottom-0 flex justify-end pr-14 pb-16 lg:static lg:p-0">

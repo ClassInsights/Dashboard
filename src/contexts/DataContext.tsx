@@ -36,7 +36,16 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!Array.isArray(data) || !data.every((computer) => isComputer(computer)))
 			throw new Error(`Not a valid Computer, ${JSON.stringify(data)}`);
 
-		return data;
+		return data.map((computer) => {
+			return {
+				...computer,
+				macAddress:
+					computer.macAddress
+						.match(/.{1,2}/g)
+						?.reverse()
+						.join(":") ?? "Unbekannt",
+			};
+		});
 	}, [auth.data]);
 
 	const fetchRooms = useCallback(async () => {

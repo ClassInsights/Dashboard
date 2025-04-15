@@ -342,7 +342,7 @@ const ComputerList = () => {
 						})}
 						<div />
 						<div className="col-span-6 col-start-1 border-container border-t-2" />
-						{computers?.slice(0, Math.min(26, computers.length)).map((computer) => {
+						{computers?.slice(0, Math.min(25, computers.length)).map((computer) => {
 							const room = rooms?.find((room) => room.roomId === computer.roomId);
 							const isSelected = selectedComputers.includes(computer.computerId);
 							return (
@@ -360,13 +360,7 @@ const ComputerList = () => {
 									</div>
 									<p>{room?.displayName ?? "Unbekannter Raum"}</p>
 									<p>{computer.ipAddress}</p>
-									<p>
-										{computer.macAddress
-											.toString()
-											.match(/.{1,2}/g)
-											?.reverse()
-											.join(":") ?? ""}
-									</p>
+									<p>{computer.macAddress}</p>
 									<p
 										className="cursor-pointer text-primary"
 										onClick={() => computerModal.open(computer)}

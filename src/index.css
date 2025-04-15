@@ -111,4 +111,8 @@
     .mobile-computer-stats {
       grid-template-columns: auto 1fr;
     }
+
+    .search-result > *:nth-child(n) {
+     @apply border-t-2 border-container; 
+    }
 }

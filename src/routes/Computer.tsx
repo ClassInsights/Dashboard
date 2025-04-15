@@ -1,11 +1,9 @@
 import Headline from "../components/Headline";
 import ComputerList from "../components/ComputerList";
-import ComputerModal from "../components/ComputerModal";
 
 const Computer = () => {
 	return (
 		<>
-			<ComputerModal />
 			<Headline
 				title="Registrierte Computer"
 				mobileTitle="Computer"
