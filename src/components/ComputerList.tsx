@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useData } from "../contexts/DataContext";
 import Spacing from "./Spacing";
 import ShutDownSVG from "../assets/svg/shutdown.svg?react";
@@ -6,30 +6,81 @@ import RestartSVG from "../assets/svg/restart.svg?react";
 import Badge from "./Badge";
 import Checkbox, { type CheckboxState } from "./inputs/Checkbox";
 import { useComputer } from "../contexts/ComputerContext";
+import type { Computer } from "../types/Computer";
+import Sorter from "./inputs/Sorter";
+
+enum SortValue {
+	NAME = "name",
+	ROOM = "room",
+	IP = "ip",
+	MAC = "mac",
+}
+
+enum Order {
+	ASC = "asc",
+	DESC = "desc",
+	NONE = "none",
+}
+
+type Sort = {
+	order: Order;
+	value: SortValue;
+};
+
+function isSort(obj: unknown): obj is Sort {
+	return (
+		typeof obj === "object" &&
+		obj !== null &&
+		"order" in obj &&
+		typeof obj.order === "string" &&
+		Object.values(Order).includes(obj.order as Order) &&
+		"value" in obj &&
+		typeof obj.value === "string" &&
+		Object.values(SortValue).includes(obj.value as SortValue)
+	);
+}
 
 const ComputerList = () => {
+	const [computers, setComputers] = useState<Computer[]>([]);
+	const [originalComputers, setOriginalComputers] = useState<Computer[]>([]);
 	const [selectedComputers, setSelectedComputers] = useState<number[]>([]);
+	const [sorts, setSorts] = useState<Sort[]>([]);
 
 	const data = useData();
+
 	const computerModal = useComputer();
 
-	const computers = useMemo(() => data.computers, [data.computers]);
 	const rooms = useMemo(() => data.rooms, [data.rooms]);
+
+	const updateSorts = useCallback((order: Order, value: SortValue) => {
+		setTimeout(() => {
+			setSorts((prev) => {
+				if (prev.includes({ order, value })) return prev;
+				const newSorts = prev.filter((sort) => sort.value !== value);
+				if (order === Order.NONE) {
+					localStorage.setItem("sorts", JSON.stringify(newSorts));
+					return newSorts;
+				}
+				localStorage.setItem("sorts", JSON.stringify([...newSorts, { order, value }]));
+				return [...newSorts, { order, value }];
+			});
+		}, 0);
+	}, []);
 
 	const handleGlobalCheckbox = useCallback(
 		(state: CheckboxState) => {
 			if (!computers) return;
-			switch (state) {
-				case "selected":
-					setTimeout(() => setSelectedComputers(computers.map((computer) => computer.computerId)), 0);
-					break;
-				case "deselected":
-					setTimeout(() => setSelectedComputers([]), 0);
-					break;
-				case "remove":
-					setTimeout(() => setSelectedComputers([]), 0);
-					break;
-			}
+			setTimeout(() => {
+				switch (state) {
+					case "selected":
+						setSelectedComputers(computers.map((computer) => computer.computerId));
+						break;
+					case "deselected":
+					case "remove":
+						setSelectedComputers([]);
+						break;
+				}
+			});
 		},
 		[computers],
 	);
@@ -53,6 +104,69 @@ const ComputerList = () => {
 				break;
 		}
 	}, []);
+
+	useEffect(() => {
+		if (!data.computers) return;
+
+		setOriginalComputers(data.computers);
+		const sorts = localStorage.getItem("sorts");
+		if (!sorts) {
+			setComputers(data.computers);
+			return;
+		}
+		try {
+			const parsedSorts = JSON.parse(sorts);
+
+			if (!Array.isArray(parsedSorts) || !parsedSorts.every((sort) => isSort(sort))) {
+				localStorage.removeItem("sorts");
+				setComputers(data.computers);
+				return;
+			}
+
+			setSorts(parsedSorts);
+		} catch {
+			localStorage.removeItem("sorts");
+			setComputers(data.computers);
+		}
+	}, [data.computers]);
+
+	useEffect(() => {
+		const computersToSort = [...originalComputers];
+		computersToSort.sort((a, b) => {
+			for (const sort of sorts) {
+				let compareResult = 0;
+
+				switch (sort.value) {
+					case SortValue.NAME:
+						compareResult = (a.name || "").localeCompare(b.name || "");
+						break;
+					case SortValue.IP:
+						compareResult = (a.ipAddress || "").localeCompare(b.ipAddress || "");
+						break;
+					case SortValue.MAC:
+						compareResult = (a.macAddress || "").localeCompare(b.macAddress || "");
+						break;
+					case SortValue.ROOM: {
+						const roomA = rooms?.find((room) => room.roomId === a.roomId);
+						const roomB = rooms?.find((room) => room.roomId === b.roomId);
+
+						compareResult = (roomA?.displayName || "").localeCompare(roomB?.displayName || "");
+						break;
+					}
+					default:
+						compareResult = 0;
+				}
+
+				const finalCompareResult = sort.order === Order.ASC ? compareResult : -compareResult;
+				if (finalCompareResult !== 0) {
+					return finalCompareResult;
+				}
+			}
+			return 0;
+		});
+
+		setTimeout(() => setComputers(computersToSort), 0);
+	}, [originalComputers, sorts, rooms]);
 
 	return (
 		<>
@@ -95,13 +209,24 @@ const ComputerList = () => {
 					}
 					onChange={handleGlobalCheckbox}
 				/>
-				<p>Name</p>
-				<p>Raum</p>
-				<p>IP-Adresse</p>
-				<p>Mac-Adresse</p>
+				{[
+					["Name", SortValue.NAME],
+					["Raum", SortValue.ROOM],
+					["IP-Adresse", SortValue.IP],
+					["Mac-Adresse", SortValue.MAC],
+				].map(([label, value]) => {
+					const currentSort = sorts.find((sort) => sort.value === value);
+					const order = currentSort ? currentSort.order : Order.NONE;
+					return (
+						<div key={label} className="flex items-center gap-2">
+							<p>{label}</p>
+							<Sorter order={order} onChange={(order) => updateSorts(order, value as SortValue)} />
+						</div>
+					);
+				})}
 				<div />
 				<div className="col-span-6 col-start-1 border-container border-t-2" />
-				{computers?.map((computer) => {
+				{computers?.slice(0, Math.min(26, computers.length)).map((computer) => {
 					const room = rooms?.find((room) => room.roomId === computer.roomId);
 					const isSelected = selectedComputers.includes(computer.computerId);
 					return (
