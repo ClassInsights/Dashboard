@@ -46,7 +46,6 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 		if (!intervalRef.current)
 			intervalRef.current = setInterval(() => {
 				const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
-				console.log(randomText);
 				setText(randomText);
 			}, 1000);
 	}, [loadingTexts]);
