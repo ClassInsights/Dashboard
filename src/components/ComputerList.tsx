@@ -305,7 +305,14 @@ const ComputerList = () => {
 				filters.length > 0 ? (
 					<div>
 						<b>Mit den aktuellen Filtern wurde kein Computer gefunden.</b>
-						<button type="button" onClick={() => setFilters([])} className="px-4 py-2 text-primary">
+						<button
+							type="button"
+							onClick={() => {
+								setFilters([]);
+								localStorage.removeItem("filters");
+							}}
+							className="px-4 py-2 text-primary"
+						>
 							Alle Filter entfernen
 						</button>
 					</div>
