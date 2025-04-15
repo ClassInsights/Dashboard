@@ -309,7 +309,10 @@ const ComputerList = () => {
 				)
 			) : (
 				<>
-					<p>{computers?.length} Computer gefunden</p>
+					<p>
+						{computers?.length} Computer gefunden{" "}
+						{filters.length > 0 && `(${`${filters.length} ${filters.length === 1 ? "aktiver" : "aktive"} Filter`})`}
+					</p>
 					<Spacing size="sm" />
 					<div className="computer-table grid items-center gap-x-4 gap-y-3 overflow-x-scroll">
 						<Checkbox
