@@ -303,7 +303,12 @@ const ComputerList = () => {
 			<Spacing size="md" />
 			{computers?.length === 0 ? (
 				filters.length > 0 ? (
-					<b>Mit den aktuellen Filtern wurde kein Computer gefunden.</b>
+					<div>
+						<b>Mit den aktuellen Filtern wurde kein Computer gefunden.</b>
+						<button type="button" onClick={() => setFilters([])} className="px-4 py-2 text-primary">
+							Alle Filter entfernen
+						</button>
+					</div>
 				) : (
 					<b>Es wurde kein Computer gefunden.</b>
 				)
