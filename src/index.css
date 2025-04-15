@@ -113,6 +113,30 @@
     }
 
     .search-result > *:nth-child(n) {
-     @apply border-t-2 border-container; 
+      @apply border-t-2 border-container; 
+    }
+
+    .room {
+      @apply border-b-2 md:odd:border-r-2 md:odd:pr-6 md:even:pl-6 lg:odd:pr-12 lg:even:pl-12 border-[#F1F4FF];
+    } 
+
+    /* Select first two schools if there are at least three schools */
+    #rooms:has(> :nth-child(3)) > :nth-child(-n+2) {
+      @apply py-4;
+    }
+
+    /* Select all schools except the first two */
+    .room:nth-child(n+3) {
+      @apply py-4;
+    }
+
+    /* Select last two schools when the amount of schools is even */
+    #rooms:has(> :nth-child(even):last-child) > .room:nth-last-child(-n+2) {
+      @apply border-b-0;
+    }
+    
+    /* Select last school when the amount of schools is odd */
+    #rooms:has(> :nth-child(odd):last-child) > .room:last-child {
+      @apply border-b-0;
     }
 }

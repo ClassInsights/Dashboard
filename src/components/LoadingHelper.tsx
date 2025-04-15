@@ -71,8 +71,6 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 		intervalRef.current = null;
 	}
 
-	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.TEACHER)) return <NoAccess />;
-
 	if (!auth.data)
 		return (
 			<div className="flex h-dvh w-full flex-col items-center justify-center gap-12">
@@ -92,6 +90,8 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 				</div>
 			</div>
 		);
+
+	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.TEACHER)) return <NoAccess />;
 
 	if (!data.computers || !data.rooms || !data.lessons)
 		return (

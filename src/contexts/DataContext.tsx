@@ -11,7 +11,8 @@ type DataContextType = {
 	rooms?: Room[];
 	lessons?: Lesson[];
 	isLoading: boolean;
-	// isRefreshing: boolean;
+	getCurrentLesson: (roomId: number) => Lesson | undefined;
+	updateRoom: (roomId: number, room: Room) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -127,16 +128,49 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 			setLessons(lessons);
 			setRooms(rooms);
 		} catch (error) {
-			console.error("Error fetching data", error);
+			console.log("Error fetching data", error);
 		}
 	}, [fetchComputers, fetchRooms, fetchLessons]);
 
+	const getCurrentLesson = useCallback(
+		(roomId: number) => {
+			if (!lessons) return undefined;
+			const currentLesson = lessons.find((lesson) => {
+				const startTime = new Date(lesson.start);
+				const endTime = new Date(lesson.end);
+				const now = new Date();
+				return lesson.roomId === roomId && startTime <= now && endTime >= now;
+			});
+			return currentLesson;
+		},
+		[lessons],
+	);
+
+	const updateRoom = useCallback((roomId: number, room: Room) => {
+		setTimeout(() => {
+			setRooms((prev) => {
+				if (!prev) return prev;
+				const newRooms = prev.filter((r) => r.roomId !== roomId);
+				newRooms.push(room);
+				return newRooms;
+			});
+		}, 0);
+	}, []);
+
 	useEffect(() => {
-		if (!auth.data) return;
+		if (!auth.data) {
+			setIsLoading(false);
+			return;
+		}
+		setIsLoading(true);
 		fetchData().then(() => setIsLoading(false));
 	}, [auth.data, fetchData]);
 
-	return <DataContext.Provider value={{ computers, rooms, lessons, isLoading }}>{children}</DataContext.Provider>;
+	return (
+		<DataContext.Provider value={{ computers, rooms, lessons, isLoading, getCurrentLesson, updateRoom }}>
+			{children}
+		</DataContext.Provider>
+	);
 };
 
 export const useData = () => {

@@ -23,7 +23,7 @@ const SearchBar = () => {
 	if (!search.isVisible) return <></>;
 
 	return (
-		<dialog className="fixed top-0 z-20 flex h-dvh w-screen items-end justify-center bg-transparent md:items-center">
+		<dialog className="fixed top-0 z-20 flex h-dvh w-screen items-center justify-center bg-transparent">
 			<div className="h-full w-full cursor-pointer bg-black opacity-30" onClick={search.hide} onKeyDown={search.hide} />
 			<div className="absolute w-[30rem]">
 				<div className={`bg-background px-5 pt-2 ${search.result.length === 0 ? "rounded-lg" : "rounded-t-lg"}`}>

@@ -103,7 +103,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			const responseData = await response.json();
 			if (!isTokenExchange(responseData)) throw new Error(`Not a valid TokenExchange, ${JSON.stringify(responseData)}`);
 
-			return await requestAuthData(responseData, token);
+			requestAuthData(responseData, token)
+				.then((data) => setData((oldData) => oldData ?? data))
+				.catch((error) => console.error("Auth failed inside requestAuthData catch:", error))
+				.finally(() => setIsLoading(false));
 		},
 		[requestAuthData],
 	);
@@ -146,8 +149,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 
 		handleToken(token)
-			.then((data) => setData((oldData) => oldData ?? data))
-			.catch((error) => console.error("Auth failed", error))
+			.catch(() => setIsLoading(false))
 			.finally(() => setIsLoading(false));
 
 		return () => {
