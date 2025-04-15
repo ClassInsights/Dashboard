@@ -22,12 +22,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [_, setSearchParams] = useSearchParams();
 
-	const logout = useCallback(() => {
+	const logout = useCallback(async () => {
 		Cookies.remove("tasty-dashboard");
+		try {
+			await fetch(`${data?.school.apiUrl}/user`, {
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${data?.accessToken}`,
+				},
+			});
+		} catch {}
 		window.location.replace(
 			`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?logout=true`,
 		);
-	}, []);
+	}, [data]);
 
 	const requestAuthData = useCallback(
 		async (exchangeData: TokenExchange, token: string) => {
