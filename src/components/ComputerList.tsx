@@ -198,13 +198,15 @@ const ComputerList = () => {
 							return room.displayName === filter.detail;
 						}
 						case FilterType.STATUS:
-							return computer.online ? "online" : "offline" === filter.detail;
+							return (computer.online ? "online" : "offline") === filter.detail;
 						default:
 							return true;
 					}
 				});
 			});
 		}
+
+		computersToSort = computersToSort.sort((a, b) => (a.online && !b.online ? -1 : !a.online && b.online ? 1 : 0));
 
 		computersToSort.sort((a, b) => {
 			for (const sort of sorts) {
