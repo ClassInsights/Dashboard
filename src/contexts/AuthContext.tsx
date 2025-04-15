@@ -4,6 +4,7 @@ import { isAccessTokenResponse, isCustomJWTPayload } from "../types/AccessToken"
 import { isAuthData, type AuthData } from "../types/AuthData";
 import * as jose from "jose";
 import { Cookies } from "typescript-cookie";
+import { useSearchParams } from "react-router-dom";
 
 type AuthContextType = {
 	isLoading: boolean;
@@ -19,55 +20,63 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const tokenRef = useRef<string | undefined>(undefined);
 
+	const [_, setSearchParams] = useSearchParams();
+
 	const logout = useCallback(() => {
 		Cookies.remove("tasty-dashboard");
-		window.location.replace(`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen`);
+		window.location.replace(
+			`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?logout=true`,
+		);
 	}, []);
 
-	const requestAuthData = useCallback(async (exchangeData: TokenExchange, token: string) => {
-		const response = await fetch(`${exchangeData.local_api_url}/user`, {
-			method: "POST",
-			body: JSON.stringify({ dashboard_token: token }),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+	const requestAuthData = useCallback(
+		async (exchangeData: TokenExchange, token: string) => {
+			const response = await fetch(`${exchangeData.local_api_url}/user`, {
+				method: "POST",
+				body: JSON.stringify({ dashboard_token: token }),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
 
-		if (!response.ok) throw new Error("Failed to fetch user data");
-		const data = await response.json();
-		if (!isAccessTokenResponse(data)) throw new Error(`Not a valid AccessTokenResponse, ${JSON.stringify(data)}`);
+			if (!response.ok) throw new Error("Failed to fetch user data");
+			const data = await response.json();
+			if (!isAccessTokenResponse(data)) throw new Error(`Not a valid AccessTokenResponse, ${JSON.stringify(data)}`);
 
-		const decodedData = jose.decodeJwt(data.access_token);
-		if (!isCustomJWTPayload(decodedData))
-			throw new Error(`Not a valid CustomJWTPayload, ${JSON.stringify(decodedData)}`);
+			const decodedData = jose.decodeJwt(data.access_token);
+			if (!isCustomJWTPayload(decodedData))
+				throw new Error(`Not a valid CustomJWTPayload, ${JSON.stringify(decodedData)}`);
 
-		window.history.replaceState({}, "", window.location.pathname);
+			window.history.replaceState({}, "", window.location.pathname);
+			setSearchParams({});
 
-		const expirationDate = new Date((decodedData.exp ?? new Date().getTime() / 1000) * 1000);
+			const expirationDate = new Date((decodedData.exp ?? new Date().getTime() / 1000) * 1000);
 
-		const authData: AuthData = {
-			name: decodedData.name,
-			email: decodedData.email,
-			roles: decodedData.role,
-			accessToken: data.access_token,
-			school: {
-				id: exchangeData.school_id,
-				name: decodedData.school_name,
-				apiUrl: exchangeData.local_api_url,
-				dashboardUrl: exchangeData.local_dashboard_url,
-				website: exchangeData.website,
-			},
-			expires: expirationDate.getTime(),
-		};
+			const authData: AuthData = {
+				name: decodedData.name,
+				email: decodedData.email,
+				roles: decodedData.role,
+				accessToken: data.access_token,
+				school: {
+					id: exchangeData.school_id,
+					name: decodedData.school_name,
+					apiUrl: exchangeData.local_api_url,
+					dashboardUrl: exchangeData.local_dashboard_url,
+					website: exchangeData.website,
+				},
+				expires: expirationDate.getTime(),
+			};
 
-		Cookies.set("tasty-dashboard", btoa(JSON.stringify(authData)), {
-			expires: expirationDate,
-			sameSite: "Lax",
-			secure: import.meta.env.PROD,
-		});
+			Cookies.set("tasty-dashboard", btoa(JSON.stringify(authData)), {
+				expires: expirationDate,
+				sameSite: "Lax",
+				secure: import.meta.env.PROD,
+			});
 
-		return authData;
-	}, []);
+			return authData;
+		},
+		[setSearchParams],
+	);
 
 	const handleToken = useCallback(
 		async (token: string) => {

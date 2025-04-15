@@ -5,6 +5,7 @@ import RoomSVG from "../assets/svg/room.svg?react";
 import AttentionSVG from "../assets/svg/attention.svg?react";
 import Spacing from "../components/Spacing";
 import ArrowSVG from "../assets/svg/arrow.svg?react";
+import LogoutSVG from "../assets/svg/logout.svg?react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
@@ -17,6 +18,11 @@ const Home = () => {
 
 	return (
 		<>
+			<div className="flex w-max cursor-pointer items-center gap-1.5" onClick={auth.logout} onKeyDown={auth.logout}>
+				<p className="text-primary">Abmelden</p>
+				<LogoutSVG width={20} className="shrink-0 fill-primary" />
+			</div>
+			<Spacing size="sm" />
 			<Headline
 				title={`Willkommen, ${auth.data?.name}.`}
 				mobileTitle={`Hey, ${auth.data?.name}.`}

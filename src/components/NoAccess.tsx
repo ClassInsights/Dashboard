@@ -1,6 +1,7 @@
 import { useAuth } from "../contexts/AuthContext";
 import Spacing from "./Spacing";
 import ArrowSVG from "../assets/svg/arrow.svg?react";
+import LogoutSVG from "../assets/svg/logout.svg?react";
 import { useNavigate } from "react-router-dom";
 
 const NoAccess = ({ inPage = false, adminOnly = false }: { inPage?: boolean; adminOnly?: boolean }) => {
@@ -29,7 +30,11 @@ const NoAccess = ({ inPage = false, adminOnly = false }: { inPage?: boolean; adm
 					onKeyDown={() => (inPage ? navigate("/") : auth.logout())}
 				>
 					<p className="text-primary">{inPage ? "Zurück zur Startseite" : "Abmelden"}</p>
-					<ArrowSVG className="shrink-0 fill-primary" />
+					{inPage ? (
+						<ArrowSVG width={20} className="shrink-0 fill-primary" />
+					) : (
+						<LogoutSVG width={20} className="shrink-0 fill-primary" />
+					)}
 				</div>
 			</div>
 		</div>

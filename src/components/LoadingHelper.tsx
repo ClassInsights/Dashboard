@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { Role } from "../types/AccessToken";
-import ArrowSVG from "../assets/svg/arrow.svg?react";
+import LogoutSVG from "../assets/svg/logout.svg?react";
 import ProgressSVG from "../assets/svg/progress.svg?react";
 import Spacing from "./Spacing";
 import NoAccess from "./NoAccess";
@@ -88,7 +88,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 					<Spacing size="md" />
 					<div className="flex w-max cursor-pointer items-center gap-1.5" onClick={auth.logout} onKeyDown={auth.logout}>
 						<p className="text-primary">Abmelden</p>
-						<ArrowSVG className="shrink-0 fill-primary" />
+						<LogoutSVG width={20} className="shrink-0 fill-primary" />
 					</div>
 				</div>
 			</div>
@@ -109,7 +109,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 					<Spacing size="md" />
 					<div className="flex w-max cursor-pointer items-center gap-1.5" onClick={auth.logout} onKeyDown={auth.logout}>
 						<p className="text-primary">Abmelden</p>
-						<ArrowSVG className="shrink-0 fill-primary" />
+						<LogoutSVG width={20} className="shrink-0 fill-primary" />
 					</div>
 				</div>
 			</div>
