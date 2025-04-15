@@ -73,7 +73,9 @@ const ComputerList = () => {
 			setTimeout(() => {
 				switch (state) {
 					case "selected":
-						setSelectedComputers(computers.map((computer) => computer.computerId));
+						setSelectedComputers(
+							computers.filter((computer) => computer.online).map((computer) => computer.computerId),
+						);
 						break;
 					case "deselected":
 					case "remove":
@@ -192,7 +194,7 @@ const ComputerList = () => {
 						/>
 					</div>
 				) : (
-					<p>Wähle mindestens einen Computer aus.</p>
+					<p>Wähle mindestens einen aktiven Computer aus.</p>
 				)}
 			</div>
 			<Spacing size="md" />
@@ -232,6 +234,7 @@ const ComputerList = () => {
 					return (
 						<Fragment key={computer.ipAddress}>
 							<Checkbox
+								disabled={!computer.online}
 								state={isSelected ? "selected" : "deselected"}
 								onChange={(state) => handleCheckbox(computer.computerId, state)}
 							/>

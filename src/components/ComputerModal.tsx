@@ -78,8 +78,16 @@ const ComputerModal = () => {
 					<Spacing size="md" />
 					<div className="absolute right-0 bottom-0 flex justify-end pr-14 pb-16 lg:static lg:p-0">
 						<div className="badge-list">
-							<Badge text="Neustarten" headIcon={<RestartSVG className="shrink-0 fill-primary" />} />
-							<Badge text="Herunterfahren" headIcon={<ShutDownSVG className="shrink-0 fill-primary" />} />
+							<Badge
+								disabled={!computer.data.online}
+								text="Neustarten"
+								headIcon={<RestartSVG className="shrink-0 fill-primary" />}
+							/>
+							<Badge
+								disabled={!computer.data.online}
+								text="Herunterfahren"
+								headIcon={<ShutDownSVG className="shrink-0 fill-primary" />}
+							/>
 						</div>
 					</div>
 				</div>
