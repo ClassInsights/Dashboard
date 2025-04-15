@@ -8,6 +8,7 @@ import ArrowSVG from "../assets/svg/arrow.svg?react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
+import { Role } from "../types/AccessToken";
 
 const Home = () => {
 	const navigate = useNavigate();
@@ -60,19 +61,22 @@ const Home = () => {
 					"Konfiguration",
 					"/konfiguration",
 				],
-			].map(([title, description, linkText, link]) => (
-				<div key={title}>
-					<Spacing size="md" />
-					<h3>{title}</h3>
-					<Spacing size="sm" />
-					<p className="text-print-width">{description}</p>
-					<Spacing size="sm" />
-					<Link to={link} className="flex w-max items-center gap-1.5 pb-2">
-						<p className="text-primary">{linkText}</p>
-						<ArrowSVG className="shrink-0 fill-primary" />
-					</Link>
-				</div>
-			))}
+			].map(([title, description, linkText, link]) => {
+				if (title === "ClassInsights Konfiguration" && !auth.data?.roles.includes(Role.ADMIN)) return null;
+				return (
+					<div key={title}>
+						<Spacing size="md" />
+						<h3>{title}</h3>
+						<Spacing size="sm" />
+						<p className="text-print-width">{description}</p>
+						<Spacing size="sm" />
+						<Link to={link} className="flex w-max items-center gap-1.5 pb-2">
+							<p className="text-primary">{linkText}</p>
+							<ArrowSVG className="shrink-0 fill-primary" />
+						</Link>
+					</div>
+				);
+			})}
 		</>
 	);
 };

@@ -19,7 +19,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const tokenRef = useRef<string | undefined>(undefined);
 
-	const logout = () => {};
+	const logout = useCallback(() => {
+		Cookies.remove("tasty-dashboard");
+		window.location.replace(`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen`);
+	}, []);
 
 	const requestAuthData = useCallback(async (exchangeData: TokenExchange, token: string) => {
 		const response = await fetch(`${exchangeData.local_api_url}/user`, {

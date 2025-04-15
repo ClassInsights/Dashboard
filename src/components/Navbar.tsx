@@ -1,8 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuSVG from "../assets/svg/menu.svg?react";
 import SearchSVG from "../assets/svg/search.svg?react";
 import { useSearch } from "../contexts/SearchContext";
+import { useAuth } from "../contexts/AuthContext";
+import { Role } from "../types/AccessToken";
 
 /** The main Navigation Bar component */
 const Navbar = () => {
@@ -11,6 +13,12 @@ const Navbar = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const search = useSearch();
+	const auth = useAuth();
+
+	const isAdmin = useMemo(() => {
+		if (!auth.data) return false;
+		return auth.data.roles.includes(Role.ADMIN);
+	}, [auth.data]);
 
 	/** Handler for clicking inside the viewport */
 	const onDocumentClick = () => {
@@ -57,21 +65,24 @@ const Navbar = () => {
 				<div
 					className={`absolute top-10 right-0 flex flex-col overflow-hidden rounded-lg bg-container shadow-md transition-opacity duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}
 				>
-					{["Computer", "Räume", "Konfiguration"].map((label) => (
-						<Link
-							key={label}
-							to={`/${label.toLowerCase()}`}
-							className="w-full py-2 pr-3 pl-14 text-right hover:bg-container-selected"
-						>
-							{label}
-						</Link>
-					))}
+					{["Computer", "Räume", "Konfiguration"].map((label) => {
+						if (label === "Konfiguration" && !isAdmin) return null;
+						return (
+							<Link
+								key={label}
+								to={`/${label.toLowerCase()}`}
+								className="w-full py-2 pr-3 pl-14 text-right hover:bg-container-selected"
+							>
+								{label}
+							</Link>
+						);
+					})}
 				</div>
 				{/* Desktop Menu */}
 				<div className="hidden items-center gap-8 md:flex">
 					<Link to="/computer">Computer</Link>
 					<Link to="/räume">Räume</Link>
-					<Link to="/konfiguration">Konfiguration</Link>
+					{isAdmin && <Link to="/konfiguration">Konfiguration</Link>}
 					<div
 						className="hidden cursor-pointer items-center gap-1.5 text-primary md:flex"
 						onClick={search.show}

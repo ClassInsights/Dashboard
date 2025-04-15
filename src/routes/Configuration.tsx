@@ -1,6 +1,13 @@
 import Headline from "../components/Headline";
+import NoAccess from "../components/NoAccess";
+import { useAuth } from "../contexts/AuthContext";
+import { Role } from "../types/AccessToken";
 
 const Confgiguration = () => {
+	const auth = useAuth();
+
+	if (!auth.data?.roles.includes(Role.ADMIN)) return <NoAccess inPage={true} adminOnly={true} />;
+
 	return (
 		<Headline
 			title="Konfiguration"
