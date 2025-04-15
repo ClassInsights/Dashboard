@@ -27,7 +27,7 @@ const Checkbox = ({ state = "deselected", onChange, disabled = false }: Checkbox
 
 	return (
 		<div
-			className={`flex h-4 w-4 items-center justify-center rounded-sm border-[1px] p-1 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+			className={`flex h-4 w-4 items-center justify-center rounded-sm border-[1px] p-1 opacity-40 ${disabled ? "cursor-not-allowed opacity-10" : "cursor-pointer"}`}
 			onClick={disabled ? undefined : handleClick}
 			onKeyDown={disabled ? undefined : handleClick}
 		>
