@@ -79,13 +79,21 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 		[computers, rooms],
 	);
 
-	const show = useCallback(() => setTimeout(() => setIsVisible(true), 0), []);
+	const show = useCallback(() => {
+		setIsVisible(true);
+		const scrollTop = document.scrollingElement?.scrollTop;
+		document.body.style.overflow = "hidden";
+		document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
+		if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
+		document.body.addEventListener("keydown", hideOnShortcut);
+	}, []);
 
 	const hide = useCallback(() => {
-		setTimeout(() => {
-			setResult([]);
-			setIsVisible(false);
-		}, 0);
+		setIsVisible(false);
+		setResult([]);
+		document.body.style.overflow = "auto";
+		document.body.style.paddingRight = "";
+		document.body.removeEventListener("keydown", hideOnShortcut);
 	}, []);
 
 	const hideOnShortcut = useCallback(

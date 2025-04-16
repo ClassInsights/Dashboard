@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import type { Computer } from "../types/Computer";
 
 type ComputerContextType = {
@@ -13,27 +13,28 @@ export const ComputerProvider = ({ children }: { children: React.ReactNode }) =>
 	const [isVisible, setIsVisible] = useState(false);
 	const [data, setData] = useState<Computer | undefined>(undefined);
 
+	const hideOnEscape = useCallback((e: KeyboardEvent) => {
+		if (e.key === "Escape") {
+			close();
+		}
+	}, []);
+
 	const open = (computer: Computer) => {
 		setData(computer);
 		setIsVisible(true);
+		const scrollTop = document.scrollingElement?.scrollTop;
+		document.body.style.overflow = "hidden";
+		document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
+		if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
+		document.body.addEventListener("keydown", hideOnEscape);
 	};
 
-	const close = useCallback(() => setIsVisible(false), []);
-
-	const hideOnEscape = useCallback(
-		(e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				close();
-			}
-		},
-		[close],
-	);
-
-	useEffect(() => {
-		window.addEventListener("keydown", hideOnEscape);
-		return () => {
-			window.removeEventListener("keydown", hideOnEscape);
-		};
+	const close = useCallback(() => {
+		setIsVisible(false);
+		setData(undefined);
+		document.body.style.overflow = "auto";
+		document.body.style.paddingRight = "";
+		document.body.removeEventListener("keydown", hideOnEscape);
 	}, [hideOnEscape]);
 
 	return <ComputerContext.Provider value={{ isVisible, open, close, data }}>{children}</ComputerContext.Provider>;
