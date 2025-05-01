@@ -24,7 +24,7 @@ const RoomTable = () => {
 		if (!originalRoom) return;
 
 		const updatedRoom = { ...room, regex };
-
+		console.log(regex, originalRoom.regex);
 		if (regex === originalRoom.regex) {
 			setUpdatedRooms((prev) => prev.filter((r) => r.roomId !== room.roomId));
 			return;
@@ -33,9 +33,7 @@ const RoomTable = () => {
 		setUpdatedRooms((prev) => {
 			if (prev.some((r) => r.roomId === room.roomId))
 				return prev.map((r) => (r.roomId === room.roomId ? updatedRoom : r));
-
-			prev[prev.indexOf(room)] = updatedRoom;
-			return prev;
+			return [...prev, updatedRoom];
 		});
 	};
 
@@ -76,11 +74,14 @@ const RoomTable = () => {
 
 	const rooms = useMemo(() => {
 		if (!data.rooms) return [];
-		const unchangedRooms = data.rooms
-			.filter((room) => !updatedRooms.some((r) => r.roomId === room.roomId))
-			.filter((room) => room.regex !== null);
 
-		return [...unchangedRooms, ...updatedRooms];
+		return data.rooms
+			.filter((room) => room.regex !== null)
+			.map((room) => {
+				const updatedRoom = updatedRooms.find((r) => r.roomId === room.roomId);
+				if (updatedRoom) return { ...room, regex: updatedRoom.regex };
+				return room;
+			});
 	}, [data.rooms, updatedRooms]);
 
 	const leftoverRooms = useMemo(() => {
