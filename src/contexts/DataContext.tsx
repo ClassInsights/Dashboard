@@ -24,8 +24,8 @@ type DataContextType = {
 	isRoomModalOpen: boolean;
 	openRoomModal: () => void;
 	closeRoomModal: () => void;
-	refreshComputers: () => void;
-	refreshRooms: () => void;
+	refreshComputers: (feedback?: boolean) => void;
+	refreshRooms: (feedback?: boolean) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -236,37 +236,43 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 		document.body.addEventListener("keydown", hideOnShortcut);
 	}, [hideOnShortcut]);
 
-	const refreshComputers = useCallback(async () => {
-		if (!auth.data || isRefreshing) return;
-		setIsRefreshing(true);
+	const refreshComputers = useCallback(
+		async (feedback = true) => {
+			if (!auth.data || isRefreshing) return;
+			setIsRefreshing(true);
 
-		fetchComputers()
-			.then((data) => {
-				setComputers(data);
-				toast.showMessage("Computer aktualisiert");
-			})
-			.catch((error) => {
-				toast.showMessage("Fehler beim Aktualisieren der Computer", "error");
-				console.error("Error fetching computers", error);
-			})
-			.finally(() => setIsRefreshing(false));
-	}, [auth.data, fetchComputers, isRefreshing, toast.showMessage]);
+			fetchComputers()
+				.then((data) => {
+					setComputers(data);
+					if (feedback) toast.showMessage("Computer aktualisiert");
+				})
+				.catch((error) => {
+					if (feedback) toast.showMessage("Fehler beim Aktualisieren der Computer", "error");
+					console.error("Error fetching computers", error);
+				})
+				.finally(() => setIsRefreshing(false));
+		},
+		[auth.data, fetchComputers, isRefreshing, toast.showMessage],
+	);
 
-	const refreshRooms = useCallback(async () => {
-		if (!auth.data || isRefreshing) return;
-		setIsRefreshing(true);
+	const refreshRooms = useCallback(
+		async (feedback = true) => {
+			if (!auth.data || isRefreshing) return;
+			setIsRefreshing(true);
 
-		fetchRooms()
-			.then((data) => {
-				setRooms(data);
-				toast.showMessage("Räume aktualisiert");
-			})
-			.catch((error) => {
-				toast.showMessage("Fehler beim Aktualisieren der Räume", "error");
-				console.error("Error fetching rooms", error);
-			})
-			.finally(() => setIsRefreshing(false));
-	}, [auth.data, fetchRooms, isRefreshing, toast.showMessage]);
+			fetchRooms()
+				.then((data) => {
+					setRooms(data);
+					if (feedback) toast.showMessage("Räume aktualisiert");
+				})
+				.catch((error) => {
+					if (feedback) toast.showMessage("Fehler beim Aktualisieren der Räume", "error");
+					console.error("Error fetching rooms", error);
+				})
+				.finally(() => setIsRefreshing(false));
+		},
+		[auth.data, fetchRooms, isRefreshing, toast.showMessage],
+	);
 
 	useEffect(() => {
 		if (!auth.data) {
@@ -276,6 +282,21 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 		setIsLoading(true);
 		fetchData().then(() => setIsLoading(false));
 	}, [auth.data, fetchData]);
+
+	const refresh = async () => {
+		setIsRefreshing(true);
+		await refreshComputers(false);
+		await refreshRooms(false);
+		setIsRefreshing(false);
+	};
+
+	useEffect(() => {
+		const interval = setInterval(
+			() => refresh(),
+			60 * 1000, // 1 minute
+		);
+		return () => clearInterval(interval);
+	});
 
 	return (
 		<DataContext.Provider
