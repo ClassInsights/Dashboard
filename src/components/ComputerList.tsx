@@ -4,6 +4,8 @@ import Spacing from "./Spacing";
 import ShutDownSVG from "../assets/svg/shutdown.svg?react";
 import RestartSVG from "../assets/svg/restart.svg?react";
 import RefreshSVG from "../assets/svg/refresh.svg?react";
+import ArrowSVG from "../assets/svg/arrow.svg?react";
+import DoubleArrowSVG from "../assets/svg/double-arrow.svg?react";
 import Badge from "./Badge";
 import Checkbox, { type CheckboxState } from "./inputs/Checkbox";
 import { useComputer } from "../contexts/ComputerContext";
@@ -67,12 +69,17 @@ const ComputerList = () => {
 	const [computers, setComputers] = useState<Computer[]>([]);
 	const [originalComputers, setOriginalComputers] = useState<Computer[]>([]);
 	const [selectedComputers, setSelectedComputers] = useState<number[]>([]);
+	const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
 	const [sorts, setSorts] = useState<Sort[]>([]);
 	const [filters, setFilters] = useState<Filter[]>([]);
 
 	const data = useData();
 	const computerModal = useComputer();
+
+	const computersPerPage = 25;
+
+	const amountOfPages = useMemo(() => Math.ceil(computers.length / computersPerPage), [computers.length]);
 
 	const rooms = useMemo(() => data.rooms, [data.rooms]);
 
@@ -360,37 +367,66 @@ const ComputerList = () => {
 						})}
 						<div />
 						<div className="col-span-6 col-start-1 border-container border-t-2" />
-						{computers?.slice(0, Math.min(25, computers.length)).map((computer) => {
-							const room = rooms?.find((room) => room.roomId === computer.roomId);
-							const isSelected = selectedComputers.includes(computer.computerId);
-							return (
-								<Fragment key={computer.ipAddress}>
-									<Checkbox
-										disabled={!computer.online}
-										state={isSelected ? "selected" : "deselected"}
-										onChange={(state) => handleCheckbox(computer.computerId, state)}
-									/>
-									<div className="flex items-center gap-[0.6rem]">
-										<div
-											className={`h-[0.6rem] w-[0.6rem] rounded-full ${computer.online ? "bg-success" : "bg-error"}`}
+						{computers
+							?.slice(currentPageIndex * computersPerPage, currentPageIndex * computersPerPage + computersPerPage)
+							.map((computer) => {
+								const room = rooms?.find((room) => room.roomId === computer.roomId);
+								const isSelected = selectedComputers.includes(computer.computerId);
+								return (
+									<Fragment key={computer.ipAddress}>
+										<Checkbox
+											disabled={!computer.online}
+											state={isSelected ? "selected" : "deselected"}
+											onChange={(state) => handleCheckbox(computer.computerId, state)}
 										/>
-										<p>{computer.name}</p>
-									</div>
-									<p>{room?.displayName ?? "Unbekannter Raum"}</p>
-									<p>{computer.ipAddress}</p>
-									<p>{computer.macAddress}</p>
-									<p
-										className="cursor-pointer text-primary"
-										onClick={() => computerModal.open(computer)}
-										onKeyDown={() => computerModal.open(computer)}
-									>
-										Details
-									</p>
-								</Fragment>
-							);
-						})}
+										<div className="flex items-center gap-[0.6rem]">
+											<div
+												className={`h-[0.6rem] w-[0.6rem] rounded-full ${computer.online ? "bg-success" : "bg-error"}`}
+											/>
+											<p>{computer.name}</p>
+										</div>
+										<p>{room?.displayName ?? "Unbekannter Raum"}</p>
+										<p>{computer.ipAddress}</p>
+										<p>{computer.macAddress}</p>
+										<p
+											className="cursor-pointer text-primary"
+											onClick={() => computerModal.open(computer)}
+											onKeyDown={() => computerModal.open(computer)}
+										>
+											Details
+										</p>
+									</Fragment>
+								);
+							})}
 						<div className="col-span-6 col-start-1 border-container border-b-2" />
 					</div>
+					{amountOfPages > 1 && (
+						<div className="mt-2 flex select-none items-center justify-center gap-1">
+							<DoubleArrowSVG
+								className="shrink-0 rotate-180 cursor-pointer fill-primary"
+								height={20}
+								onClick={() => setCurrentPageIndex(0)}
+							/>
+							<ArrowSVG
+								className="shrink-0 rotate-180 cursor-pointer fill-primary"
+								height={20}
+								onClick={() => setCurrentPageIndex((prev) => Math.max(prev - 1, 0))}
+							/>
+							<p className="px-2">
+								Seite {currentPageIndex + 1} / {amountOfPages}
+							</p>
+							<ArrowSVG
+								className="shrink-0 cursor-pointer fill-primary"
+								height={20}
+								onClick={() => setCurrentPageIndex((prev) => Math.min(prev + 1, amountOfPages - 1))}
+							/>
+							<DoubleArrowSVG
+								className="shrink-0 cursor-pointer fill-primary"
+								height={20}
+								onClick={() => setCurrentPageIndex(amountOfPages - 1)}
+							/>
+						</div>
+					)}
 				</>
 			)}
 		</>
