@@ -12,6 +12,7 @@ export interface CustomJWTPayload extends JWTPayload {
 }
 
 export enum Role {
+	OWNER = "Owner",
 	ADMIN = "Admin",
 	TEACHER = "Teacher",
 	STUDENT = "Student",
