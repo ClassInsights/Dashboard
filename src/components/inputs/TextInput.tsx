@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TextInputProps = {
 	id: string;
@@ -22,7 +22,10 @@ const TextInput = ({
 	maxLength,
 	disabled = false,
 }: TextInputProps) => {
-	const [value, setValue] = useState(initialValue ?? "");
+	const [value, setValue] = useState("");
+
+	useEffect(() => setValue(initialValue ?? ""), [initialValue]);
+
 	return (
 		<div className="relative w-full">
 			{label && (
