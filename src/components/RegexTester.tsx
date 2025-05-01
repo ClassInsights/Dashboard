@@ -35,7 +35,9 @@ const RegexTester = () => {
 					</span>
 				)}
 			</p>
-			{showComputers && matches.length > 0 && <p>{matches.map((computer) => computer.name).join(", ")}</p>}
+			{regex !== "" && showComputers && matches.length > 0 && (
+				<p>{matches.map((computer) => computer.name).join(", ")}</p>
+			)}
 		</>
 	);
 };
