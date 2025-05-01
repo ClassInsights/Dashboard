@@ -10,6 +10,7 @@ import Spacing from "../components/Spacing";
 import RoomTable from "../components/RoomTable";
 import SaveSVG from "../assets/svg/save.svg?react";
 import ProgressSVG from "../assets/svg/progress.svg?react";
+import RefreshSVG from "../assets/svg/refresh.svg?react";
 
 const Confgiguration = () => {
 	const auth = useAuth();
@@ -55,6 +56,9 @@ const Confgiguration = () => {
 				subtitle="Diese Seite können nur Administratoren aufrufen, hier können Änderungen am gesamten ClassInsights Ökosystem vorgenommen werden."
 				backLink="/"
 			/>
+			<div className="flex w-full justify-end">
+				<RefreshSVG className="shrink-0 cursor-pointer fill-primary" onClick={() => settings.refreshSettings()} />
+			</div>
 			<div className="flex flex-col gap-20">
 				<Setting
 					title="Tagesende"

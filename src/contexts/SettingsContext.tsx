@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { isSettings, type Settings } from "../types/Settings";
 import { useAuth } from "./AuthContext";
 import { Role } from "../types/AccessToken";
+import { useToast } from "./ToastContext";
 
 type SettingsContextType = {
 	getSettings: () => Settings | undefined;
@@ -9,6 +10,7 @@ type SettingsContextType = {
 	hasUnsavedChanges: boolean;
 	saveSettings: () => Promise<void>;
 	isLoading: boolean;
+	refreshSettings: () => void;
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -17,8 +19,10 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 	const [settings, setSettings] = useState<Settings | undefined>(undefined);
 	const [newSettings, setNewSettings] = useState<Settings | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
 	const auth = useAuth();
+	const toast = useToast();
 
 	const getSettings = () => newSettings ?? settings;
 
@@ -74,6 +78,21 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 		setNewSettings(undefined);
 	}, [auth.data, newSettings]);
 
+	const refreshSettings = useCallback(() => {
+		if (isRefreshing) return;
+		setIsRefreshing(true);
+		fetchSettings()
+			.then((data) => {
+				setSettings(data);
+				toast.showMessage("Erfolgreich aktualisiert");
+			})
+			.catch((error) => {
+				console.error("Error fetching settings:", error);
+				toast.showMessage("Fehler beim Aktualisieren der Einstellungen", "error");
+			})
+			.finally(() => setIsRefreshing(false));
+	}, [fetchSettings, isRefreshing, toast.showMessage]);
+
 	useEffect(() => {
 		fetchSettings()
 			.then((data) => setSettings(data))
@@ -82,7 +101,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 	}, [fetchSettings]);
 
 	return (
-		<SettingsContext.Provider value={{ getSettings, updateSettings, hasUnsavedChanges, saveSettings, isLoading }}>
+		<SettingsContext.Provider
+			value={{ getSettings, updateSettings, hasUnsavedChanges, saveSettings, isLoading, refreshSettings }}
+		>
 			{children}
 		</SettingsContext.Provider>
 	);

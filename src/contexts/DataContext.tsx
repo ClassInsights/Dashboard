@@ -25,6 +25,7 @@ type DataContextType = {
 	openRoomModal: () => void;
 	closeRoomModal: () => void;
 	refreshComputers: () => void;
+	refreshRooms: () => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -251,6 +252,22 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 			.finally(() => setIsRefreshing(false));
 	}, [auth.data, fetchComputers, isRefreshing, toast.showMessage]);
 
+	const refreshRooms = useCallback(async () => {
+		if (!auth.data || isRefreshing) return;
+		setIsRefreshing(true);
+
+		fetchRooms()
+			.then((data) => {
+				setRooms(data);
+				toast.showMessage("Räume aktualisiert");
+			})
+			.catch((error) => {
+				toast.showMessage("Fehler beim Aktualisieren der Räume", "error");
+				console.error("Error fetching rooms", error);
+			})
+			.finally(() => setIsRefreshing(false));
+	}, [auth.data, fetchRooms, isRefreshing, toast.showMessage]);
+
 	useEffect(() => {
 		if (!auth.data) {
 			setIsLoading(false);
@@ -274,6 +291,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 				openRoomModal,
 				closeRoomModal,
 				refreshComputers,
+				refreshRooms,
 			}}
 		>
 			{children}

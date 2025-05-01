@@ -3,6 +3,7 @@ import { RoomSaveStatus, useData } from "../contexts/DataContext";
 import DeleteSVG from "../assets/svg/delete.svg?react";
 import TextInput from "./inputs/TextInput";
 import SaveSVG from "../assets/svg/save.svg?react";
+import RefreshSVG from "../assets/svg/refresh.svg?react";
 import PlusSVG from "../assets/svg/plus.svg?react";
 import type { Room } from "../types/Room";
 import AddRoomModal from "./AddRoomModal";
@@ -112,6 +113,15 @@ const RoomTable = () => {
 	return (
 		<>
 			<AddRoomModal rooms={leftoverRooms} onSelect={(roomId) => addRoom(roomId)} />
+			<div className="flex w-full justify-end">
+				<RefreshSVG
+					className="shrink-0 cursor-pointer fill-primary"
+					onClick={() => {
+						setUpdatedRooms([]);
+						data.refreshRooms();
+					}}
+				/>
+			</div>
 			<div className="flex flex-col gap-20 lg:flex-row">
 				<div className="w-full">
 					<div className="room-table grid items-center gap-x-5 gap-y-3 overflow-x-scroll">

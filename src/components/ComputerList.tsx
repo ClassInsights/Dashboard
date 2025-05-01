@@ -3,6 +3,7 @@ import { useData } from "../contexts/DataContext";
 import Spacing from "./Spacing";
 import ShutDownSVG from "../assets/svg/shutdown.svg?react";
 import RestartSVG from "../assets/svg/restart.svg?react";
+import RefreshSVG from "../assets/svg/refresh.svg?react";
 import Badge from "./Badge";
 import Checkbox, { type CheckboxState } from "./inputs/Checkbox";
 import { useComputer } from "../contexts/ComputerContext";
@@ -323,10 +324,13 @@ const ComputerList = () => {
 				)
 			) : (
 				<>
-					<p>
-						{computers?.length} Computer gefunden{" "}
-						{filters.length > 0 && `(${`${filters.length} ${filters.length === 1 ? "aktiver" : "aktive"} Filter`})`}
-					</p>
+					<div className="flex items-center justify-between">
+						<p>
+							{computers?.length} Computer gefunden{" "}
+							{filters.length > 0 && `(${`${filters.length} ${filters.length === 1 ? "aktiver" : "aktive"} Filter`})`}
+						</p>
+						<RefreshSVG className="shrink-0 cursor-pointer fill-primary" onClick={() => data.refreshComputers()} />
+					</div>
 					<Spacing size="sm" />
 					<div className="computer-table grid items-center gap-x-4 gap-y-3 overflow-x-scroll">
 						<Checkbox
