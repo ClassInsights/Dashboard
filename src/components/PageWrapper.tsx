@@ -10,25 +10,28 @@ import { ComputerProvider } from "../contexts/ComputerContext";
 import SearchBar from "./Searchbar";
 import ComputerModal from "./ComputerModal";
 import { ToastProvider } from "../contexts/ToastContext";
+import { SettingsProvider } from "../contexts/SettingsContext";
 
 const PageWrapper = () => (
 	<main className="page-spacing relative min-h-[100dvh] max-w-screen-xl">
 		<ToastProvider>
 			<AuthProvider>
 				<DataProvider>
-					<LoadingHelper>
-						<ComputerProvider>
-							<SearchProvider>
-								<SearchBar />
-								<ComputerModal />
-								<Navbar />
-								<Spacing size="xl" />
-								<Outlet />
-								<Spacing size="xl" />
-								<Footer />
-							</SearchProvider>
-						</ComputerProvider>
-					</LoadingHelper>
+					<SettingsProvider>
+						<LoadingHelper>
+							<ComputerProvider>
+								<SearchProvider>
+									<SearchBar />
+									<ComputerModal />
+									<Navbar />
+									<Spacing size="xl" />
+									<Outlet />
+									<Spacing size="xl" />
+									<Footer />
+								</SearchProvider>
+							</ComputerProvider>
+						</LoadingHelper>
+					</SettingsProvider>
 				</DataProvider>
 			</AuthProvider>
 		</ToastProvider>

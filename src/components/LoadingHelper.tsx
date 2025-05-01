@@ -6,6 +6,7 @@ import LogoutSVG from "../assets/svg/logout.svg?react";
 import ProgressSVG from "../assets/svg/progress.svg?react";
 import Spacing from "./Spacing";
 import NoAccess from "./NoAccess";
+import { useSettings } from "../contexts/SettingsContext";
 
 const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +42,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 
 	const auth = useAuth();
 	const data = useData();
+	const settings = useSettings();
 
 	useEffect(() => {
 		if (!intervalRef.current)
@@ -50,9 +52,10 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 			}, 1000);
 	}, [loadingTexts]);
 
-	useEffect(() => {
-		setIsLoading(auth.isLoading || data.isLoading);
-	}, [auth.isLoading, data.isLoading]);
+	useEffect(
+		() => setIsLoading(auth.isLoading || data.isLoading || settings.isLoading),
+		[auth.isLoading, data.isLoading, settings.isLoading],
+	);
 
 	if (isLoading)
 		return (
@@ -60,7 +63,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 				<img src="/logo.svg" alt="ClassInsights Logo" width={80} className="pointer-events-auto cursor-pointer" />
 				<div className="flex flex-col items-center text-center">
 					<h1 className="pb-6">Daten werden geladen</h1>
-					<p className="md:w-3/5">{text}</p>
+					<p>{text}</p>
 				</div>
 				<ProgressSVG width={50} className="h-20 w-20 shrink-0 animate-spin fill-primary" />
 			</div>
@@ -93,7 +96,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 
 	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.TEACHER)) return <NoAccess />;
 
-	if (!data.computers || !data.rooms || !data.lessons)
+	if (!data.computers || !data.rooms /* || !data.lessons */)
 		return (
 			<div className="flex h-dvh w-full flex-col items-center justify-center gap-12">
 				<img src="/logo.svg" alt="ClassInsights Logo" width={80} className="pointer-events-auto cursor-pointer" />

@@ -148,9 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			return;
 		}
 
-		handleToken(token)
-			.catch(() => setIsLoading(false))
-			.finally(() => setIsLoading(false));
+		handleToken(token).catch((error) => console.error("Auth failed inside handleToken catch:", error));
 
 		return () => {
 			if (!tokenRef.current) tokenRef.current = token;

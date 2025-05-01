@@ -104,6 +104,11 @@
       overflow: hidden; 
     }
 
+    .room-table {
+      grid-template-columns: minmax(4rem, auto) 1fr min-content;
+      align-items: center;
+    }
+
     .computer-stats {
       grid-template-columns: max-content max-content 3rem max-content max-content;
     }
