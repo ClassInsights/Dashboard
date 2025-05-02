@@ -25,5 +25,8 @@
 		"clientKind": "git",
 		"useIgnoreFile": true,
 		"defaultBranch": "main"
+	},
+	"files": {
+		"ignore": ["tsconfig.app.json"]
 	}
 }
