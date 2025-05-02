@@ -139,7 +139,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		if (latestTag.toLowerCase() !== localVersion) {
 			setChanges((prev) => [
 				...prev,
-				<p key="Api Change">
+				<p key="Dashboard Change">
 					API: {localVersion} &gt; {latestTag}
 					<span>
 						{" "}
