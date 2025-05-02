@@ -1,0 +1,18 @@
+name: Docker Image CI for GHCR
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: Build and push the image
+      run: |
+        docker login --username classinsights --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+        docker build --tag ghcr.io/classinsights/website:$RELEASE_VERSION --tag ghcr.io/classinsights/website:latest .
+        docker push ghcr.io/classinsights/website --all-tags
