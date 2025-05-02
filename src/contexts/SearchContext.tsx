@@ -79,50 +79,44 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 		[computers, rooms],
 	);
 
-	const show = useCallback(() => {
-		setIsVisible(true);
-		const scrollTop = document.scrollingElement?.scrollTop;
-		document.body.style.overflow = "hidden";
-		document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
-		if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
-		document.body.addEventListener("keydown", hideOnShortcut);
+	useEffect(() => {
+		const handleGlobalKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "k" && (event.ctrlKey || event.metaKey)) {
+				event.preventDefault();
+				setIsVisible((prev) => !prev);
+				return;
+			}
+
+			if (event.key !== "Escape") return;
+
+			setIsVisible((prev) => {
+				if (prev) return false;
+				return prev;
+			});
+		};
+
+		window.addEventListener("keydown", handleGlobalKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleGlobalKeyDown);
+		};
 	}, []);
 
-	const hide = useCallback(() => {
-		setIsVisible(false);
+	useEffect(() => {
+		if (isVisible) {
+			const scrollTop = document.scrollingElement?.scrollTop;
+			document.body.style.overflow = "hidden";
+			document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
+			if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
+			return;
+		}
+
 		setResult([]);
 		document.body.style.overflow = "auto";
 		document.body.style.paddingRight = "";
-		document.body.removeEventListener("keydown", hideOnShortcut);
-	}, []);
+	}, [isVisible]);
 
-	const hideOnShortcut = useCallback(
-		(e: KeyboardEvent) => {
-			if (!isVisible) return;
-			if (e.key === "Escape") hide();
-			if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				hide();
-			}
-		},
-		[hide, isVisible],
-	);
-
-	const openOnShortcut = useCallback(
-		(e: KeyboardEvent) => {
-			if (isVisible) return;
-			if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				show();
-			}
-		},
-		[show, isVisible],
-	);
-
-	useEffect(() => {
-		window.addEventListener("keydown", openOnShortcut);
-		window.addEventListener("keydown", hideOnShortcut);
-	});
+	const show = useCallback(() => setIsVisible(true), []);
+	const hide = useCallback(() => setIsVisible(false), []);
 
 	return (
 		<SearchContext.Provider value={{ result, generateResult, isVisible, show, hide }}>

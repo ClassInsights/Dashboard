@@ -7,7 +7,7 @@ const UpdateChecker = () => {
 	if (!update.updateAvailable) return null;
 
 	return (
-		<div className="fixed right-0 bottom-0 left-0 z-50 w-full bg-container py-5">
+		<div className="fixed right-0 bottom-0 left-0 z-10 w-full bg-container py-5">
 			<CloseSVG
 				width={20}
 				className="absolute top-3 right-3 shrink-0 cursor-pointer fill-black"
