@@ -17,11 +17,16 @@ const Home = () => {
 
 	return (
 		<>
-			<div className="flex w-max cursor-pointer items-center gap-1.5" onClick={auth.logout} onKeyDown={auth.logout}>
-				<p className="text-primary">Abmelden</p>
-				<LogoutSVG width={20} className="shrink-0 fill-primary" />
+			<div className="relative">
+				<div
+					className="-top-10 absolute flex w-max cursor-pointer items-center gap-1.5 pb-2"
+					onClick={auth.logout}
+					onKeyDown={auth.logout}
+				>
+					<p className="text-primary">Abmelden</p>
+					<LogoutSVG width={20} className="shrink-0 fill-primary" />
+				</div>
 			</div>
-			<Spacing size="sm" />
 			<Headline
 				title={`Willkommen, ${auth.data?.name}.`}
 				mobileTitle={`Hey, ${auth.data?.name}.`}

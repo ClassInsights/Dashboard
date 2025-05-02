@@ -22,16 +22,20 @@ const Rooms = () => {
 				</Link>
 				<RefreshSVG className="shrink-0 cursor-pointer fill-primary" onClick={() => data.refreshRooms()} />
 			</div>
-			<div
-				id="rooms"
-				className={`flex flex-col md:grid ${data.rooms?.length ?? 0 > 1 ? "w-full grid-cols-2" : "mx-auto md:w-1/2 lg:w-2/5"}`}
-			>
-				{data.rooms
-					?.sort((a, b) => (a.enabled && !b.enabled ? -1 : !a.enabled && b.enabled ? 1 : 0))
-					.map((room) => (
-						<Room key={room.roomId} room={room} />
-					))}
-			</div>
+			{data.rooms?.length === 0 ? (
+				<b>Es wurde kein Räume gefunden.</b>
+			) : (
+				<div
+					id="rooms"
+					className={`flex flex-col md:grid ${data.rooms?.length ?? 0 > 1 ? "w-full grid-cols-2" : "mx-auto md:w-1/2 lg:w-2/5"}`}
+				>
+					{data.rooms
+						?.sort((a, b) => (a.enabled && !b.enabled ? -1 : !a.enabled && b.enabled ? 1 : 0))
+						.map((room) => (
+							<Room key={room.roomId} room={room} />
+						))}
+				</div>
+			)}
 		</>
 	);
 };

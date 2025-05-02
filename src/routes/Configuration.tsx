@@ -37,7 +37,14 @@ const Confgiguration = () => {
 			</div>
 		);
 
-	if (!settings.getSettings()) return null;
+	if (!settings.getSettings())
+		return (
+			<Headline
+				title="Fehler beim Laden der Einstellungen"
+				subtitle="Die Einstellungen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+				backLink="/"
+			/>
+		);
 
 	return (
 		<>

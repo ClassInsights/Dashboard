@@ -277,7 +277,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const sendCommands = useCallback(
 		async (computersIds: number[], command: Command) => {
-			if (!auth.data) return;
+			if (!auth.data || computersIds.length === 0) return;
 			try {
 				const response = await fetch(`${auth.data?.school.apiUrl}/computers/commands`, {
 					method: "POST",
@@ -296,7 +296,10 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 				if (!response.ok) throw new Error(`Api Status Code: ${response.status}`);
 			} catch (error) {
 				console.error("Error sending commands", error);
-				toast.showMessage("Fehler beim Senden der Befehle", "error");
+				toast.showMessage(
+					computersIds.length > 1 ? "Fehler beim Senden der Befehle" : "Fehler beim Senden des Befehls",
+					"error",
+				);
 			}
 		},
 		[auth.data, toast.showMessage],

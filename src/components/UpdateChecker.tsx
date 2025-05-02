@@ -18,6 +18,7 @@ const UpdateChecker = () => {
 				{update.isUnix ? (
 					<>
 						<p>Klicke Sie auf Update, um ClassInsights automatisch auf den neusten Stand zu aktualisieren.</p>
+						{update.changes.length > 0 && update.changes.map((change) => change)}
 						<button
 							type="button"
 							onClick={() => update.callUpdate()}
@@ -27,7 +28,10 @@ const UpdateChecker = () => {
 						</button>
 					</>
 				) : (
-					<p>Bitte folgen Sie der Aktualisierungsanleitung.</p>
+					<>
+						<p>Bitte folgen Sie der Aktualisierungsanleitung.</p>
+						{update.changes.length > 0 && update.changes.map((change) => change)}
+					</>
 				)}
 			</div>
 		</div>

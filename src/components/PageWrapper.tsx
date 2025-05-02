@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Spacing from "./Spacing";
 import { SearchProvider } from "../contexts/SearchContext";
@@ -13,34 +13,44 @@ import { ToastProvider } from "../contexts/ToastContext";
 import { SettingsProvider } from "../contexts/SettingsContext";
 import { UpdateProvider } from "../contexts/UpdateContext";
 import UpdateChecker from "./UpdateChecker";
+import { useEffect } from "react";
 
-const PageWrapper = () => (
-	<main className="page-spacing relative min-h-[100dvh] max-w-screen-xl">
-		<ToastProvider>
-			<AuthProvider>
-				<DataProvider>
-					<SettingsProvider>
-						<UpdateProvider>
-							<LoadingHelper>
-								<ComputerProvider>
-									<SearchProvider>
-										<UpdateChecker />
-										<SearchBar />
-										<ComputerModal />
-										<Navbar />
-										<Spacing size="xl" />
-										<Outlet />
-										<Spacing size="xl" />
-										<Footer />
-									</SearchProvider>
-								</ComputerProvider>
-							</LoadingHelper>
-						</UpdateProvider>
-					</SettingsProvider>
-				</DataProvider>
-			</AuthProvider>
-		</ToastProvider>
-	</main>
-);
+const PageWrapper = () => {
+	const location = useLocation();
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Scroll to top on route change
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [location.pathname]);
+
+	return (
+		<main className="page-spacing relative min-h-[100dvh] max-w-screen-xl">
+			<ToastProvider>
+				<AuthProvider>
+					<DataProvider>
+						<SettingsProvider>
+							<UpdateProvider>
+								<LoadingHelper>
+									<ComputerProvider>
+										<SearchProvider>
+											<UpdateChecker />
+											<SearchBar />
+											<ComputerModal />
+											<Navbar />
+											<Spacing size="xl" />
+											<Outlet />
+											<Spacing size="xl" />
+											<Footer />
+										</SearchProvider>
+									</ComputerProvider>
+								</LoadingHelper>
+							</UpdateProvider>
+						</SettingsProvider>
+					</DataProvider>
+				</AuthProvider>
+			</ToastProvider>
+		</main>
+	);
+};
 
 export default PageWrapper;

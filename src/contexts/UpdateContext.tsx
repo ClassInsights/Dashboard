@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useToast } from "./ToastContext";
 import { Role } from "../types/AccessToken";
@@ -7,6 +7,7 @@ export type UpdateContextType = {
 	isUnix: boolean;
 	updateAvailable: boolean;
 	isChecking: boolean;
+	changes: ReactNode[];
 	callUpdate: () => Promise<void>;
 	abort: () => void;
 };
@@ -38,6 +39,7 @@ export const UpdateContext = createContext<UpdateContextType | undefined>(undefi
 export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [isUnix, setIsUnix] = useState(false);
+	const [changes, setChanges] = useState<ReactNode[]>([]);
 
 	const alreadyChecked = useRef(false);
 
@@ -79,7 +81,8 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		const data = await response.json();
 		if (!isGitHubTagArray(data)) throw new Error("Invalid response from GitHub API");
 		if (data.length === 0) throw new Error("No tags found in GitHub API response");
-		const latestTag = data[0].name;
+
+		const latestTag = data[0].name.replace("v", "");
 
 		const url = auth.data?.school.apiUrl;
 		if (!url) throw new Error("API URL is not available");
@@ -94,10 +97,30 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!localResponse.ok) throw new Error("Local API request failed");
 		const localData = await localResponse.json();
 		if (!isLocalApiResponse(localData)) throw new Error("Invalid response from local API");
-		const localVersion = localData.version;
+		const localVersion = localData.version.replace("v", "");
 
-		if (latestTag.toLowerCase() !== localVersion.toLocaleLowerCase()) setUpdateAvailable(true);
-
+		if (latestTag.toLowerCase() !== localVersion.toLocaleLowerCase()) {
+			setChanges((prev) => [
+				...prev,
+				<p key="Api Change">
+					API: {localVersion} &gt; {latestTag}
+					<span>
+						{" "}
+						(
+						<a
+							href={`https://github.com/ClassInsights/Api/compare/${localData.version}...${data[0].name}`}
+							target="_blank"
+							rel="noreferrer"
+							className="text-primary"
+						>
+							Änderungen
+						</a>
+						)
+					</span>
+				</p>,
+			]);
+			setUpdateAvailable(true);
+		}
 		setIsUnix(localData.platform.toLowerCase() === "unix");
 	};
 
@@ -109,10 +132,32 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!isGitHubTagArray(data)) throw new Error("Invalid response from GitHub API");
 		if (data.length === 0) throw new Error("No tags found in GitHub API response");
 
-		const latestTag = data[0].name;
-		console.log(latestTag, import.meta.env.PACKAGE_VERSION);
+		const latestTag = data[0].name.replace("v", "");
 
-		if (latestTag.toLowerCase() !== import.meta.env.PACKAGE_VERSION.toLocaleLowerCase()) setUpdateAvailable(true);
+		const localVersion = import.meta.env.PACKAGE_VERSION.toLocaleLowerCase().replace("v", "");
+
+		if (latestTag.toLowerCase() !== localVersion) {
+			setChanges((prev) => [
+				...prev,
+				<p key="Api Change">
+					API: {localVersion} &gt; {latestTag}
+					<span>
+						{" "}
+						(
+						<a
+							href={`https://github.com/ClassInsights/Dashboard/compare/${import.meta.env.PACKAGE_VERSION}...${data[0].name}`}
+							target="_blank"
+							rel="noreferrer"
+							className="text-primary"
+						>
+							Änderungen
+						</a>
+						)
+					</span>
+				</p>,
+			]);
+			setUpdateAvailable(true);
+		}
 	};
 
 	const abort = useCallback(() => setUpdateAvailable(false), []);
@@ -123,6 +168,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 				isUnix,
 				updateAvailable,
 				isChecking: alreadyChecked.current,
+				changes,
 				callUpdate,
 				abort,
 			}}

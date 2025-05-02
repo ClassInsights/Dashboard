@@ -1,12 +1,17 @@
+import { useEffect, useState } from "react";
+
 type MinutesInputProps = {
 	value: number;
 	onChange: (value: number) => void;
 	disabled?: boolean;
 };
 
-const MinutesInputProps = ({ value, onChange, disabled }: MinutesInputProps) => {
+const MinutesInputProps = ({ value: initialValue, onChange, disabled }: MinutesInputProps) => {
+	const [value, setValue] = useState(initialValue.toString());
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value === "") {
+			setValue("");
 			onChange(0);
 			return;
 		}
@@ -14,10 +19,18 @@ const MinutesInputProps = ({ value, onChange, disabled }: MinutesInputProps) => 
 		if (e.target.value.length > 3) return;
 
 		const parsedValue = Number.parseInt(e.target.value);
-		if (Number.isNaN(parsedValue) || value < 0) return;
+		if (Number.isNaN(parsedValue) || initialValue < 0) return;
 
 		onChange(parsedValue);
 	};
+
+	useEffect(() => {
+		if (initialValue === 0) {
+			setValue("");
+		} else {
+			setValue(initialValue.toString());
+		}
+	}, [initialValue]);
 
 	return (
 		<div className="flex items-center gap-2 rounded-md bg-container px-4 py-1">
