@@ -387,7 +387,7 @@ const ComputerList = () => {
 											/>
 											<p>{computer.name}</p>
 										</div>
-										<p>{room?.displayName ?? "Unbekannter Raum"}</p>
+										<p>{room?.displayName ?? "???"}</p>
 										<p>{computer.ipAddress}</p>
 										<p>{computer.macAddress}</p>
 										<p

@@ -62,7 +62,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 
 				const matchLength = searchTerm.length;
 
-				const room = rooms?.find((room) => room.roomId === computer.roomId)?.displayName ?? "Unbekannt";
+				const room = rooms?.find((room) => room.roomId === computer.roomId)?.displayName ?? "???";
 
 				return {
 					...computer,

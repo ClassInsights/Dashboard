@@ -61,7 +61,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 					computer.macAddress
 						.match(/.{1,2}/g)
 						?.reverse()
-						.join(":") ?? "Unbekannt",
+						.join(":") ?? "???",
 			};
 		});
 	}, [auth.data]);
@@ -123,8 +123,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 	// 		const schoolClass = classes.find((c) => c.classId === lesson.classId);
 	// 		return {
 	// 			...lesson,
-	// 			subject: subject?.displayName ?? "Unbekannt",
-	// 			class: schoolClass?.displayName ?? "Unbekannt",
+	// 			subject: subject?.displayName ?? "???",
+	// 			class: schoolClass?.displayName ?? "???",
 	// 		};
 	// 	});
 
