@@ -76,11 +76,20 @@ const RoomTable = () => {
 		if (!data.rooms) return [];
 
 		return data.rooms
-			.filter((room) => room.regex !== null)
+			.filter((room) => room.regex !== null || updatedRooms.some((r) => r.roomId === room.roomId))
 			.map((room) => {
 				const updatedRoom = updatedRooms.find((r) => r.roomId === room.roomId);
 				if (updatedRoom) return { ...room, regex: updatedRoom.regex };
 				return room;
+			})
+			.sort((a, b) => {
+				const roomA = data.rooms?.find((room) => room.roomId === a.roomId);
+				const roomB = data.rooms?.find((room) => room.roomId === b.roomId);
+
+				if (roomA?.regex && !roomB?.regex) return -1;
+				if (!roomA?.regex && roomB?.regex) return 1;
+
+				return -1;
 			});
 	}, [data.rooms, updatedRooms]);
 
