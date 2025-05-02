@@ -2,7 +2,6 @@ import Badge from "../components/Badge";
 import Headline from "../components/Headline";
 import ComputerSVG from "../assets/svg/computer.svg?react";
 import RoomSVG from "../assets/svg/room.svg?react";
-import AttentionSVG from "../assets/svg/attention.svg?react";
 import Spacing from "../components/Spacing";
 import ArrowSVG from "../assets/svg/arrow.svg?react";
 import LogoutSVG from "../assets/svg/logout.svg?react";
@@ -38,10 +37,6 @@ const Home = () => {
 					text={`${data.rooms?.length} ${data.rooms?.length === 1 ? "Raum" : "Räume"}`}
 					headIcon={<RoomSVG width={20} className="shrink-0 fill-primary" />}
 					onClick={() => navigate("/räume")}
-				/>
-				<Badge
-					text="12 Computer ohne Unterricht online"
-					headIcon={<AttentionSVG width={20} className="shrink-0 fill-primary" />}
 				/>
 			</div>
 			<Spacing />
