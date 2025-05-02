@@ -372,7 +372,6 @@ const ComputerList = () => {
 						{computers
 							?.slice(currentPageIndex * computersPerPage, currentPageIndex * computersPerPage + computersPerPage)
 							.map((computer) => {
-								const room = rooms?.find((room) => room.roomId === computer.roomId);
 								const isSelected = selectedComputers.includes(computer.computerId);
 								return (
 									<Fragment key={computer.ipAddress}>
@@ -387,7 +386,7 @@ const ComputerList = () => {
 											/>
 											<p>{computer.name}</p>
 										</div>
-										<p>{room?.displayName ?? "???"}</p>
+										<p>{rooms?.find((room) => room.roomId === computer.roomId)?.displayName ?? "???"}</p>
 										<p>{computer.ipAddress}</p>
 										<p>{computer.macAddress}</p>
 										<p
