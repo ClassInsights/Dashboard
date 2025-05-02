@@ -1,0 +1,32 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"nursery": {
+				"useSortedClasses": {
+					"level": "warn",
+					"fix": "safe",
+					"options": {}
+				}
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"lineWidth": 120
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
+	},
+	"files": {
+		"ignore": ["tsconfig.app.json"]
+	}
+}
