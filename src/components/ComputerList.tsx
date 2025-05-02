@@ -296,6 +296,7 @@ const ComputerList = () => {
 									: `${selectedComputers.length} Computer`
 							} neustarten`}
 							headIcon={<RestartSVG className="shrink-0 fill-primary" />}
+							onClick={() => data.sendCommands(selectedComputers, "restart")}
 						/>
 						<Badge
 							text={`${
@@ -304,6 +305,7 @@ const ComputerList = () => {
 									: `${selectedComputers.length} Computer`
 							} herunterfahren`}
 							headIcon={<ShutDownSVG className="shrink-0 fill-primary" />}
+							onClick={() => data.sendCommands(selectedComputers, "shutdown")}
 						/>
 					</div>
 				) : (

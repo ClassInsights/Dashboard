@@ -76,11 +76,21 @@ const ComputerModal = () => {
 								disabled={!computer.data.online}
 								text="Neustarten"
 								headIcon={<RestartSVG className="shrink-0 fill-primary" />}
+								onClick={() => {
+									const computerId = computer.data?.computerId;
+									if (!computerId) return;
+									data.sendCommands([computerId], "restart");
+								}}
 							/>
 							<Badge
 								disabled={!computer.data.online}
 								text="Herunterfahren"
 								headIcon={<ShutDownSVG className="shrink-0 fill-primary" />}
+								onClick={() => {
+									const computerId = computer.data?.computerId;
+									if (!computerId) return;
+									data.sendCommands([computerId], "shutdown");
+								}}
 							/>
 						</div>
 					</div>

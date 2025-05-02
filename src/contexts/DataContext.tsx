@@ -13,6 +13,8 @@ export enum RoomSaveStatus {
 	FAIL = "fail",
 }
 
+type Command = "shutdown" | "restart";
+
 type DataContextType = {
 	computers?: Computer[];
 	rooms?: Room[];
@@ -26,6 +28,7 @@ type DataContextType = {
 	closeRoomModal: () => void;
 	refreshComputers: (feedback?: boolean) => void;
 	refreshRooms: (feedback?: boolean) => void;
+	sendCommands: (computersIds: number[], command: Command) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -274,6 +277,33 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 		[auth.data, fetchRooms, isRefreshing, toast.showMessage],
 	);
 
+	const sendCommands = useCallback(
+		async (computersIds: number[], command: Command) => {
+			if (!auth.data) return;
+			try {
+				const response = await fetch(`${auth.data?.school.apiUrl}/computers/commands`, {
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${auth.data?.accessToken}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(
+						computersIds.map((computerId) => ({
+							computerId,
+							command,
+						})),
+					),
+				});
+
+				if (!response.ok) throw new Error(`Api Status Code: ${response.status}`);
+			} catch (error) {
+				console.error("Error sending commands", error);
+				toast.showMessage("Fehler beim Senden der Befehle", "error");
+			}
+		},
+		[auth.data, toast.showMessage],
+	);
+
 	useEffect(() => {
 		if (!auth.data) {
 			setIsLoading(false);
@@ -293,7 +323,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
 		const interval = setInterval(
 			() => refresh(),
-			60 * 1000, // 1 minute
+			30 * 1000, // 30 seconds
 		);
 		return () => clearInterval(interval);
 	});
@@ -313,6 +343,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 				closeRoomModal,
 				refreshComputers,
 				refreshRooms,
+				sendCommands,
 			}}
 		>
 			{children}
