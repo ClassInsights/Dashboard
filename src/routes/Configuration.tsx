@@ -26,7 +26,8 @@ const Confgiguration = () => {
 			.catch(() => toast.showMessage("Fehler beim Speichern", "error"));
 	}, [settings.saveSettings, toast.showMessage]);
 
-	if (!auth.data?.roles.includes(Role.ADMIN)) return <NoAccess inPage={true} adminOnly={true} />;
+	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.OWNER))
+		return <NoAccess inPage={true} adminOnly={true} />;
 
 	if (settings.isLoading)
 		return (

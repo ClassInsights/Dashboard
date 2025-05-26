@@ -17,7 +17,7 @@ const Navbar = () => {
 
 	const isAdmin = useMemo(() => {
 		if (!auth.data) return false;
-		return auth.data.roles.includes(Role.ADMIN);
+		return auth.data.roles.includes(Role.ADMIN) || auth.data.roles.includes(Role.OWNER);
 	}, [auth.data]);
 
 	/** Handler for clicking inside the viewport */

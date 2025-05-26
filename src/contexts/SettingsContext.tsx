@@ -42,7 +42,8 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
 	const fetchSettings = useCallback(async () => {
 		if (!auth.data) return;
-		if (!auth.data?.roles.includes(Role.ADMIN)) throw new Error("Unauthorized access");
+		if (!auth.data.roles.includes(Role.ADMIN) && !auth.data.roles.includes(Role.OWNER))
+			throw new Error("Unauthorized access");
 
 		const response = await fetch(`${auth.data?.school.apiUrl}/settings/dashboard`, {
 			headers: {

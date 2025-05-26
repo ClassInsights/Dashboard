@@ -94,7 +94,12 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 			</div>
 		);
 
-	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.TEACHER)) return <NoAccess />;
+	if (
+		!auth.data?.roles.includes(Role.ADMIN) &&
+		!auth.data?.roles.includes(Role.OWNER) &&
+		!auth.data?.roles.includes(Role.TEACHER)
+	)
+		return <NoAccess />;
 
 	if (!data.computers || !data.rooms /* || !data.lessons */)
 		return (

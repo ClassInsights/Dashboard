@@ -68,7 +68,12 @@ const Home = () => {
 					"/konfiguration",
 				],
 			].map(([title, description, linkText, link]) => {
-				if (title === "ClassInsights Konfiguration" && !auth.data?.roles.includes(Role.ADMIN)) return null;
+				if (
+					title === "ClassInsights Konfiguration" &&
+					!auth.data?.roles.includes(Role.ADMIN) &&
+					!auth.data?.roles.includes(Role.OWNER)
+				)
+					return null;
 				return (
 					<div key={title}>
 						<Spacing size="md" />
