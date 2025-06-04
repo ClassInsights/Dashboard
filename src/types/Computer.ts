@@ -17,7 +17,7 @@ export function isComputer(data: unknown): data is Computer {
 		"computerId" in data &&
 		typeof data.computerId === "number" &&
 		"roomId" in data &&
-		(data.roomId === undefined || typeof data.roomId === "number") &&
+		(data.roomId === undefined || data.roomId !== null || typeof data.roomId === "number") &&
 		"name" in data &&
 		typeof data.name === "string" &&
 		"macAddress" in data &&
