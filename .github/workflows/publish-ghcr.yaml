@@ -20,7 +20,7 @@ jobs:
       run: |
         TAG_VERSION="${RELEASE_VERSION#v}"  
         if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-          echo "Error: Tag version $RELEASE_VERSION does not match package.json version $PKG_VERSION"
+          echo "Error: Tag version $TAG_VERSION does not match package.json version $PKG_VERSION"
           exit 1
         fi
     - name: Set env
