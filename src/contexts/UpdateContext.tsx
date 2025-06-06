@@ -140,7 +140,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 			setChanges((prev) => [
 				...prev,
 				<p key="Dashboard Change">
-					API: {localVersion} &gt; {latestTag}
+					Dashboard: {localVersion} &gt; {latestTag}
 					<span>
 						{" "}
 						(
