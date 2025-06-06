@@ -1,6 +1,6 @@
 {
-	"name": "vite-biome-tailwind-template",
-	"author": "fakerr",
+	"name": "classinsights-local-dashboard",
+	"author": "ClassInsights",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",

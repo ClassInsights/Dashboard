@@ -12,15 +12,6 @@ export type UpdateContextType = {
 	abort: () => void;
 };
 
-type GitHubTag = {
-	name: string;
-};
-
-const isGitHubTagArray = (data: unknown): data is GitHubTag[] =>
-	data !== null &&
-	Array.isArray(data) &&
-	data.every((item) => typeof item === "object" && item !== null && "name" in item && typeof item.name === "string");
-
 type LocalApiResponse = {
 	version: string;
 	platform: string;
@@ -75,14 +66,13 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [updateAvailable, toast.showMessage, auth.data]);
 
 	const checkApiUpdate = async () => {
-		const response = await fetch("https://api.github.com/repos/classinsights/api/tags");
+		const response = await fetch("https://api.github.com/repos/classinsights/api/releases/latest");
 		if (!response.ok) throw new Error("GitHub API request for Api repository failed");
 
 		const data = await response.json();
-		if (!isGitHubTagArray(data)) throw new Error("Invalid response from GitHub API");
-		if (data.length === 0) throw new Error("No tags found in GitHub API response");
+		if (!data || !("tag_name" in data)) throw new Error("Invalid response from GitHub API");
 
-		const latestTag = data[0].name.replace("v", "");
+		const latestTag = data.tag_name.replace("v", "");
 
 		const url = auth.data?.school.apiUrl;
 		if (!url) throw new Error("API URL is not available");
@@ -99,16 +89,16 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!isLocalApiResponse(localData)) throw new Error("Invalid response from local API");
 		const localVersion = localData.version.replace("v", "");
 
-		if (latestTag.toLowerCase() !== localVersion.toLocaleLowerCase()) {
+		if (latestTag.toLowerCase() !== localVersion.toLowerCase()) {
 			setChanges((prev) => [
 				...prev,
 				<p key="Api Change">
-					API: {localVersion} &gt; {latestTag}
+					API: {localVersion} &#8594; {latestTag}
 					<span>
 						{" "}
 						(
 						<a
-							href={`https://github.com/ClassInsights/Api/compare/${localData.version}...${data[0].name}`}
+							href={`https://github.com/ClassInsights/Api/compare/${localData.version}...${data.tag_name}`}
 							target="_blank"
 							rel="noreferrer"
 							className="text-primary"
@@ -121,31 +111,30 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 			]);
 			setUpdateAvailable(true);
 		}
+
 		setIsUnix(localData.platform.toLowerCase() === "unix");
 	};
 
 	const checkDashboardUpdate = async () => {
-		const response = await fetch("https://api.github.com/repos/classinsights/dashboard/tags");
+		const response = await fetch("https://api.github.com/repos/classinsights/dashboard/releases/latest");
 		if (!response.ok) throw new Error("GitHub API request for Dashboard repository failed");
 		const data = await response.json();
 
-		if (!isGitHubTagArray(data)) throw new Error("Invalid response from GitHub API");
-		if (data.length === 0) throw new Error("No tags found in GitHub API response");
+		if (!data || !("tag_name" in data)) throw new Error("Invalid response from GitHub API");
+		const latestTag = data.tag_name.replace("v", "");
 
-		const latestTag = data[0].name.replace("v", "");
+		const localVersion = import.meta.env.PACKAGE_VERSION;
 
-		const localVersion = import.meta.env.PACKAGE_VERSION.toLocaleLowerCase().replace("v", "");
-
-		if (latestTag.toLowerCase() !== localVersion) {
+		if (latestTag.toLowerCase() !== localVersion.toLowerCase()) {
 			setChanges((prev) => [
 				...prev,
 				<p key="Dashboard Change">
-					Dashboard: {localVersion} &gt; {latestTag}
+					Dashboard: {localVersion} &#8594; {latestTag}
 					<span>
 						{" "}
 						(
 						<a
-							href={`https://github.com/ClassInsights/Dashboard/compare/${import.meta.env.PACKAGE_VERSION}...${data[0].name}`}
+							href={`https://github.com/ClassInsights/Dashboard/compare/v${localVersion}...${data.tag_name}`}
 							target="_blank"
 							rel="noreferrer"
 							className="text-primary"
