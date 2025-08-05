@@ -1,8 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { isComputer, type Computer } from "../types/Computer";
 import { isRoom, type Room } from "../types/Room";
 import { useAuth } from "./AuthContext";
-import type { Lesson } from "../types/Lesson";
 import { useToast } from "./ToastContext";
 
 export enum RoomSaveStatus {
@@ -16,9 +15,7 @@ type Command = "shutdown" | "restart";
 type DataContextType = {
 	computers?: Computer[];
 	rooms?: Room[];
-	lessons?: Lesson[];
 	isLoading: boolean;
-	getCurrentLesson: (roomId: number) => Lesson | undefined;
 	updateRoom: (roomId: number, room: Room) => void;
 	saveRooms: (rooms: Room[]) => Promise<RoomSaveStatus>;
 	isRoomModalOpen: boolean;
@@ -33,7 +30,6 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 	const [computers, setComputers] = useState<Computer[] | undefined>(undefined);
 	const [rooms, setRooms] = useState<Room[] | undefined>(undefined);
-	const [lessons /* setLessons */] = useState<Lesson[] | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
@@ -41,7 +37,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 	const auth = useAuth();
 	const toast = useToast();
 
-	const fetchComputers = useCallback(async () => {
+	const fetchComputers = async () => {
 		const response = await fetch(`${auth.data?.school.apiUrl}/computers`, {
 			headers: {
 				Authorization: `Bearer ${auth.data?.accessToken}`,
@@ -64,9 +60,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 						.join(":") ?? "???",
 			};
 		});
-	}, [auth.data]);
+	};
 
-	const fetchRooms = useCallback(async () => {
+	const fetchRooms = async () => {
 		const response = await fetch(`${auth.data?.school.apiUrl}/rooms`, {
 			headers: {
 				Authorization: `Bearer ${auth.data?.accessToken}`,
@@ -79,91 +75,25 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 			throw new Error(`Not a valid Room, ${JSON.stringify(data)}`);
 
 		return data.map((room) => (room.regex === "" ? { ...room, regex: null } : room));
-	}, [auth.data]);
+	};
 
-	// const fetchLessons = useCallback(async () => {
-	// 	// Fetch lessons
-	// 	let response = await fetch(`${auth.data?.school.apiUrl}/lessons`, {
-	// 		headers: {
-	// 			Authorization: `Bearer ${auth.data?.accessToken}`,
-	// 		},
-	// 	});
-	// 	if (!response.ok) throw new Error("Failed to fetch lessons");
-	// 	const lessons = await response.json();
-
-	// 	if (!Array.isArray(lessons) || !lessons.every((lesson) => isLesson(lesson)))
-	// 		throw new Error(`Not a valid Lesson, ${JSON.stringify(lessons)}`);
-
-	// 	// Fetch subjects
-	// 	response = await fetch(`${auth.data?.school.apiUrl}/subjects`, {
-	// 		headers: {
-	// 			Authorization: `Bearer ${auth.data?.accessToken}`,
-	// 		},
-	// 	});
-
-	// 	if (!response.ok) throw new Error("Failed to fetch lessons");
-	// 	const subjects = await response.json();
-	// 	if (!Array.isArray(subjects) || !subjects.every((subject) => isSubject(subject)))
-	// 		throw new Error(`Not a valid Subject, ${JSON.stringify(subjects)}`);
-
-	// 	// Fetch classes
-	// 	response = await fetch(`${auth.data?.school.apiUrl}/classes`, {
-	// 		headers: {
-	// 			Authorization: `Bearer ${auth.data?.accessToken}`,
-	// 		},
-	// 	});
-
-	// 	if (!response.ok) throw new Error("Failed to fetch lessons");
-	// 	const classes = await response.json();
-	// 	if (!Array.isArray(classes) || !classes.every((c) => isClass(c)))
-	// 		throw new Error(`Not a valid Class, ${JSON.stringify(classes)}`);
-
-	// 	const finalLessons: Lesson[] = lessons.map((lesson) => {
-	// 		const subject = subjects.find((subject) => subject.subjectId === lesson.subjectId);
-	// 		const schoolClass = classes.find((c) => c.classId === lesson.classId);
-	// 		return {
-	// 			...lesson,
-	// 			subject: subject?.displayName ?? "???",
-	// 			class: schoolClass?.displayName ?? "???",
-	// 		};
-	// 	});
-
-	// 	return finalLessons;
-	// }, [auth.data]);
-
-	const fetchData = useCallback(async () => {
+	const fetchData = async () => {
 		let computers: Computer[];
 		let rooms: Room[];
-		// let lessons: Lesson[];
 
 		try {
 			computers = await fetchComputers();
 			rooms = await fetchRooms();
-			// lessons = await fetchLessons();
 
 			setComputers(computers);
-			// setLessons(lessons);
 			setRooms(rooms);
 		} catch (error) {
 			console.log("Error fetching data", error);
 		}
-	}, [fetchComputers, fetchRooms]);
+	};
 
-	const getCurrentLesson = useCallback(
-		(roomId: number) => {
-			if (!lessons) return undefined;
-			const currentLesson = lessons.find((lesson) => {
-				const startTime = new Date(lesson.start);
-				const endTime = new Date(lesson.end);
-				const now = new Date();
-				return lesson.roomId === roomId && startTime <= now && endTime >= now;
-			});
-			return currentLesson;
-		},
-		[lessons],
-	);
 
-	const updateRoom = useCallback((roomId: number, room: Room) => {
+	const updateRoom = (roomId: number, room: Room) => {
 		setTimeout(() => {
 			setRooms((prev) => {
 				if (!prev) return prev;
@@ -172,9 +102,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 				return newRooms;
 			});
 		}, 0);
-	}, []);
+	};
 
-	const saveRooms = useCallback(
+	const saveRooms = 
 		async (rooms: Room[]) => {
 			if (!auth.data) return RoomSaveStatus.FAIL;
 			if (rooms.length === 0) return RoomSaveStatus.SUCCESS;
@@ -208,36 +138,32 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 			if (successRooms.length === 0) return RoomSaveStatus.FAIL;
 			if (successRooms.length < rooms.length) return RoomSaveStatus.PARTIAL;
 			return RoomSaveStatus.SUCCESS;
-		},
-		[auth.data],
-	);
+		};
 
-	const closeRoomModal = useCallback(() => {
+	const closeRoomModal = () => {
 		setIsRoomModalOpen(false);
 		document.body.style.overflow = "auto";
 		document.body.style.paddingRight = "";
 		document.body.removeEventListener("keydown", hideOnShortcut);
-	}, []);
+	};
 
-	const hideOnShortcut = useCallback(
+	const hideOnShortcut = 
 		(event: KeyboardEvent) => {
 			if (event.key === "Escape") {
 				closeRoomModal();
 			}
-		},
-		[closeRoomModal],
-	);
+		};
 
-	const openRoomModal = useCallback(() => {
+	const openRoomModal = () => {
 		setIsRoomModalOpen(true);
 		const scrollTop = document.scrollingElement?.scrollTop;
 		document.body.style.overflow = "hidden";
 		document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
 		if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
 		document.body.addEventListener("keydown", hideOnShortcut);
-	}, [hideOnShortcut]);
+	};
 
-	const refreshComputers = useCallback(
+	const refreshComputers = 
 		async (feedback = true) => {
 			if (!auth.data || isRefreshing) return;
 			setIsRefreshing(true);
@@ -252,11 +178,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 					console.error("Error fetching computers", error);
 				})
 				.finally(() => setIsRefreshing(false));
-		},
-		[auth.data, fetchComputers, isRefreshing, toast.showMessage],
-	);
+		};
 
-	const refreshRooms = useCallback(
+	const refreshRooms = 
 		async (feedback = true) => {
 			if (!auth.data || isRefreshing) return;
 			setIsRefreshing(true);
@@ -271,11 +195,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 					console.error("Error fetching rooms", error);
 				})
 				.finally(() => setIsRefreshing(false));
-		},
-		[auth.data, fetchRooms, isRefreshing, toast.showMessage],
-	);
+		};
 
-	const sendCommands = useCallback(
+	const sendCommands = 
 		async (computersIds: number[], command: Command) => {
 			if (!auth.data || computersIds.length === 0) return;
 			try {
@@ -301,9 +223,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 					"error",
 				);
 			}
-		},
-		[auth.data, toast.showMessage],
-	);
+		};
 
 	useEffect(() => {
 		if (!auth.data) {
@@ -312,7 +232,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 		setIsLoading(true);
 		fetchData().then(() => setIsLoading(false));
-	}, [auth.data, fetchData]);
+	}, [auth.data]);
 
 	const refresh = async () => {
 		setIsRefreshing(true);
@@ -334,9 +254,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 			value={{
 				computers,
 				rooms,
-				lessons,
 				isLoading,
-				getCurrentLesson,
 				updateRoom,
 				saveRooms,
 				isRoomModalOpen,

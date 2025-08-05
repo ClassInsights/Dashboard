@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import type { Computer } from "../types/Computer";
 
 type ComputerContextType = {
@@ -13,11 +13,11 @@ export const ComputerProvider = ({ children }: { children: React.ReactNode }) =>
 	const [isVisible, setIsVisible] = useState(false);
 	const [data, setData] = useState<Computer | undefined>(undefined);
 
-	const hideOnEscape = useCallback((e: KeyboardEvent) => {
+	const hideOnEscape = (e: KeyboardEvent) => {
 		if (e.key === "Escape") {
 			close();
 		}
-	}, []);
+	};
 
 	const open = (computer: Computer) => {
 		setData(computer);
@@ -29,13 +29,13 @@ export const ComputerProvider = ({ children }: { children: React.ReactNode }) =>
 		document.body.addEventListener("keydown", hideOnEscape);
 	};
 
-	const close = useCallback(() => {
+	const close = () => {
 		setIsVisible(false);
 		setData(undefined);
 		document.body.style.overflow = "auto";
 		document.body.style.paddingRight = "";
 		document.body.removeEventListener("keydown", hideOnEscape);
-	}, [hideOnEscape]);
+	};
 
 	return <ComputerContext.Provider value={{ isVisible, open, close, data }}>{children}</ComputerContext.Provider>;
 };

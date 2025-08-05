@@ -5,7 +5,15 @@ import version from "vite-plugin-package-version";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react(), svgr(), version()],
+	plugins: [
+		react({
+			babel: {
+				plugins: ["babel-plugin-react-compiler"],
+			},
+		}),
+		svgr(),
+		version(),
+	],
 	server: {
 		port: 5174,
 	},

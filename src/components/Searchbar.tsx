@@ -1,4 +1,4 @@
-import { type ChangeEvent, useCallback, useEffect } from "react";
+import { type ChangeEvent, useEffect } from "react";
 import { useSearch } from "../contexts/SearchContext";
 import SearchSVG from "../assets/svg/search.svg?react";
 import { useComputer } from "../contexts/ComputerContext";
@@ -7,13 +7,10 @@ const SearchBar = () => {
 	const search = useSearch();
 	const { open } = useComputer();
 
-	const handleChange = useCallback(
-		(event: ChangeEvent<HTMLInputElement>) => {
-			const value = event.target.value.trim();
-			search.generateResult(value);
-		},
-		[search.generateResult],
-	);
+	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const value = event.target.value.trim();
+		search.generateResult(value);
+	};
 
 	useEffect(() => {
 		const input = document.getElementById("search") as HTMLInputElement;

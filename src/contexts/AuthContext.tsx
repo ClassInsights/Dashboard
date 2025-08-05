@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { isTokenExchange, type TokenExchange } from "../types/TokenExchange";
 import { isAccessTokenResponse, isCustomJWTPayload } from "../types/AccessToken";
 import { isAuthData, type AuthData } from "../types/AuthData";
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [_, setSearchParams] = useSearchParams();
 
-	const logout = useCallback(async () => {
+	const logout = async () => {
 		Cookies.remove("tasty-dashboard");
 		try {
 			await fetch(`${data?.school.apiUrl}/user`, {
@@ -35,10 +35,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		window.location.replace(
 			`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?logout=true`,
 		);
-	}, [data]);
+	};
 
-	const requestAuthData = useCallback(
-		async (exchangeData: TokenExchange, token: string) => {
+	useEffect(() => {
+		const urlParams = new URLSearchParams(window.location.search);
+		if (tokenRef.current) return;
+
+		const requestAuthData = async (exchangeData: TokenExchange, token: string) => {
 			const response = await fetch(`${exchangeData.local_api_url}/user`, {
 				method: "POST",
 				body: JSON.stringify({ dashboard_token: token }),
@@ -82,12 +85,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			});
 
 			return authData;
-		},
-		[setSearchParams],
-	);
+		};
 
-	const handleToken = useCallback(
-		async (token: string) => {
+		const handleToken = async (token: string) => {
 			const response = await fetch(
 				`https://classinsights${import.meta.env.DEV ? ".dev" : ".at"}/api/school/dashboard`,
 				{
@@ -107,19 +107,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				.then((data) => setData((oldData) => oldData ?? data))
 				.catch((error) => console.error("Auth failed inside requestAuthData catch:", error))
 				.finally(() => setIsLoading(false));
-		},
-		[requestAuthData],
-	);
+		};
 
-	const redirectToLogin = useCallback(() => {
-		window.location.replace(
-			`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?auto-redirect=true`,
-		);
-	}, []);
-
-	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search);
-		if (tokenRef.current) return;
+		const redirectToLogin = () => {
+			window.location.replace(
+				`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?auto-redirect=true`,
+			);
+		};
 
 		const token = urlParams.get("token");
 		if (!token) {
@@ -153,7 +147,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		return () => {
 			if (!tokenRef.current) tokenRef.current = token;
 		};
-	}, [handleToken, redirectToLogin]);
+	}, [setSearchParams]);
 
 	return <AuthContext.Provider value={{ isLoading, data, logout }}>{children}</AuthContext.Provider>;
 };

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import { RoomSaveStatus, useData } from "../contexts/DataContext";
 import DeleteSVG from "../assets/svg/delete.svg?react";
 import TextInput from "./inputs/TextInput";
@@ -60,7 +60,7 @@ const RoomTable = () => {
 		setIsProcessing(false);
 	};
 
-	const saveRooms = useCallback(async () => {
+	const saveRooms = async () => {
 		setIsProcessing(true);
 		const response = await data.saveRooms(updatedRooms.filter((room) => room.regex));
 
@@ -70,9 +70,9 @@ const RoomTable = () => {
 
 		setIsProcessing(false);
 		setUpdatedRooms([]);
-	}, [data, updatedRooms, toast.showMessage]);
+	};
 
-	const rooms = useMemo(() => {
+	const rooms = (() => {
 		if (!data.rooms) return [];
 
 		return data.rooms
@@ -91,34 +91,31 @@ const RoomTable = () => {
 
 				return -1;
 			});
-	}, [data.rooms, updatedRooms]);
+	})();
 
-	const leftoverRooms = useMemo(() => {
+	const leftoverRooms = (() => {
 		if (!data.rooms) return [];
 		return data.rooms
 			.filter((room) => !rooms.some((r) => r.roomId === room.roomId))
 			.sort((a, b) => a.displayName.localeCompare(b.displayName));
-	}, [data.rooms, rooms]);
+	})();
 
-	const hasChanges = useMemo(() => {
+	const hasChanges = (() => {
 		const changedRooms = updatedRooms.filter((room) => {
 			const originalRoom = data.rooms?.find((r) => r.roomId === room.roomId);
 			if (!originalRoom) return false;
 			return room.regex !== (originalRoom.regex ?? "");
 		});
 		return changedRooms.length > 0;
-	}, [updatedRooms, data.rooms]);
+	})();
 
-	const testRegex = useCallback(
-		(regex: string, room: string) => {
-			try {
-				const regexPattern = new RegExp(regex);
-				const computers = data.computers?.filter((computer) => regexPattern.test(computer.name)) ?? [];
-				if (computers.length === 0) toast.showMessage(`Keine Computer in ${room} gefunden`, "error");
-			} catch {}
-		},
-		[data.computers, toast.showMessage],
-	);
+	const testRegex = (regex: string, room: string) => {
+		try {
+			const regexPattern = new RegExp(regex);
+			const computers = data.computers?.filter((computer) => regexPattern.test(computer.name)) ?? [];
+			if (computers.length === 0) toast.showMessage(`Keine Computer in ${room} gefunden`, "error");
+		} catch {}
+	};
 
 	return (
 		<>

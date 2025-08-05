@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { Room as RoomType } from "../types/Room";
 import Toggle from "./inputs/Toggle";
 import Spacing from "./Spacing";
@@ -13,25 +13,22 @@ const Room = ({ room }: { room: RoomType }) => {
 	const { updateRoom } = useData();
 	const toast = useToast();
 
-	const saveRoom = useCallback(
-		async (active: boolean) => {
-			if (!data) return;
-			setIsSubmitting(true);
-			const result = await fetch(`${data.school.apiUrl}/rooms/${room.roomId}`, {
-				method: "PATCH",
-				headers: {
-					Authorization: `Bearer ${data.accessToken}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ ...room, enabled: active }),
-			});
+	const saveRoom = async (active: boolean) => {
+		if (!data) return;
+		setIsSubmitting(true);
+		const result = await fetch(`${data.school.apiUrl}/rooms/${room.roomId}`, {
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${data.accessToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ ...room, enabled: active }),
+		});
 
-			if (!result.ok) throw new Error("Failed to update room");
+		if (!result.ok) throw new Error("Failed to update room");
 
-			updateRoom(room.roomId, { ...room, enabled: active });
-		},
-		[data, room, updateRoom],
-	);
+		updateRoom(room.roomId, { ...room, enabled: active });
+	};
 
 	return (
 		<div className="room">

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { Role } from "../types/AccessToken";
@@ -11,30 +11,27 @@ import { useSettings } from "../contexts/SettingsContext";
 const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(true);
 
-	const loadingTexts = useMemo(
-		() => [
-			"Drehe Däumchen und lade Daten...",
-			"Poliere die Pixel auf Hochglanz...",
-			"Wecke die Hamster im Serverraum...",
-			"Beschwöre digitale Magie...",
-			"Sortiere Einsen und Nullen (die Klassiker)...",
-			"Füttere die Datenkraken...",
-			"Entwirre den Datensalat...",
-			"Tue so, als würde ich schwer arbeiten...",
-			"Moment, suche noch den An-Knopf...",
-			"Lade... fast so schnell wie mein Kaffeedurst am Morgen.",
-			"Optimiere den Fluxkompensator...",
-			"Zähle Schäfchen... äh, Bytes...",
-			"Gleich geht's los, versprochen!",
-			"Reticuliere Splines... (Ein Klassiker!)",
-			"Halte durch, es ist fast geschafft!",
-			"Frage die Bits höflich, ob sie mitmachen wollen...",
-			"Suche nach dem Sinn des Ladens...",
-			"Diese Ladezeit wird Ihnen präsentiert von... Geduld!",
-			"Bin gleich zurück, muss kurz die Kabel neu stecken.",
-		],
-		[],
-	);
+	const loadingTexts = [
+		"Drehe Däumchen und lade Daten...",
+		"Poliere die Pixel auf Hochglanz...",
+		"Wecke die Hamster im Serverraum...",
+		"Beschwöre digitale Magie...",
+		"Sortiere Einsen und Nullen (die Klassiker)...",
+		"Füttere die Datenkraken...",
+		"Entwirre den Datensalat...",
+		"Tue so, als würde ich schwer arbeiten...",
+		"Moment, suche noch den An-Knopf...",
+		"Lade... fast so schnell wie mein Kaffeedurst am Morgen.",
+		"Optimiere den Fluxkompensator...",
+		"Zähle Schäfchen... äh, Bytes...",
+		"Gleich geht's los, versprochen!",
+		"Reticuliere Splines... (Ein Klassiker!)",
+		"Halte durch, es ist fast geschafft!",
+		"Frage die Bits höflich, ob sie mitmachen wollen...",
+		"Suche nach dem Sinn des Ladens...",
+		"Diese Ladezeit wird Ihnen präsentiert von... Geduld!",
+		"Bin gleich zurück, muss kurz die Kabel neu stecken.",
+	];
 
 	const [text, setText] = useState(loadingTexts[Math.floor(Math.random() * loadingTexts.length)]);
 
@@ -50,7 +47,7 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 				const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
 				setText(randomText);
 			}, 1000);
-	}, [loadingTexts]);
+	}, []);
 
 	useEffect(
 		() => setIsLoading(auth.isLoading || data.isLoading || settings.isLoading),

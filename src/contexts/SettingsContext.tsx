@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { isSettings, type Settings } from "../types/Settings";
 import { useAuth } from "./AuthContext";
 import { Role } from "../types/AccessToken";
@@ -26,21 +26,19 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
 	const getSettings = () => newSettings ?? settings;
 
-	const updateSettings = useCallback(
+	const updateSettings = 
 		(key: string, value: number | boolean) => {
 			if (!settings && !newSettings) return;
 			if (newSettings) setNewSettings({ ...newSettings, [key]: value });
 			else if (settings) setNewSettings({ ...settings, [key]: value });
-		},
-		[settings, newSettings],
-	);
+		};
 
-	const hasUnsavedChanges = useMemo(() => {
+	const hasUnsavedChanges = (() => {
 		if (!settings || !newSettings) return false;
 		return JSON.stringify(settings) !== JSON.stringify(newSettings);
-	}, [settings, newSettings]);
+})();
 
-	const fetchSettings = useCallback(async () => {
+	const fetchSettings = async () => {
 		if (!auth.data) return;
 		if (!auth.data.roles.includes(Role.ADMIN) && !auth.data.roles.includes(Role.OWNER))
 			throw new Error("Unauthorized access");
@@ -57,9 +55,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 		if (!data || !isSettings(data)) throw new Error("Invalid settings data");
 
 		return data;
-	}, [auth.data]);
+	};
 
-	const saveSettings = useCallback(async () => {
+	const saveSettings = async () => {
 		if (!newSettings) return;
 		const response = await fetch(`${auth.data?.school.apiUrl}/settings/dashboard`, {
 			method: "PUT",
@@ -77,9 +75,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
 		setSettings(newSettings);
 		setNewSettings(undefined);
-	}, [auth.data, newSettings]);
+	};
 
-	const refreshSettings = useCallback(() => {
+	const refreshSettings = () => {
 		if (isRefreshing) return;
 		setIsRefreshing(true);
 		fetchSettings()
@@ -92,7 +90,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 				toast.showMessage("Fehler beim Aktualisieren der Einstellungen", "error");
 			})
 			.finally(() => setIsRefreshing(false));
-	}, [fetchSettings, isRefreshing, toast.showMessage]);
+		};
 
 	useEffect(() => {
 		fetchSettings()

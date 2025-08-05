@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import ToastMessage from "../components/ToastMessage";
 
 export type ToastType = {
@@ -25,7 +25,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 	const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
 
 	/** Show a toast message */
-	const showMessage = useCallback(
+	const showMessage = 
 		(message: string, type: MessageType = "success", duration?: number) => {
 			if (toast.isVisible) {
 				setToast((prev) => ({ ...prev, isVisible: false }));
@@ -42,9 +42,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 			if (timeoutId) clearTimeout(timeoutId);
 			const newTimeoutId = setTimeout(() => setToast((prev) => ({ ...prev, isVisible: false })), duration ?? 4000);
 			setTimeoutId(newTimeoutId);
-		},
-		[toast.isVisible, timeoutId],
-	);
+		};
 
 	return (
 		<ToastContext.Provider value={{ showMessage }}>

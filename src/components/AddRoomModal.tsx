@@ -2,7 +2,6 @@ import { useData } from "../contexts/DataContext";
 import CloseSVG from "../assets/svg/close.svg?react";
 import Spacing from "./Spacing";
 import type { Room } from "../types/Room";
-import { useCallback } from "react";
 
 type AddRoomModalProps = {
 	rooms: Room[];
@@ -12,13 +11,10 @@ type AddRoomModalProps = {
 const AddRoomModal = ({ rooms, onSelect }: AddRoomModalProps) => {
 	const data = useData();
 
-	const selectRoom = useCallback(
-		(roomId: number) => {
-			data.closeRoomModal();
-			onSelect(roomId);
-		},
-		[data, onSelect],
-	);
+	const selectRoom = (roomId: number) => {
+		data.closeRoomModal();
+		onSelect(roomId);
+	};
 
 	if (!rooms) return null;
 

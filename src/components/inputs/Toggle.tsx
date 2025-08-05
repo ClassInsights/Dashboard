@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type ToggleProps = {
 	checked?: boolean;
@@ -9,10 +9,10 @@ type ToggleProps = {
 const Toggle = ({ checked = false, onChange, disabled = false }: ToggleProps) => {
 	const [isChecked, setIsChecked] = useState(false);
 
-	const handleClick = useCallback(() => {
+	const handleClick = () => {
 		onChange(!isChecked);
 		setIsChecked((prev) => !prev);
-	}, [onChange, isChecked]);
+	};
 
 	useEffect(() => {
 		setIsChecked(checked);

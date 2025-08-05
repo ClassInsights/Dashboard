@@ -4,7 +4,6 @@ import ComputerSVG from "../assets/svg/computer.svg?react";
 import ShutDownSVG from "../assets/svg/shutdown.svg?react";
 import RestartSVG from "../assets/svg/restart.svg?react";
 import { useData } from "../contexts/DataContext";
-import { useMemo } from "react";
 import Spacing from "./Spacing";
 import Badge from "./Badge";
 
@@ -12,10 +11,7 @@ const ComputerModal = () => {
 	const computer = useComputer();
 	const data = useData();
 
-	const room = useMemo(
-		() => data.rooms?.find((room) => room.roomId === computer.data?.roomId) ?? undefined,
-		[data.rooms, computer.data?.roomId],
-	);
+	const room = data.rooms?.find((room) => room.roomId === computer.data?.roomId) ?? undefined;
 
 	if (!computer.isVisible || !computer.data) return null;
 

@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useToast } from "./ToastContext";
 import { Role } from "../types/AccessToken";
@@ -46,7 +46,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		checkDashboardUpdate().catch((error) => console.error("Error checking for Dashboard update", error));
 	});
 
-	const callUpdate = useCallback(async () => {
+	const callUpdate = async () => {
 		if (!updateAvailable || !auth.data) return;
 		setUpdateAvailable(false);
 
@@ -63,7 +63,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		} catch {
 			toast.showMessage("Fehler beim Starten des Updates");
 		}
-	}, [updateAvailable, toast.showMessage, auth.data]);
+	};
 
 	const checkApiUpdate = async () => {
 		const response = await fetch("https://api.github.com/repos/classinsights/api/releases/latest");
@@ -149,7 +149,7 @@ export const UpdateProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	};
 
-	const abort = useCallback(() => setUpdateAvailable(false), []);
+	const abort = () => setUpdateAvailable(false);
 
 	return (
 		<UpdateContext.Provider

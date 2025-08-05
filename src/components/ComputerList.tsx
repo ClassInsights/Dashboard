@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useData } from "../contexts/DataContext";
 import Spacing from "./Spacing";
 import ShutDownSVG from "../assets/svg/shutdown.svg?react";
@@ -79,11 +79,11 @@ const ComputerList = () => {
 
 	const computersPerPage = 25;
 
-	const amountOfPages = useMemo(() => Math.ceil(computers.length / computersPerPage), [computers.length]);
+	const amountOfPages = Math.ceil(computers.length / computersPerPage);
 
-	const rooms = useMemo(() => data.rooms, [data.rooms]);
+	const rooms = data.rooms;
 
-	const updateSorts = useCallback((order: Order, value: SortValue) => {
+	const updateSorts = (order: Order, value: SortValue) => {
 		setTimeout(() => {
 			setSorts((prev) => {
 				if (prev.includes({ order, value })) return prev;
@@ -96,9 +96,9 @@ const ComputerList = () => {
 				return [...newSorts, { order, value }];
 			});
 		}, 0);
-	}, []);
+	};
 
-	const updateFilters = useCallback((type: FilterType, isActive: boolean, detail?: string) => {
+	const updateFilters = (type: FilterType, isActive: boolean, detail?: string) => {
 		setTimeout(() => {
 			setFilters((prev) => {
 				if (isActive && prev.includes({ type, detail })) return prev;
@@ -111,29 +111,24 @@ const ComputerList = () => {
 				return [...newFilters, { type, detail }];
 			});
 		}, 0);
-	}, []);
+	};
 
-	const handleGlobalCheckbox = useCallback(
-		(state: CheckboxState) => {
-			if (!computers) return;
-			setTimeout(() => {
-				switch (state) {
-					case "selected":
-						setSelectedComputers(
-							computers.filter((computer) => computer.online).map((computer) => computer.computerId),
-						);
-						break;
-					case "deselected":
-					case "remove":
-						setSelectedComputers([]);
-						break;
-				}
-			});
-		},
-		[computers],
-	);
+	const handleGlobalCheckbox = (state: CheckboxState) => {
+		if (!computers) return;
+		setTimeout(() => {
+			switch (state) {
+				case "selected":
+					setSelectedComputers(computers.filter((computer) => computer.online).map((computer) => computer.computerId));
+					break;
+				case "deselected":
+				case "remove":
+					setSelectedComputers([]);
+					break;
+			}
+		});
+	};
 
-	const handleCheckbox = useCallback((computerId: number, state: CheckboxState) => {
+	const handleCheckbox = (computerId: number, state: CheckboxState) => {
 		switch (state) {
 			case "selected":
 				setTimeout(
@@ -151,7 +146,7 @@ const ComputerList = () => {
 			default:
 				break;
 		}
-	}, []);
+	};
 
 	useEffect(() => {
 		if (!data.computers) return;

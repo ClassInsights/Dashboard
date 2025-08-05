@@ -1,4 +1,3 @@
-import { useCallback, useMemo } from "react";
 import Headline from "../components/Headline";
 import NoAccess from "../components/NoAccess";
 import Setting from "../components/Setting";
@@ -17,14 +16,14 @@ const Confgiguration = () => {
 	const settings = useSettings();
 	const toast = useToast();
 
-	const currentSettings = useMemo(() => settings.getSettings(), [settings.getSettings]);
+	const currentSettings = settings.getSettings();
 
-	const saveSettings = useCallback(() => {
+	const saveSettings = () => {
 		settings
 			.saveSettings()
 			.then(() => toast.showMessage("Erfolgreich gespeichert"))
 			.catch(() => toast.showMessage("Fehler beim Speichern", "error"));
-	}, [settings.saveSettings, toast.showMessage]);
+	};
 
 	if (!auth.data?.roles.includes(Role.ADMIN) && !auth.data?.roles.includes(Role.OWNER))
 		return <NoAccess inPage={true} adminOnly={true} />;

@@ -1,9 +1,11 @@
+import type React from "react";
+
 type SpacingProps = {
 	id?: string;
 	size?: "sm" | "md" | "lg" | "xl";
 };
 
-const Spacing = ({ id, size = "lg" }: SpacingProps): JSX.Element => {
+const Spacing = ({ id, size = "lg" }: SpacingProps): React.JSX.Element => {
 	return (
 		<div
 			id={id}

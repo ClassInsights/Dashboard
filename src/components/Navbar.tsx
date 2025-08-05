@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuSVG from "../assets/svg/menu.svg?react";
 import SearchSVG from "../assets/svg/search.svg?react";
@@ -15,10 +15,7 @@ const Navbar = () => {
 	const search = useSearch();
 	const auth = useAuth();
 
-	const isAdmin = useMemo(() => {
-		if (!auth.data) return false;
-		return auth.data.roles.includes(Role.ADMIN) || auth.data.roles.includes(Role.OWNER);
-	}, [auth.data]);
+	const isAdmin = !auth.data ? false : auth.data.roles.includes(Role.ADMIN) || auth.data.roles.includes(Role.OWNER);
 
 	/** Handler for clicking inside the viewport */
 	const onDocumentClick = () => {
@@ -33,13 +30,13 @@ const Navbar = () => {
 		setTimeout(() => document.addEventListener("click", onDocumentClick), 100);
 	};
 
-	const scrollToTop = useCallback(() => {
+	const scrollToTop = () => {
 		if (location.pathname !== "/") navigate("/");
 		else {
 			window.scrollTo({ top: 0 });
 			history.pushState("", document.title, location.pathname + location.search);
 		}
-	}, [location, navigate]);
+	};
 
 	return (
 		<header

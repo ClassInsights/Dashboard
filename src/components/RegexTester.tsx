@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useData } from "../contexts/DataContext";
 import TextInput from "./inputs/TextInput";
+import type { Computer } from "../types/Computer";
 
 const RegexTester = () => {
 	const [regex, setRegex] = useState("");
@@ -8,14 +9,13 @@ const RegexTester = () => {
 
 	const data = useData();
 
-	const matches = useMemo(() => {
-		try {
-			const regexPattern = new RegExp(regex);
-			return data.computers?.filter((computer) => regexPattern.test(computer.name)) ?? [];
-		} catch {
-			return [];
-		}
-	}, [regex, data.computers]);
+	let matches: Computer[] = [];
+	try {
+		const regexPattern = new RegExp(regex);
+		matches = data.computers?.filter((computer) => regexPattern.test(computer.name)) ?? [];
+	} catch {
+		matches = [];
+	}
 
 	const handleToggle = () => setShowComputers((prev) => !prev);
 

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { Computer } from "../types/Computer";
 import { useData } from "./DataContext";
 
@@ -25,7 +25,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const { computers, rooms } = useData();
 
-	const generateResult = useCallback(
+	const generateResult = 
 		(value: string) => {
 			const searchTerm = value.trim().toLowerCase();
 			if (searchTerm.length < 2) {
@@ -75,9 +75,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 
 			const sortedResults = searchResults.sort((a, b) => (a.matchLength > b.matchLength ? -1 : 1)).slice(0, 5);
 			setResult(sortedResults);
-		},
-		[computers, rooms],
-	);
+		};
 
 	useEffect(() => {
 		const handleGlobalKeyDown = (event: KeyboardEvent) => {
@@ -115,11 +113,8 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 		document.body.style.paddingRight = "";
 	}, [isVisible]);
 
-	const show = useCallback(() => setIsVisible(true), []);
-	const hide = useCallback(() => setIsVisible(false), []);
-
 	return (
-		<SearchContext.Provider value={{ result, generateResult, isVisible, show, hide }}>
+		<SearchContext.Provider value={{ result, generateResult, isVisible, show: () => setIsVisible(true), hide: () => setIsVisible(false) }}>
 			{children}
 		</SearchContext.Provider>
 	);
