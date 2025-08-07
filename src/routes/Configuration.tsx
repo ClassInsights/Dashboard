@@ -6,7 +6,6 @@ import { useSettings } from "../contexts/SettingsContext";
 import { Role } from "../types/AccessToken";
 import { useToast } from "../contexts/ToastContext";
 import Spacing from "../components/Spacing";
-import RoomTable from "../components/RoomTable";
 import SaveSVG from "../assets/svg/save.svg?react";
 import ProgressSVG from "../assets/svg/progress.svg?react";
 import RefreshSVG from "../assets/svg/refresh.svg?react";
@@ -190,7 +189,6 @@ const Confgiguration = () => {
 					<p>Beginnt mit “DV1-”, danach genau zwei beliebige Zeichen, dann “-PC”: ^DV6-..-PC$</p>
 					<p>Beginn mit zwei Zahlen, danach “-CPR”: ^..-CPR$</p>
 					<Spacing size="md" />
-					<RoomTable />
 				</div>
 			</div>
 		</>

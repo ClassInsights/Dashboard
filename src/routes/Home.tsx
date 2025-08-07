@@ -1,19 +1,13 @@
-import Badge from "../components/Badge";
 import Headline from "../components/Headline";
-import ComputerSVG from "../assets/svg/computer.svg?react";
-import RoomSVG from "../assets/svg/room.svg?react";
 import Spacing from "../components/Spacing";
 import ArrowSVG from "../assets/svg/arrow.svg?react";
 import LogoutSVG from "../assets/svg/logout.svg?react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useData } from "../contexts/DataContext";
 import { Role } from "../types/AccessToken";
 
 const Home = () => {
-	const navigate = useNavigate();
 	const auth = useAuth();
-	const data = useData();
 
 	return (
 		<>
@@ -32,7 +26,7 @@ const Home = () => {
 				mobileTitle={`Hey, ${auth.data?.name}.`}
 				subtitle="Dies ist der zentraler Ort für das gesamte ClassInsights Ökosystem. Hier können Sie interessante Insights über die Computer Ihrer Schule herausfinden."
 			/>
-			<div className="badge-list">
+			{/* <div className="badge-list">
 				<Badge
 					text={`${data.computers?.filter((computer) => computer.online).length} / ${data.computers?.length} aktiv`}
 					headIcon={<ComputerSVG width={20} className="shrink-0 fill-primary" />}
@@ -43,7 +37,7 @@ const Home = () => {
 					headIcon={<RoomSVG width={20} className="shrink-0 fill-primary" />}
 					onClick={() => navigate("/räume")}
 				/>
-			</div>
+			</div> */}
 			<Spacing />
 			<h2>Navigation</h2>
 			<Spacing size="sm" />

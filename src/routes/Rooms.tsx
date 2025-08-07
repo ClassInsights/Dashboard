@@ -1,12 +1,6 @@
-import { Link } from "react-router-dom";
 import Headline from "../components/Headline";
-import Room from "../components/Room";
-import { useData } from "../contexts/DataContext";
-import ArrowSVG from "../assets/svg/arrow.svg?react";
-import RefreshSVG from "../assets/svg/refresh.svg?react";
 
 const Rooms = () => {
-	const data = useData();
 
 	return (
 		<>
@@ -15,14 +9,14 @@ const Rooms = () => {
 				subtitle="Hier sind alle Räume mit aktivem ClassInsights Ihrer Schule aufgelistet. Sie können sich den aktuellen Stundenplan anzeigen lassen und Automationen für einen Raum verwalten."
 				backLink="/"
 			/>
-			<div className="flex items-center justify-between">
+			{/* <div className="flex items-center justify-between">
 				<Link to="/computer" className="flex w-max items-center gap-1.5 pb-2">
 					<p className="text-primary">Liste der Computer</p>
 					<ArrowSVG className="shrink-0 fill-primary" />
 				</Link>
 				<RefreshSVG className="shrink-0 cursor-pointer fill-primary" onClick={() => data.refreshRooms()} />
-			</div>
-			{data.rooms?.length === 0 ? (
+			</div> */}
+			{/* {data.rooms?.length === 0 ? (
 				<b>Es wurde kein Räume gefunden.</b>
 			) : (
 				<div
@@ -35,7 +29,7 @@ const Rooms = () => {
 							<Room key={room.roomId} room={room} />
 						))}
 				</div>
-			)}
+			)} */}
 		</>
 	);
 };

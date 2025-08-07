@@ -7,6 +7,7 @@ import Home from "./routes/Home";
 import Computer from "./routes/Computer";
 import Rooms from "./routes/Rooms";
 import Confgiguration from "./routes/Configuration";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = document.getElementById("root");
 
@@ -48,8 +49,12 @@ const router = createBrowserRouter([
 	},
 ]);
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(root).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router} />
+		</QueryClientProvider>
 	</React.StrictMode>,
 );

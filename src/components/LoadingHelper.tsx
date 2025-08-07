@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { useData } from "../contexts/DataContext";
 import { Role } from "../types/AccessToken";
 import LogoutSVG from "../assets/svg/logout.svg?react";
 import ProgressSVG from "../assets/svg/progress.svg?react";
@@ -38,7 +37,6 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 	const intervalRef = useRef<number | null>(null);
 
 	const auth = useAuth();
-	const data = useData();
 	const settings = useSettings();
 
 	useEffect(() => {
@@ -50,8 +48,8 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 	}, []);
 
 	useEffect(
-		() => setIsLoading(auth.isLoading || data.isLoading || settings.isLoading),
-		[auth.isLoading, data.isLoading, settings.isLoading],
+		() => setIsLoading(auth.isLoading || settings.isLoading),
+		[auth.isLoading, settings.isLoading],
 	);
 
 	if (isLoading)
@@ -97,27 +95,6 @@ const LoadingHelper = ({ children }: { children: React.ReactNode }) => {
 		!auth.data?.roles.includes(Role.TEACHER)
 	)
 		return <NoAccess />;
-
-	if (!data.computers || !data.rooms /* || !data.lessons */)
-		return (
-			<div className="flex h-dvh w-full flex-col items-center justify-center gap-12">
-				<img src="/logo.svg" alt="ClassInsights Logo" width={80} className="pointer-events-auto cursor-pointer" />
-				<div className="flex flex-col items-center text-center">
-					<h1>Datenabfrage fehlgeschlagen</h1>
-					<Spacing size="md" />
-					<p className="md:w-3/5">
-						Beim Abrufen der Daten ist ein Fehler aufgetreten. Bitte warten Sie ein paar Minuten und versuchen Sie es
-						danach erneut. Wenn das Problem weiterhin über mehrere Tage hinweg besteht, wenden Sie sich bitte an Ihren
-						Schul-Administrator.
-					</p>
-					<Spacing size="md" />
-					<div className="flex w-max cursor-pointer items-center gap-1.5" onClick={auth.logout} onKeyDown={auth.logout}>
-						<p className="text-primary">Abmelden</p>
-						<LogoutSVG width={20} className="shrink-0 fill-primary" />
-					</div>
-				</div>
-			</div>
-		);
 
 	return children;
 };

@@ -1,5 +1,3 @@
-import MinutesInputProps from "./inputs/MinutesInput";
-import Toggle from "./inputs/Toggle";
 import Spacing from "./Spacing";
 
 type SettingProps = {
@@ -26,7 +24,7 @@ const Setting = ({
 			<div className="flex items-center gap-5">
 				<h2>{title}</h2>
 				{toggleValue !== undefined && toggleAction !== undefined && (
-					<Toggle checked={toggleValue} onChange={toggleAction} />
+					<p>Toggle</p>
 				)}
 			</div>
 			<Spacing size="sm" />
@@ -34,7 +32,7 @@ const Setting = ({
 				<div className="flex flex-col items-start justify-between gap-4 md:flex-row">
 					<p className="md:w-3/4">{desciption}</p>
 					{inputValue !== undefined && inputAction && (
-						<MinutesInputProps value={inputValue} onChange={inputAction} disabled={toggleValue === false} />
+						<p>Minutes</p>
 					)}
 				</div>
 				{currentHint && (

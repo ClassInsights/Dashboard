@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuSVG from "../assets/svg/menu.svg?react";
-import SearchSVG from "../assets/svg/search.svg?react";
-import { useSearch } from "../contexts/SearchContext";
 import { useAuth } from "../contexts/AuthContext";
 import { Role } from "../types/AccessToken";
 
@@ -12,7 +10,6 @@ const Navbar = () => {
 
 	const location = useLocation();
 	const navigate = useNavigate();
-	const search = useSearch();
 	const auth = useAuth();
 
 	const isAdmin = !auth.data ? false : auth.data.roles.includes(Role.ADMIN) || auth.data.roles.includes(Role.OWNER);
@@ -52,10 +49,6 @@ const Navbar = () => {
 				className="pointer-events-auto cursor-pointer"
 			/>
 			<nav className="relative flex items-center gap-5">
-				{/* Mobile Search Button */}
-				<nav className="cursor-pointer md:hidden" aria-label="Suche" onClick={search.show} onKeyDown={search.show}>
-					<SearchSVG width={25} className="shrink-0 fill-primary" />
-				</nav>
 				{/* Mobile Menu Icon */}
 				<MenuSVG width={25} onClick={handleMenu} onKeyDown={handleMenu} className="shrink-0 cursor-pointer md:hidden" />
 				{/* Mobile Menu */}
@@ -80,14 +73,6 @@ const Navbar = () => {
 					<Link to="/computer">Computer</Link>
 					<Link to="/räume">Räume</Link>
 					{isAdmin && <Link to="/konfiguration">Konfiguration</Link>}
-					<div
-						className="hidden cursor-pointer items-center gap-1.5 text-primary md:flex"
-						onClick={search.show}
-						onKeyDown={search.show}
-					>
-						<p>Suche</p>
-						<SearchSVG className="shrink-0 fill-primary" />
-					</div>
 				</div>
 			</nav>
 		</header>
