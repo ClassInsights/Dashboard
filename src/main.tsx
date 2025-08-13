@@ -1,60 +1,30 @@
-import React, { useEffect } from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom";
-import PageWrapper from "./components/PageWrapper";
-import Home from "./routes/Home";
-import Computer from "./routes/Computer";
-import Rooms from "./routes/Rooms";
-import Confgiguration from "./routes/Configuration";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router";
+import MainLayout from "./components/layouts/Main";
+import "./index.css";
+import Computer from "./pages/Computer";
+import Computers from "./pages/Computers";
+import Home from "./pages/Home";
 
-const root = document.getElementById("root");
+const client = new QueryClient();
 
-if (!root) throw new Error("No root element found");
-
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <PageWrapper />,
-		errorElement: (() => {
-			const ErrorHandler = () => {
-				const navigate = useNavigate();
-				useEffect(() => {
-					navigate("/");
-				}, [navigate]);
-
-				return <React.Fragment />;
-			};
-			return <ErrorHandler />;
-		})(),
-		children: [
-			{
-				path: "/",
-				element: <Home />,
-			},
-			{
-				path: "/computer",
-				element: <Computer />,
-			},
-			{
-				path: "/räume",
-				element: <Rooms />,
-			},
-			{
-				path: "/konfiguration",
-				element: <Confgiguration />,
-			},
-		],
-	},
-]);
-
-const queryClient = new QueryClient();
-
-ReactDOM.createRoot(root).render(
-	<React.StrictMode>
-		<QueryClientProvider client={queryClient}>
-			<RouterProvider router={router} />
-		</QueryClientProvider>
-	</React.StrictMode>,
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <QueryClientProvider client={client}>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="computer" element={<Computers />} />
+            <Route path="einstellungen" element={<div>Einstellungen Page</div>} />
+            <Route path="raumverwaltung" element={<div>Raumverwaltung Page</div>} />
+            <Route path="computer/:id" element={<Computer />} />
+            <Route path="*" element={<Home />} />
+          </Route>
+        </Routes>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </StrictMode>,
 );

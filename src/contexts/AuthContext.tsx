@@ -1,161 +1,186 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { isTokenExchange, type TokenExchange } from "../types/TokenExchange";
-import { isAccessTokenResponse, isCustomJWTPayload } from "../types/AccessToken";
-import { isAuthData, type AuthData } from "../types/AuthData";
-import * as jose from "jose";
-import { Cookies } from "typescript-cookie";
-import { useSearchParams } from "react-router-dom";
+import ProgressSVG from "@/assets/svg/progress.svg?react";
+import Prefetcher from "@/components/Prefetcher";
+import { isAccessTokenResponse, isCustomJWTPayload } from "@/types/AccessToken";
+import { isAuthData, type AuthData } from "@/types/AuthData";
+import { isTokenExchangeData } from "@/types/TokenExchangeData";
+import { useQuery } from "@tanstack/react-query";
+import { decodeJwt } from "jose";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
+import { getCookie, removeCookie, setCookie } from "typescript-cookie";
 
-type AuthContextType = {
-	isLoading: boolean;
-	data?: AuthData;
-	logout: () => void;
+/** Redirects the user to the login page */
+const redirectToLogin = () =>
+  window.location.replace(
+    `${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen`,
+  );
+
+type AuthContextType = AuthData & {
+  /** Log the user out and redirect to the login page */
+  logout: () => Promise<void>;
 };
 
-const AuthContext = createContext<undefined | AuthContextType>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-	const [data, setData] = useState<AuthData | undefined>(undefined);
-	const [isLoading, setIsLoading] = useState(true);
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [searchParams] = useSearchParams();
+  const [authData, setAuthData] = useState<AuthData | undefined>(undefined);
+  const loginToken = searchParams.get("token");
 
-	const tokenRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (loginToken) return;
+    const cookie = getCookie("tasty-dashboard");
+    if (!cookie) {
+      redirectToLogin();
+      return;
+    }
 
-	const [_, setSearchParams] = useSearchParams();
+    try {
+      const parsed: unknown = JSON.parse(atob(cookie));
 
-	const logout = async () => {
-		Cookies.remove("tasty-dashboard");
-		try {
-			await fetch(`${data?.school.apiUrl}/user`, {
-				method: "DELETE",
-				headers: {
-					Authorization: `Bearer ${data?.accessToken}`,
-				},
-			});
-		} catch {}
-		window.location.replace(
-			`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?logout=true`,
-		);
-	};
+      if (!isAuthData(parsed)) throw new Error("Invalid auth data");
+      if (parsed.expires < Date.now()) throw new Error("Auth data expired");
 
-	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search);
-		if (tokenRef.current) return;
+      setAuthData(parsed);
+    } catch {
+      removeCookie("tasty-dashboard");
+      redirectToLogin();
+    }
+  }, [loginToken]);
 
-		const requestAuthData = async (exchangeData: TokenExchange, token: string) => {
-			const response = await fetch(`${exchangeData.local_api_url}/user`, {
-				method: "POST",
-				body: JSON.stringify({ dashboard_token: token }),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+  const tokenExchangeQuery = useQuery({
+    queryKey: ["tokenExchange"],
+    queryFn: async () => {
+      const response = await fetch(
+        `https://classinsights.${import.meta.env.DEV ? "dev" : "at"}/api/school/dashboard`,
+        {
+          method: "POST",
+          body: JSON.stringify({ dashboard_token: loginToken }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-			if (!response.ok) throw new Error("Failed to fetch user data");
-			const data = await response.json();
-			if (!isAccessTokenResponse(data)) throw new Error(`Not a valid AccessTokenResponse, ${JSON.stringify(data)}`);
+      if (!response.ok) throw new Error("Network response was not ok");
+      const data = await response.json();
 
-			const decodedData = jose.decodeJwt(data.access_token);
-			if (!isCustomJWTPayload(decodedData))
-				throw new Error(`Not a valid CustomJWTPayload, ${JSON.stringify(decodedData)}`);
+      if (!isTokenExchangeData(data)) throw new Error("Invalid token exchange data");
+      return data;
+    },
+    enabled: !!loginToken && !authData,
+  });
 
-			window.history.replaceState({}, "", window.location.pathname);
-			setSearchParams({});
+  const accessTokenQuery = useQuery({
+    queryKey: ["accessToken", tokenExchangeQuery.data],
+    queryFn: async () => {
+      if (!tokenExchangeQuery.data) throw new Error("Token exchange data is not available");
 
-			const expirationDate = new Date((decodedData.exp ?? new Date().getTime() / 1000) * 1000);
+      const now = Date.now();
 
-			const authData: AuthData = {
-				name: decodedData.name,
-				email: decodedData.email,
-				roles: decodedData.role,
-				accessToken: data.access_token,
-				school: {
-					id: exchangeData.school_id,
-					name: decodedData.school_name,
-					apiUrl: exchangeData.local_api_url,
-					dashboardUrl: exchangeData.local_dashboard_url,
-					website: exchangeData.website,
-				},
-				expires: expirationDate.getTime(),
-			};
+      const response = await fetch(`${tokenExchangeQuery.data.local_api_url}/user`, {
+        method: "POST",
+        body: JSON.stringify({ dashboard_token: loginToken }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-			Cookies.set("tasty-dashboard", btoa(JSON.stringify(authData)), {
-				expires: expirationDate,
-				sameSite: "Lax",
-				secure: import.meta.env.PROD,
-			});
+      if (!response.ok) throw new Error("Network response was not ok");
+      const data = await response.json();
 
-			return authData;
-		};
+      if (!isAccessTokenResponse(data)) throw new Error("Invalid access token response");
+      const decodedData = decodeJwt(data.access_token);
 
-		const handleToken = async (token: string) => {
-			const response = await fetch(
-				`https://classinsights${import.meta.env.DEV ? ".dev" : ".at"}/api/school/dashboard`,
-				{
-					method: "POST",
-					body: JSON.stringify({ dashboard_token: token }),
-					headers: {
-						"Content-Type": "application/json",
-					},
-				},
-			);
-			if (!response.ok) throw new Error("Failed to fetch token exchange data");
+      if (!isCustomJWTPayload(decodedData)) throw new Error("Invalid JWT payload");
+      const expires = new Date((decodedData.exp ?? Date.now() / 1000) * 1000);
 
-			const responseData = await response.json();
-			if (!isTokenExchange(responseData)) throw new Error(`Not a valid TokenExchange, ${JSON.stringify(responseData)}`);
+      const authData: AuthData = {
+        name: decodedData.name,
+        email: decodedData.email,
+        roles: decodedData.role,
+        accessToken: data.access_token,
+        school: {
+          id: tokenExchangeQuery.data.school_id,
+          name: decodedData.school_name,
+          apiUrl: tokenExchangeQuery.data.local_api_url,
+          dashboardUrl: tokenExchangeQuery.data.local_dashboard_url,
+          website: tokenExchangeQuery.data.website,
+        },
+        expires: expires.getTime(),
+      };
 
-			requestAuthData(responseData, token)
-				.then((data) => setData((oldData) => oldData ?? data))
-				.catch((error) => console.error("Auth failed inside requestAuthData catch:", error))
-				.finally(() => setIsLoading(false));
-		};
+      setCookie("tasty-dashboard", btoa(JSON.stringify(authData)), {
+        expires,
+        sameSite: "Strict",
+        secure: import.meta.env.PROD,
+      });
 
-		const redirectToLogin = () => {
-			window.location.replace(
-				`${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?auto-redirect=true`,
-			);
-		};
+      setAuthData(authData);
+      window.history.replaceState({}, "", window.location.pathname);
 
-		const token = urlParams.get("token");
-		if (!token) {
-			const data = Cookies.get("tasty-dashboard");
-			if (!data || typeof data !== "string") {
-				redirectToLogin();
-				return;
-			}
+      const diff = Date.now() - now;
+      if (diff < 1000) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 - diff));
+      }
 
-			const decodedData = atob(data);
-			const parsedData = JSON.parse(decodedData);
-			if (!isAuthData(parsedData)) {
-				Cookies.remove("tasty-dashboard");
-				setIsLoading(false);
-				return;
-			}
+      return authData;
+    },
+    enabled: !!tokenExchangeQuery.data && !authData,
+  });
 
-			if (parsedData.expires < new Date().getTime()) {
-				Cookies.remove("tasty-dashboard");
-				redirectToLogin();
-				return;
-			}
+  const logout = async () => {
+    removeCookie("tasty-dashboard");
+    try {
+      await fetch(`${authData?.school.apiUrl}/user`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authData?.accessToken}`,
+        },
+      });
+    } catch {}
 
-			setData((oldAuthData) => oldAuthData ?? parsedData);
-			setIsLoading(false);
-			return;
-		}
+    window.location.replace(
+      `${import.meta.env.DEV ? "http://localhost:5173" : "https://classinsights.at"}/schulen?logout=true`,
+    );
+  };
 
-		handleToken(token).catch((error) => console.error("Auth failed inside handleToken catch:", error));
+  if (tokenExchangeQuery.isError || accessTokenQuery.isError) {
+    // TODO: create error screen
+    return <h1>AUTH Failed</h1>;
+  }
 
-		return () => {
-			if (!tokenRef.current) tokenRef.current = token;
-		};
-	}, [setSearchParams]);
+  if (tokenExchangeQuery.isLoading || accessTokenQuery.isLoading) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center gap-12">
+        <img src="/logo.svg" alt="ClassInsights Logo" width={100} className="animate-pulse" />
+        <div className="flex flex-col items-center pb-20 text-center">
+          <h1 className="pb-6">Anmeldung läuft...</h1>
+          <p>Sie werden gerade authentifiziert. Fast fertig!</p>
+          <ProgressSVG width={50} className="mt-5 h-20 w-20 shrink-0 animate-spin fill-primary" />
+        </div>
+      </div>
+    );
+  }
 
-	return <AuthContext.Provider value={{ isLoading, data, logout }}>{children}</AuthContext.Provider>;
+  if (!authData) return null;
+
+  return (
+    <AuthContext.Provider
+      value={{
+        ...authData,
+        logout,
+      }}
+    >
+      <Prefetcher>{children}</Prefetcher>
+    </AuthContext.Provider>
+  );
 };
+
+export default AuthProvider;
 
 export const useAuth = () => {
-	const context = useContext(AuthContext);
-	if (context === undefined) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
-	return context;
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
 };
