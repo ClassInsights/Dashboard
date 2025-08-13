@@ -1,3 +1,4 @@
+import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
 import type { Computer } from "@/types/Computer";
 import type { Table } from "@tanstack/react-table";
@@ -8,14 +9,18 @@ import ComputerTableFacetedFilter from "./FacetedFilter";
 
 const Toolbar = ({ table }: { table: Table<Computer> }) => {
   const { data: rooms } = useRooms();
-  if (!rooms) return null;
+  const { data: computers } = useComputers();
 
-  const roomsWithLabel = rooms.map((room) => {
-    return {
-      value: room.displayName,
-      label: room.displayName,
-    };
-  });
+  if (!computers || !rooms) return null;
+
+  const roomsWithLabel = rooms
+    .filter((room) => computers.find((computer) => computer.roomId === room.roomId))
+    .map((room) => {
+      return {
+        value: room.displayName,
+        label: room.displayName,
+      };
+    });
 
   return (
     <div className="mb-4 flex items-end justify-between">
