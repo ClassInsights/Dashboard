@@ -2,7 +2,7 @@ import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
 import type { Computer } from "@/types/Computer";
 import type { Table } from "@tanstack/react-table";
-import { ChevronsUpDown } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { Button } from "../ui/button";
 import ComputerTableViewOptions from "./ColumnToggle";
 import ComputerTableFacetedFilter from "./FacetedFilter";
@@ -59,7 +59,7 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
           className="flex h-8"
           onClick={() => table.resetSorting()}
         >
-          <ChevronsUpDown />
+          <RotateCcw />
           Sortierung zurücksetzen
         </Button>
         <ComputerTableViewOptions table={table} />
