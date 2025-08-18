@@ -7,8 +7,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import useConfiguration from "@/hooks/use-configuration";
 import type { Configuration as Config } from "@/types/Configuration";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RotateCcw, Save } from "lucide-react";
+import { ChevronRight, RotateCcw, Save } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 
 const Configuration = () => {
   const { data: config } = useConfiguration();
@@ -165,6 +166,21 @@ const Configuration = () => {
           toggleAction={(value) => updateConfig("checkUser", value)}
           disabled={mutation.isPending}
         />
+        <Separator className="mx-auto w-3/4!" />
+        <div>
+          <h2>Möchtest du die Räume verwalten?</h2>
+          <Spacing size="sm" />
+          <p>
+            Hier kannst du die Zuweisung von Räumen und Computern vornehmen und ClassInsights
+            raumweit anpassen.
+          </p>
+          <Link to="../raumverwaltung">
+            <Button variant="link" className="px-0!">
+              Zur Raumverwaltung
+              <ChevronRight />
+            </Button>
+          </Link>
+        </div>
       </div>
       <Spacing />
     </>
