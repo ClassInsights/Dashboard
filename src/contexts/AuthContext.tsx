@@ -1,5 +1,6 @@
 import ProgressSVG from "@/assets/svg/progress.svg?react";
 import Prefetcher from "@/components/Prefetcher";
+import { Button } from "@/components/ui/button";
 import { isAccessTokenResponse, isCustomJWTPayload } from "@/types/AccessToken";
 import { isAuthData, type AuthData } from "@/types/AuthData";
 import { isTokenExchangeData } from "@/types/TokenExchangeData";
@@ -62,7 +63,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       );
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      if (!response.ok) throw new Error(`Failed to exchange token: ${response.status}`);
       const data = await response.json();
 
       if (!isTokenExchangeData(data)) throw new Error("Invalid token exchange data");
@@ -94,6 +95,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!isCustomJWTPayload(decodedData)) throw new Error("Invalid JWT payload");
       const expires = new Date((decodedData.exp ?? Date.now() / 1000) * 1000);
+      if (expires.getTime() < Date.now()) throw new Error("JWT expired");
 
       const authData: AuthData = {
         name: decodedData.name,
@@ -146,8 +148,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   if (tokenExchangeQuery.isError || accessTokenQuery.isError) {
-    // TODO: create error screen
-    return <h1>AUTH Failed</h1>;
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center gap-12">
+        <img src="/logo.svg" alt="ClassInsights Logo" width={100} className="animate-pulse" />
+        <div className="flex flex-col items-center pb-20 text-center">
+          <h1 className="pb-6">Anmeldung fehlgeschlagen</h1>
+          <p className="w-3/4 pb-5 lg:w-1/2">
+            Leider war der Authentifizierungsvorgang nicht erfolgreich. Bitte versuchen Sie es in
+            ein paar Minuten erneut. Wenn das Problem bestehen bleibt, melden Sie sich bitte bei
+            Ihrem Systemadministrator.
+          </p>
+          <Button onClick={logout}>Erneut versuchen</Button>
+        </div>
+      </div>
+    );
   }
 
   if (tokenExchangeQuery.isLoading || accessTokenQuery.isLoading) {
