@@ -4,10 +4,10 @@ import { Link } from "react-router";
 interface TitleProps {
   title: string;
   subtitle: string;
-  backLink: string;
+  backLink?: string;
 }
 
-const Title = ({ title, subtitle, backLink }: TitleProps) => (
+const Title = ({ title, subtitle, backLink = "/" }: TitleProps) => (
   <div className="relative mt-4 py-8">
     <h1 className="pb-2">{title}</h1>
     <p className="xl:w-3/5; md:w-3/4">{subtitle}</p>

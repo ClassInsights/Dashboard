@@ -20,7 +20,6 @@ const Computers = () => {
       <Title
         title="Computerliste"
         subtitle="Nachfolgend finden Sie eine Übersicht aller registrierten Computer Ihrer Schule. Sie haben die Möglichkeit, gezielt nach Computern zu suchen, Filteroptionen zu nutzen und die Sortierung individuell anzupassen."
-        backLink="/"
       />
       <ComputerTable columns={columns} data={computersWithRooms} />
     </>

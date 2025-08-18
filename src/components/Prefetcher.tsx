@@ -1,4 +1,5 @@
 import useComputers from "@/hooks/use-computers";
+import useConfiguration from "@/hooks/use-configuration";
 import useRooms from "@/hooks/use-rooms";
 import Loading from "@/pages/Loading";
 import { useEffect, useRef, useState } from "react";
@@ -10,8 +11,9 @@ const Prefetcher = ({ children }: { children: React.ReactNode }) => {
 
   const computers = useComputers();
   const rooms = useRooms();
+  const config = useConfiguration();
 
-  const isLoading = computers.isLoading || rooms.isLoading;
+  const isLoading = computers.isLoading || rooms.isLoading || config.isLoading;
 
   useEffect(() => {
     if (isLoading && startTimeRef.current === undefined) {
@@ -32,12 +34,18 @@ const Prefetcher = ({ children }: { children: React.ReactNode }) => {
     };
   }, [isLoading]);
 
+  // TODO: add error pages
+
   if (computers.error) {
     return <div>Computer Error: {computers.error.message}</div>;
   }
 
   if (rooms.error) {
     return <div>Room Error: {rooms.error.message}</div>;
+  }
+
+  if (config.error) {
+    return <div>Config Error: {config.error.message}</div>;
   }
 
   if (isLoading || !shouldShowContent) {

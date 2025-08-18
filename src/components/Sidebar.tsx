@@ -43,8 +43,8 @@ const items = [
     icon: Computer,
   },
   {
-    title: "Einstellungen",
-    url: "einstellungen",
+    title: "Konfiguration",
+    url: "konfiguration",
     icon: Settings,
   },
   {

@@ -62,7 +62,7 @@ const MainLayout = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="p-4">
+          <div className="p-4 lg:pr-10">
             <Outlet />
           </div>
         </SidebarInset>
