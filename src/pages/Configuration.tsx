@@ -4,6 +4,7 @@ import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import useConfiguration from "@/hooks/use-configuration";
 import type { Configuration as Config } from "@/types/Configuration";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ import { Link } from "react-router";
 
 const Configuration = () => {
   const { data: config } = useConfiguration();
+  const { showMessage } = useToast();
   const queryClient = useQueryClient();
   const {
     accessToken,
@@ -31,9 +33,9 @@ const Configuration = () => {
       });
 
       if (!response.ok) throw new Error("Failed to update configuration");
-
-      return response.json();
     },
+    onSuccess: () => showMessage("Änderungen erfolgreich gespeichert"),
+    onError: () => showMessage("Fehler beim Speichern der Änderungen", "error"),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["configuration"] });
     },
@@ -43,10 +45,8 @@ const Configuration = () => {
 
   const [currentConfig, setCurrentConfig] = useState<Config>(config);
 
-  const updateConfig = (key: keyof Config, value: any) => {
-    console.log(`Updating ${key} to`, value);
+  const updateConfig = (key: keyof Config, value: any) =>
     setCurrentConfig((prev) => ({ ...prev, [key]: value }));
-  };
 
   const hasChanged = JSON.stringify(currentConfig) !== JSON.stringify(config);
 
@@ -69,6 +69,7 @@ const Configuration = () => {
       <Title
         title="Konfiguration"
         subtitle="Auf dieser Seite können Sie Änderungen am gesamten ClassInsights Ökosystem vornehmen. Um die Änderungen zu speichern, klicken Sie auf den Button unten."
+        backLink="/"
       />
       <div className="flex flex-col gap-10">
         <Setting
