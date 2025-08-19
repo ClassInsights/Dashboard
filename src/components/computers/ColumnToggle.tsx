@@ -28,7 +28,7 @@ const ComputerTableViewOptions = ({ table }: { table: Table<Computer> }) => {
           ) : (
             <Columns4 />
           )}
-          Ansicht
+          <span className="hidden lg:block">Ansicht</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
