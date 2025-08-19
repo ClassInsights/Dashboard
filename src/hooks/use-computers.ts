@@ -31,6 +31,7 @@ const useComputers = () => {
       throw new Error("Invalid computer data format");
     },
     enabled: !!accessToken && !!apiUrl,
+    staleTime: 1000 * 5,
     refetchInterval: 1000 * 10,
     refetchIntervalInBackground: true,
   });
