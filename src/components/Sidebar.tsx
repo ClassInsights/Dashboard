@@ -76,13 +76,13 @@ const AppSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <a href="#">
+              <Link to="/">
                 <img src="/logo.svg" alt="Logo" className="h-8 w-8 rounded-full" />
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">ClassInsights</span>
-                  <span className="">v{import.meta.env.PACKAGE_VERSION}</span>
+                  <span>v{import.meta.env.PACKAGE_VERSION}</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
