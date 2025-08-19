@@ -14,6 +14,7 @@ import {
 } from "../ui/breadcrumb";
 import { Separator } from "../ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "../ui/sidebar";
+import Updater from "../Updater";
 
 const translatePath = (path: string) => {
   switch (path) {
@@ -41,6 +42,7 @@ const MainLayout = () => {
     <ToastProvider>
       <ToastMessage />
       <AuthProvider>
+        <Updater />
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
