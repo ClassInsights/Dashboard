@@ -93,7 +93,7 @@ const ComputerTableFacetedFilter = ({ column, title, options }: DataTableFaceted
                           : "opacity-50 [&_svg]:invisible",
                       )}
                     >
-                      <Check />
+                      <Check className="text-primary-foreground" />
                     </div>
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (
