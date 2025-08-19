@@ -116,7 +116,8 @@ const useVersions = (): VersionResponse | undefined => {
     latestApiVersion,
     currentApiVersion: currentApi.version,
     latestDashboardVersion,
-    currentDashboardVersion: import.meta.env.PACKAGE_VERSION,
+    currentDashboardVersion:
+      cachedVersion?.currentDashboardVersion || import.meta.env.PACKAGE_VERSION,
     platform: currentApi.platform,
     expiresAt: Date.now() + 1000 * 60 * 30,
     isLoading: isLoadingLatestApiVersion || isLoadingDashboard || isLoadingCurrentApi,
