@@ -72,6 +72,9 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
           desc: false,
         },
       ],
+      columnVisibility: {
+        "Zuletzt Online": false,
+      },
     },
   });
 

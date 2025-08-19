@@ -72,7 +72,25 @@ export const columns: ColumnDef<Computer>[] = [
       const macAddress = getValue() as string;
       const formattedMac = macAddress.match(/.{1,2}/g)?.join(":");
 
-      return <div>{formattedMac}</div>;
+      return <span>{formattedMac}</span>;
+    },
+  },
+  {
+    id: "Zuletzt Online",
+    accessorKey: "lastSeen",
+    header: ({ column }) => <ComputerTableColumnHeader column={column} title="Zuletzt Online" />,
+    cell: ({ getValue }) => {
+      const date = getValue() as string;
+      const formattedDate = new Date(date).toLocaleString("de-AT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+
+      return <span>{formattedDate}</span>;
     },
   },
   {
