@@ -137,6 +137,19 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
   );
 }
 
+function CommandPlatformShortcut({ triggerKey }: { triggerKey: string }) {
+  const isMac = navigator.userAgent.includes("Mac");
+
+  return (
+    <span
+      data-slot="command-shortcut"
+      className="ml-auto text-xs tracking-widest text-muted-foreground"
+    >
+      {isMac ? `⌘${triggerKey}` : `Ctrl+${triggerKey}`}
+    </span>
+  );
+}
+
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -155,6 +168,7 @@ export {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandPlatformShortcut,
   CommandSeparator,
   CommandShortcut,
 };

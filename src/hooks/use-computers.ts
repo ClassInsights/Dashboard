@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { isComputer, type Computer } from "@/types/Computer";
+import { isComputer } from "@/types/Computer";
 import { useQuery } from "@tanstack/react-query";
 
 /**
@@ -25,7 +25,10 @@ const useComputers = () => {
 
       const data = await response.json();
       if (Array.isArray(data) && data.every(isComputer)) {
-        return data as Computer[];
+        return data.map((computer) => ({
+          ...computer,
+          macAddress: computer.macAddress.match(/.{1,2}/g)?.join(":") ?? "???",
+        }));
       }
 
       throw new Error("Invalid computer data format");
