@@ -1,4 +1,5 @@
 import LogArea from "@/components/computer/LogArea";
+import Title from "@/components/Title";
 import useComputers from "@/hooks/use-computers";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -18,7 +19,12 @@ const Computer = () => {
   if (!computer) return null;
 
   return (
-    <div>
+    <div key={id}>
+      <Title
+        title={computer.name}
+        subtitle="Hier finden Sie alle gesammelten Daten und Logs für diesen Computer."
+        backLink="/computer"
+      />
       <LogArea computerId={computer.computerId} />
     </div>
   );
