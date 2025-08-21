@@ -5,6 +5,9 @@ declare global {
   interface Array<T> {
     shuffle(): this;
   }
+  interface Date {
+    formatToDay(): string;
+  }
 }
 
 import { clsx, type ClassValue } from "clsx";
@@ -29,4 +32,12 @@ Array.prototype.shuffle = function () {
   }
 
   return this;
+};
+
+Date.prototype.formatToDay = function () {
+  return this.toLocaleDateString("de-AT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
