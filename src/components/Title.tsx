@@ -5,12 +5,18 @@ interface TitleProps {
   title: string;
   subtitle: string;
   backLink?: string;
+  titleBadge?: React.ReactNode;
+  actions?: React.ReactNode;
 }
 
-const Title = ({ title, subtitle, backLink }: TitleProps) => (
+const Title = ({ title, subtitle, backLink, titleBadge, actions }: TitleProps) => (
   <div className="relative mt-4 py-8">
-    <h1 className="pb-2">{title}</h1>
+    <div className="flex flex-row items-center gap-3 pb-2">
+      <h1>{title}</h1>
+      {titleBadge}
+    </div>
     <p className="xl:w-3/5; md:w-3/4">{subtitle}</p>
+    {actions && <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">{actions}</div>}
     {backLink && (
       <Link
         to={backLink}

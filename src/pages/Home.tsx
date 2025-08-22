@@ -21,21 +21,23 @@ const Home = () => {
       <Title
         title={`Wilkommen ${auth.name}.`}
         subtitle="Willkommen beim ClassInsights Dashboard, Ihr zentrales Steuerungselement für das gesamte ClassInsights Ökosystem."
+        actions={
+          <>
+            <Link to="computer">
+              <Button variant="outline">
+                <Computer />
+                {onlineComputers} / {computers?.length} online
+              </Button>
+            </Link>
+            <Link to="raumverwaltung">
+              <Button variant="outline">
+                <Computer />
+                {roomsWithComputers} Räume registriert
+              </Button>
+            </Link>
+          </>
+        }
       />
-      <div className="flex gap-2.5">
-        <Link to="computer">
-          <Button variant="outline">
-            <Computer />
-            {onlineComputers} / {computers?.length} online
-          </Button>
-        </Link>
-        <Link to="raumverwaltung">
-          <Button variant="outline">
-            <Computer />
-            {roomsWithComputers} Räume registriert
-          </Button>
-        </Link>
-      </div>
     </>
   );
 };

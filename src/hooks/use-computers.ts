@@ -1,6 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { isComputer } from "@/types/Computer";
-import { useQuery } from "@tanstack/react-query";
+import type { CommandMessage } from "@/types/ComputerCommand";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 /**
  * Custom hook to fetch computers from the API.
@@ -12,7 +14,26 @@ const useComputers = () => {
     school: { apiUrl },
   } = useAuth();
 
-  return useQuery({
+  const { showMessage } = useToast();
+
+  const commands = useMutation({
+    mutationFn: async (messages: CommandMessage[]) => {
+      const response = await fetch(`${apiUrl}/computers/commands`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(messages),
+      });
+
+      if (!response.ok) throw new Error("Failed to send command");
+    },
+    onSuccess: () => showMessage("Befehl erfolgreich gesendet"),
+    onError: () => showMessage("Fehler beim Senden des Befehls", "error"),
+  });
+
+  const query = useQuery({
     queryKey: ["computers"],
     queryFn: async () => {
       const response = await fetch(`${apiUrl}/computers`, {
@@ -38,6 +59,8 @@ const useComputers = () => {
     refetchInterval: 1000 * 10,
     refetchIntervalInBackground: true,
   });
+
+  return { ...query, commands };
 };
 
 export default useComputers;
