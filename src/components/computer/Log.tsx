@@ -48,16 +48,18 @@ const Log = ({ computerId, currentDate, logsPerPage, setLogsPerPage }: LogProps)
             key={index}
             className="flex w-full flex-1 items-start justify-between gap-4 border-b px-4 py-4 text-left text-sm font-medium outline-none"
           >
-            <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              <div className="flex items-center gap-2 md:gap-0">
-                <div className="md:w-24">
+            <div className="flex flex-col gap-2 lg:flex-row">
+              <div className="flex">
+                <div className="w-24 shrink-0">
                   <span className="[&amp;&gt;svg]:size-3 w-fit animate-pulse rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent">
                     ...........
                   </span>
                 </div>
-                <span className="animate-pulse rounded-md bg-accent text-accent">00:00:00</span>
+                <span className="animate-pulse rounded-md bg-accent pt-[0.0625rem] text-accent">
+                  00:00:00
+                </span>
               </div>
-              <span className="animate-pulse rounded-md bg-accent text-accent">
+              <span className="animate-pulse rounded-md bg-accent pt-[0.0625rem] text-accent">
                 ..............................................................
               </span>
             </div>
