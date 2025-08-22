@@ -28,8 +28,10 @@ const DatePicker = ({ date, onChange }: DatePickerProps) => {
   const selectToday = () => handleSelect(new Date());
 
   return (
-    <div className="flex gap-3">
-      <Label htmlFor="date">Ausgewähles Datum</Label>
+    <div className="flex items-center justify-center gap-3 md:justify-start">
+      <Label htmlFor="date" className="hidden md:block">
+        Ausgewähles Datum
+      </Label>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <Button variant="outline" size="icon" aria-label="Einen Tag zurück" onClick={previousDay}>
           <ChevronLeft />
