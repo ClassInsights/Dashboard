@@ -77,7 +77,7 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link to="/">
-                <img src="/logo.svg" alt="Logo" className="h-8 w-8 rounded-full" />
+                <img src="/logo.svg" alt="Logo" className="mr-1 h-8 w-8 rounded-full" />
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">ClassInsights</span>
                   <span>v{import.meta.env.PACKAGE_VERSION}</span>
@@ -129,7 +129,7 @@ const AppSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 className="size-4" />
+                  <User2 className="mr-1 size-4" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{auth.name}</span>
                     <span className="truncate text-xs">{auth.email}</span>
