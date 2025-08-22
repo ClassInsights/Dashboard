@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 import { useSidebar } from "./ui/sidebar";
 
 const CommandMenu = () => {
-  const { isOpen, setIsOpen, result, generateResult } = useSearch();
+  const { isOpen, openSearch, closeSearch, result, generateResult } = useSearch();
   const { toggleSidebar } = useSidebar();
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const CommandMenu = () => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
 
-        setIsOpen((prev) => !prev);
+        if (!isOpen) openSearch();
       }
     };
 
@@ -32,10 +32,18 @@ const CommandMenu = () => {
   }, [isOpen]);
 
   return (
-    <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+    <CommandDialog
+      key={isOpen ? "open" : "closed"}
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open) openSearch();
+        else closeSearch();
+      }}
+    >
       <CommandInput
         placeholder="Suchbegriff oder Befehl eingeben..."
         onValueChange={generateResult}
+        defaultValue={undefined}
       />
       <CommandList>
         <CommandEmpty>Keine Ergebnisse gefunden.</CommandEmpty>
@@ -46,7 +54,7 @@ const CommandMenu = () => {
                 key={result.computerId}
                 value={`${result.name},${result.room},${result.ipAddress},${result.macAddress},${result.lastUser}`}
                 onSelect={() => {
-                  setIsOpen(false);
+                  closeSearch();
                   navigate(`/computer/${result.computerId}`);
                 }}
               >
@@ -72,7 +80,7 @@ const CommandMenu = () => {
         <CommandGroup heading="Befehle">
           <CommandItem
             onSelect={() => {
-              setIsOpen(false);
+              closeSearch();
               navigate("/");
             }}
           >
@@ -81,7 +89,7 @@ const CommandMenu = () => {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              setIsOpen(false);
+              closeSearch();
               navigate("/computer");
             }}
           >
@@ -90,7 +98,7 @@ const CommandMenu = () => {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              setIsOpen(false);
+              closeSearch();
               navigate("/konfiguration");
             }}
           >
@@ -99,7 +107,7 @@ const CommandMenu = () => {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              setIsOpen(false);
+              closeSearch();
               navigate("/raumverwaltung");
             }}
           >
@@ -108,7 +116,7 @@ const CommandMenu = () => {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              setIsOpen(false);
+              closeSearch();
               toggleSidebar();
             }}
           >

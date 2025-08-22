@@ -6,7 +6,6 @@ import { createContext, useContext, useState } from "react";
 
 type SearchContextType = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   openSearch: () => void;
   closeSearch: () => void;
   result: SearchResult[];
@@ -32,7 +31,12 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: rooms } = useRooms();
 
   const openSearch = () => setIsOpen(true);
-  const closeSearch = () => setIsOpen(false);
+  const closeSearch = () => {
+    setIsOpen(false);
+    setTimeout(() => setResult([]), 200);
+
+    // TODO: CHECK IF RESULT RESET WORKS, also check if the text input gets reset; MAYBE add a key with date to CommandDialog so it gets rebuild (reset input state; )
+  };
 
   const generateResult = (value: string) => {
     const searchTerm = value.trim().toLowerCase();
@@ -89,9 +93,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <SearchContext.Provider
-      value={{ isOpen, setIsOpen, openSearch, closeSearch, result, generateResult }}
-    >
+    <SearchContext.Provider value={{ isOpen, openSearch, closeSearch, result, generateResult }}>
       {children}
     </SearchContext.Provider>
   );
