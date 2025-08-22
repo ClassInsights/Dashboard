@@ -4,6 +4,7 @@ import Spacing from "@/components/Spacing";
 import Title from "@/components/Title";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
 import {
@@ -56,24 +57,39 @@ const Computer = () => {
           <>
             <CommandButton
               label="Herunterfahren"
-              icon={Power}
               alertDescription={`Der Computer ${computer.name} wird sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`}
               action={() => sendCommand([{ command: "shutdown", computerId: computer.computerId }])}
               disabled={!computer.online || isCommandPending}
+              trigger={
+                <Button variant="outline">
+                  <Power />
+                  Herunterfahren
+                </Button>
+              }
             />
             <CommandButton
               label="Neustarten"
-              icon={RotateCcw}
               alertDescription={`Der Computer ${computer.name} wird sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`}
               action={() => sendCommand([{ command: "restart", computerId: computer.computerId }])}
               disabled={!computer.online || isCommandPending}
+              trigger={
+                <Button variant="outline">
+                  <RotateCcw />
+                  Neustarten
+                </Button>
+              }
             />
             <CommandButton
               label="Abmelden"
-              icon={LogOut}
               alertDescription={`Alle angemeldeten Benutzer am Computer ${computer.name} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`}
               action={() => sendCommand([{ command: "logoff", computerId: computer.computerId }])}
               disabled={!computer.online || isCommandPending}
+              trigger={
+                <Button variant="outline">
+                  <LogOut />
+                  Abmelden
+                </Button>
+              }
             />
           </>
         }

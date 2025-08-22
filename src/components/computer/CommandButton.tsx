@@ -9,26 +9,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import type { LucideProps } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../ui/button";
 
 type CommandButtonProps = {
   label: string;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
   disabled: boolean;
   alertDescription: string;
   action: () => void;
+  trigger: React.ReactNode;
 };
 
 const CommandButton = ({
   label,
-  icon: Icon,
   disabled,
   alertDescription,
   action,
+  trigger,
 }: CommandButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -51,10 +47,7 @@ const CommandButton = ({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger disabled={disabled} onClick={handleTriggerClick} asChild>
-        <Button variant="outline">
-          <Icon />
-          {label}
-        </Button>
+        {trigger}
       </AlertDialogTrigger>
       <AlertDialogContent onClickOutside={() => setIsOpen(false)}>
         <AlertDialogHeader>

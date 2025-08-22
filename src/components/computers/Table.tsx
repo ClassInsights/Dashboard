@@ -1,11 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Computer } from "@/types/Computer";
 import {
   type ColumnDef,
@@ -21,6 +14,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
+import Body from "./Body";
 import ComputerTablePagination from "./Pagination";
 import Toolbar from "./Toolbar";
 
@@ -98,25 +92,7 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Keine Computer gefunden.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <Body table={table} />
         </Table>
       </div>
       <ComputerTablePagination table={table} />
