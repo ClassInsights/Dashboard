@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { deAT } from "react-day-picker/locale";
 import { Button } from "../ui/button";
@@ -20,18 +20,31 @@ const DatePicker = ({ date, onChange }: DatePickerProps) => {
     setIsOpen(false);
   };
 
+  const previousDay = () =>
+    handleSelect(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1));
+  const nextDay = () =>
+    handleSelect(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1));
+
   const selectToday = () => handleSelect(new Date());
 
   return (
     <div className="flex gap-3">
       <Label htmlFor="date">Ausgewähles Datum</Label>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <Button variant="outline" size="icon" aria-label="Einen Tag zurück" onClick={previousDay}>
+          <ChevronLeft />
+          <span className="sr-only">Einen Tag zurück</span>
+        </Button>
         <PopoverTrigger asChild>
           <Button variant="outline" id="date" className="w-48 justify-between font-normal">
             {date.formatToDay()}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
+        <Button variant="outline" size="icon" aria-label="Einen Tag vor" onClick={nextDay}>
+          <ChevronRight />
+          <span className="sr-only">Einen Tag vor</span>
+        </Button>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             locale={deAT}
