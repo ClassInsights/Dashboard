@@ -38,7 +38,7 @@ const DatePicker = ({ date, onChange }: DatePickerProps) => {
           <span className="sr-only">Einen Tag zurück</span>
         </Button>
         <PopoverTrigger asChild>
-          <Button variant="outline" id="date" className="w-48 justify-between font-normal">
+          <Button variant="outline" id="date" className="justify-between font-normal">
             {date.formatToDay()}
             <ChevronDownIcon />
           </Button>
