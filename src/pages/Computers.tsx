@@ -3,6 +3,7 @@ import ComputerTable from "@/components/computers/Table";
 import Title from "@/components/Title";
 import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
+import { useMemo } from "react";
 
 const Computers = () => {
   const { data: computers } = useComputers();
@@ -10,10 +11,14 @@ const Computers = () => {
 
   if (!computers || !rooms) return null;
 
-  const computersWithRooms = computers.map((computer) => ({
-    ...computer,
-    room: rooms.find((room) => room.roomId === computer.roomId)?.displayName ?? "???",
-  }));
+  const computersWithRooms = useMemo(
+    () =>
+      computers.map((computer) => ({
+        ...computer,
+        room: rooms.find((room) => room.roomId === computer.roomId)?.displayName ?? "???",
+      })),
+    [computers, rooms],
+  );
 
   return (
     <>
