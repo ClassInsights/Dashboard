@@ -155,6 +155,7 @@ const Log = ({ computerId, currentDate, logsPerPage, setLogsPerPage }: LogProps)
               value={logsPerPage.toString()}
               onValueChange={(value) => {
                 setLogsPerPage(Number(value));
+                setCurrentPage(1);
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
