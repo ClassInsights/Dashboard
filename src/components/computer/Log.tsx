@@ -71,7 +71,7 @@ const Log = ({ computerId, currentDate, logsPerPage, setLogsPerPage }: LogProps)
 
   if (isError) {
     return (
-      <div className="my-4 flex items-center justify-center overflow-hidden rounded-md border p-4">
+      <div className="my-4 flex flex-col items-center justify-center overflow-hidden rounded-md border p-4 text-center md:flex-row md:text-left">
         <span className="pr-2">Ein unterwarter Fehler ist beim Laden der Logs aufgetreten.</span>
         <Button variant="link" onClick={() => refetch()} className="p-0">
           Erneut versuchen
@@ -82,7 +82,7 @@ const Log = ({ computerId, currentDate, logsPerPage, setLogsPerPage }: LogProps)
 
   if (!logs || logs.length === 0) {
     return (
-      <div className="my-4 flex items-center justify-center overflow-hidden rounded-md border py-4">
+      <div className="my-4 flex items-center justify-center overflow-hidden rounded-md border p-4 text-center">
         Es wurden keine Log Einträge für den {currentDate.formatToDay()} gefunden.
       </div>
     );

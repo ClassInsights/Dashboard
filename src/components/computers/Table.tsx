@@ -112,7 +112,7 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  Keine Computer gefunden.
                 </TableCell>
               </TableRow>
             )}
