@@ -12,6 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   type PaginationState,
+  type RowSelectionState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -36,26 +37,35 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
       desc: false,
     },
   ]);
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const prevDataLengthRef = useRef(data.length);
+  const prevDataRef = useRef(data);
 
   const { showMessage } = useToast();
 
   useEffect(() => {
-    if (data.length !== prevDataLengthRef.current) {
+    if (data.length !== prevDataRef.current.length) {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
       if (pagination.pageIndex !== 0)
         showMessage("Tabelle zurückgesetzt: Computeranzahl hat sich geändert", "success", 5000);
     }
 
-    prevDataLengthRef.current = data.length;
+    prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
+
+  useEffect(() => {
+    // make sure just the online computers are selected
+    const newSelection: RowSelectionState = {};
+    table.getSelectedRowModel().rows.forEach((row) => {
+      if (row.original.online) newSelection[row.id] = true;
+    });
+    setRowSelection(newSelection);
+  }, [data]);
 
   const table = useReactTable({
     data,
