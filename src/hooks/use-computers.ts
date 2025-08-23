@@ -29,8 +29,13 @@ const useComputers = () => {
 
       if (!response.ok) throw new Error("Failed to send command");
     },
-    onSuccess: () => showMessage("Befehl erfolgreich gesendet"),
-    onError: () => showMessage("Fehler beim Senden des Befehls", "error"),
+    onSuccess: (_, commands) =>
+      showMessage(`${commands.length > 1 ? "Befehle" : "Befehl"} erfolgreich gesendet`),
+    onError: (_, commands) =>
+      showMessage(
+        `Fehler beim Senden ${commands.length > 1 ? "der Befehle" : "des Befehls"}`,
+        "error",
+      ),
   });
 
   const query = useQuery({

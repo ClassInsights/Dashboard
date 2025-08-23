@@ -40,13 +40,22 @@ const Body = ({ table }: { table: Table<Computer> }) => {
     commands: { mutate: sendCommand },
   } = useComputers();
 
+  const selectedComputers = table.getSelectedRowModel().rows.map((row) => row.original);
+  const hasSelectedRows = selectedComputers.length > 0;
+
   const handleCommand = (
     event: React.MouseEvent<HTMLDivElement>,
     command: ComputerCommand,
     { original: computer }: Row<Computer>,
   ) => {
-    event.stopPropagation();
-    const action = () => sendCommand([{ computerId: computer.computerId, command }]);
+    const action = () => {
+      sendCommand(
+        hasSelectedRows
+          ? selectedComputers.map((computer) => ({ computerId: computer.computerId, command }))
+          : [{ computerId: computer.computerId, command }],
+      );
+      table.resetRowSelection();
+    };
 
     if (event.shiftKey) {
       action();
@@ -57,7 +66,9 @@ const Body = ({ table }: { table: Table<Computer> }) => {
       case "shutdown":
         setCommandAlert({
           isOpen: true,
-          description: `Der Computer ${computer.name} wird sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
+          description: hasSelectedRows
+            ? `Die ${selectedComputers.length} ausgewählten Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
+            : `Der Computer ${computer.name} wird sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
           label: "Herunterfahren",
           action,
         });
@@ -65,7 +76,9 @@ const Body = ({ table }: { table: Table<Computer> }) => {
       case "restart":
         setCommandAlert({
           isOpen: true,
-          description: `Der Computer ${computer.name} wird sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
+          description: hasSelectedRows
+            ? `Die ${selectedComputers.length} ausgewählten Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
+            : `Der Computer ${computer.name} wird sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
           label: "Neustarten",
           action,
         });
@@ -73,7 +86,9 @@ const Body = ({ table }: { table: Table<Computer> }) => {
       case "logoff":
         setCommandAlert({
           isOpen: true,
-          description: `Alle angemeldeten Benutzer am Computer ${computer.name} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`,
+          description: hasSelectedRows
+            ? `Alle Benutzer an den ${selectedComputers.length} ausgewählten Computern ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`
+            : `Der Benutzer am Computer ${computer.name} wird sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`,
           label: "Abmelden",
           action,
         });
@@ -99,6 +114,24 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                 </TableRow>
               </ContextMenuTrigger>
               <ContextMenuContent className="w-52">
+                {hasSelectedRows && (
+                  <>
+                    <ContextMenuItem disabled>
+                      {selectedComputers.length > 3
+                        ? `${selectedComputers.length} Computer ausgewählt`
+                        : selectedComputers.length === 1
+                          ? selectedComputers[0].name
+                          : `${selectedComputers
+                              .slice(0, -1)
+                              .map((computer) => computer.name)
+                              .join(", ")} und ${selectedComputers
+                              .slice(-1)
+                              .map((computer) => computer.name)
+                              .join(", ")}`}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                  </>
+                )}
                 <ContextMenuItem
                   disabled={!row.original.online}
                   onClick={(event) => handleCommand(event, "shutdown", row)}
