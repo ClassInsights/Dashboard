@@ -13,6 +13,7 @@ import {
   LogOut,
   MessageCircleQuestionMark,
   School,
+  School2,
   Settings,
   User2,
 } from "lucide-react";
@@ -56,13 +57,20 @@ const items = [
 
 const externItems = [
   {
+    title: "Schulauswahl",
+    url: import.meta.env.PROD
+      ? "https://classinsights.at/schulen"
+      : "http://localhost:5173/schulen",
+    icon: School2,
+  },
+  {
     title: "Dokumentation",
-    url: "https://classinsights.at",
+    url: "https://github.com/ClassInsights/Installer/blob/main/readme.md",
     icon: BookOpen,
   },
   {
     title: "Support",
-    url: "https://classinsights.at",
+    url: "mailto:office@classinsights.at",
     icon: MessageCircleQuestionMark,
   },
 ];
