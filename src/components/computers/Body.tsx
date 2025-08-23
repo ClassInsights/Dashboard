@@ -114,24 +114,24 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                 </TableRow>
               </ContextMenuTrigger>
               <ContextMenuContent className="w-52">
-                {hasSelectedRows && (
-                  <>
-                    <ContextMenuItem disabled>
-                      {selectedComputers.length > 3
-                        ? `${selectedComputers.length} Computer ausgewählt`
-                        : selectedComputers.length === 1
-                          ? selectedComputers[0].name
-                          : `${selectedComputers
-                              .slice(0, -1)
-                              .map((computer) => computer.name)
-                              .join(", ")} und ${selectedComputers
-                              .slice(-1)
-                              .map((computer) => computer.name)
-                              .join(", ")}`}
-                    </ContextMenuItem>
-                    <ContextMenuSeparator />
-                  </>
+                {hasSelectedRows ? (
+                  <ContextMenuItem disabled>
+                    {selectedComputers.length > 3
+                      ? `${selectedComputers.length} Computer ausgewählt`
+                      : selectedComputers.length === 1
+                        ? selectedComputers[0].name
+                        : `${selectedComputers
+                            .slice(0, -1)
+                            .map((computer) => computer.name)
+                            .join(", ")} und ${selectedComputers
+                            .slice(-1)
+                            .map((computer) => computer.name)
+                            .join(", ")}`}
+                  </ContextMenuItem>
+                ) : (
+                  <ContextMenuItem disabled>{row.original.name}</ContextMenuItem>
                 )}
+                <ContextMenuSeparator />
                 <ContextMenuItem
                   disabled={!row.original.online}
                   onClick={(event) => handleCommand(event, "shutdown", row)}
