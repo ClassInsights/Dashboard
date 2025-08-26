@@ -156,7 +156,12 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                 <ContextMenuSeparator />
                 <ContextMenuItem
                   inset
-                  onClick={() => navigate(`/computer/${row.original.computerId}`)}
+                  onClick={() =>
+                    hasSelectedRows
+                      ? navigate(`/computer/${selectedComputers[0].computerId}`)
+                      : navigate(`/computer/${row.original.computerId}`)
+                  }
+                  disabled={selectedComputers.length > 1}
                 >
                   Details anzeigen
                 </ContextMenuItem>
