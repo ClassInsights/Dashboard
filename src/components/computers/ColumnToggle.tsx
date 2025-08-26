@@ -1,5 +1,4 @@
 import type { Computer } from "@/types/Computer";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { type Table } from "@tanstack/react-table";
 import { Columns2, Columns3, Columns4, Square } from "lucide-react";
 import { Button } from "../ui/button";
@@ -9,11 +8,12 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
 const ComputerTableViewOptions = ({ table }: { table: Table<Computer> }) => {
   const amountOfVisible =
-    table.getAllColumns().filter((column) => column.getIsVisible()).length - 1;
+    table.getAllColumns().filter((column) => column.getIsVisible()).length - 2;
 
   return (
     <DropdownMenu>

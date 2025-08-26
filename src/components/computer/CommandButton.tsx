@@ -51,7 +51,7 @@ const CommandButton = ({
       </AlertDialogTrigger>
       <AlertDialogContent onClickOutside={() => setIsOpen(false)}>
         <AlertDialogHeader>
-          <AlertDialogTitle>Bist du dir sicher?</AlertDialogTitle>
+          <AlertDialogTitle>Sind Sie sich sicher?</AlertDialogTitle>
           <AlertDialogDescription>{alertDescription}</AlertDialogDescription>
           <AlertDialogDescription>
             Pro-Tipp: Shift + Klick um Bestätigung zu überspringen

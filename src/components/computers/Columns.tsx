@@ -21,7 +21,6 @@ export const columns: ColumnDef<Computer>[] = [
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
         className="translate-y-[2px]"
-        disabled={!row.original.online}
       />
     ),
     enableSorting: false,

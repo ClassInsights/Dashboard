@@ -30,14 +30,13 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
       .then(() => showMessage("Computer wurden aktualisiert"))
       .catch(() => showMessage("Fehler beim Aktualisieren der Computer", "error"));
 
-  const roomsWithLabel = rooms
-    .filter((room) => computers.find((computer) => computer.roomId === room.roomId))
-    .map((room) => {
-      return {
-        value: room.displayName,
-        label: room.displayName,
-      };
-    });
+  const roomsWithLabel = Array.from(
+    table.getColumn("Raum")?.getFacetedUniqueValues().keys() ?? [],
+  ).map((room: string) => ({ value: room, label: room === "???" ? "Nicht zugewiesen" : room }));
+
+  const statusWithLabel = Array.from(
+    table.getColumn("Status")?.getFacetedUniqueValues().keys() ?? [],
+  ).map((status: string) => ({ value: status, label: status }));
 
   return (
     <div className="mb-4 flex items-end justify-between">
@@ -49,22 +48,15 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
               column={table.getColumn("Raum")}
               title="Raum"
               options={roomsWithLabel}
+              table={table}
             />
           )}
           {table.getColumn("Status") && (
             <ComputerTableFacetedFilter
               column={table.getColumn("Status")}
               title="Status"
-              options={[
-                {
-                  value: "Online",
-                  label: "Online",
-                },
-                {
-                  value: "Offline",
-                  label: "Offline",
-                },
-              ]}
+              options={statusWithLabel}
+              table={table}
             />
           )}
         </div>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
-import { Computer } from "lucide-react";
+import { Computer, School } from "lucide-react";
 import { Link } from "react-router";
 
 const Home = () => {
@@ -26,13 +26,19 @@ const Home = () => {
             <Link to="computer">
               <Button variant="outline">
                 <Computer />
-                {onlineComputers} / {computers?.length} online
+                {computers && computers.length > 0 ? (
+                  <span>
+                    {onlineComputers} / {computers?.length} online
+                  </span>
+                ) : (
+                  <span>Keine Computer gefunden</span>
+                )}
               </Button>
             </Link>
             <Link to="raumverwaltung">
               <Button variant="outline">
-                <Computer />
-                {roomsWithComputers} Räume registriert
+                <School />
+                {roomsWithComputers} Räume mit Computern
               </Button>
             </Link>
           </>

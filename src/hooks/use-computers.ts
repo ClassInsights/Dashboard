@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
-import { isComputer } from "@/types/Computer";
+import { isComputer, type Computer } from "@/types/Computer";
 import type { CommandMessage } from "@/types/ComputerCommand";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -38,6 +38,26 @@ const useComputers = () => {
       ),
   });
 
+  const update = useMutation({
+    mutationFn: async (computers: Computer[]) => {
+      const response = await fetch(`${apiUrl}/computers`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(computers),
+      });
+
+      if (!response.ok) throw new Error("Failed to update computers");
+    },
+    onSuccess: () => {
+      query.refetch();
+      showMessage("Computer erfolgreich aktualisiert");
+    },
+    onError: () => showMessage("Fehler beim Aktualisieren der Computer", "error"),
+  });
+
   const query = useQuery({
     queryKey: ["computers"],
     queryFn: async () => {
@@ -50,12 +70,7 @@ const useComputers = () => {
       if (!response.ok) throw new Error("Failed to fetch computers");
 
       const data = await response.json();
-      if (Array.isArray(data) && data.every(isComputer)) {
-        return data.map((computer) => ({
-          ...computer,
-          macAddress: computer.macAddress.match(/.{1,2}/g)?.join(":") ?? "???",
-        }));
-      }
+      if (Array.isArray(data) && data.every(isComputer)) return data;
 
       throw new Error("Invalid computer data format");
     },
@@ -65,7 +80,7 @@ const useComputers = () => {
     refetchIntervalInBackground: true,
   });
 
-  return { ...query, commands };
+  return { ...query, commands, update };
 };
 
 export default useComputers;

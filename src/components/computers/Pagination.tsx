@@ -9,8 +9,7 @@ const ComputerTablePagination = ({ table }: { table: Table<Computer> }) => {
     <div className="flex flex-col items-center gap-4 px-2 lg:flex-row lg:justify-between">
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} von{" "}
-        {table.getFilteredRowModel().rows.filter((row) => row.getCanSelect()).length} Zeile(n)
-        ausgewählt.
+        {table.getFilteredRowModel().rows.length} Zeile(n) ausgewählt.
       </div>
       <div className="flex flex-col items-center gap-4 space-x-6 lg:flex-row lg:space-x-8">
         <div className="flex items-center space-x-2">
@@ -35,7 +34,8 @@ const ComputerTablePagination = ({ table }: { table: Table<Computer> }) => {
         </div>
         <div className="flex items-center justify-between gap-3">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Seite {table.getState().pagination.pageIndex + 1} von {table.getPageCount()}
+            Seite {table.getState().pagination.pageIndex + 1} von{" "}
+            {Math.min(table.getPageCount(), 1)}
           </div>
           <div className="flex items-center space-x-2">
             <Button

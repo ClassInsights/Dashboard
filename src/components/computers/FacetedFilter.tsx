@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { Computer } from "@/types/Computer";
-import { type Column } from "@tanstack/react-table";
+import { type Column, type Table } from "@tanstack/react-table";
 import { Check, PlusCircle } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -23,11 +23,19 @@ interface DataTableFacetedFilterProps {
     label: string;
     value: string;
   }[];
+  table: Table<Computer>;
 }
 
-const ComputerTableFacetedFilter = ({ column, title, options }: DataTableFacetedFilterProps) => {
+const ComputerTableFacetedFilter = ({
+  column,
+  title,
+  options,
+  table,
+}: DataTableFacetedFilterProps) => {
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  let selectedValues = new Set(
+    ((column?.getFilterValue() as string[]) ?? []).filter((value) => facets?.has(value)),
+  );
 
   return (
     <Popover>
@@ -70,40 +78,43 @@ const ComputerTableFacetedFilter = ({ column, title, options }: DataTableFaceted
           <CommandList>
             <CommandEmpty>Nichts gefunden.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => {
-                const isSelected = selectedValues.has(option.value);
-                return (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => {
-                      if (isSelected) {
-                        selectedValues.delete(option.value);
-                      } else {
-                        selectedValues.add(option.value);
-                      }
-                      const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(filterValues.length ? filterValues : undefined);
-                    }}
-                  >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible",
-                      )}
+              {options
+                .sort((a, b) => a.label.localeCompare(b.label))
+                .map((option) => {
+                  const isSelected = selectedValues.has(option.value);
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      onSelect={() => {
+                        if (isSelected) selectedValues.delete(option.value);
+                        else selectedValues.add(option.value);
+
+                        const filterValues = Array.from(selectedValues);
+                        column?.setFilterValue(filterValues.length ? filterValues : undefined);
+
+                        table.resetPageIndex();
+                        table.resetRowSelection();
+                      }}
                     >
-                      <Check className="text-primary-foreground" />
-                    </div>
-                    <span>{option.label}</span>
-                    {facets?.get(option.value) && (
-                      <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
-                      </span>
-                    )}
-                  </CommandItem>
-                );
-              })}
+                      <div
+                        className={cn(
+                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                          isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "opacity-50 [&_svg]:invisible",
+                        )}
+                      >
+                        <Check className="text-primary-foreground" />
+                      </div>
+                      <span>{option.label}</span>
+                      {facets?.get(option.value) && (
+                        <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
+                          {facets.get(option.value)}
+                        </span>
+                      )}
+                    </CommandItem>
+                  );
+                })}
             </CommandGroup>
             {selectedValues.size > 0 && (
               <>

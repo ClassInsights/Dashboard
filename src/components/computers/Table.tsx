@@ -58,15 +58,6 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
 
-  useEffect(() => {
-    // make sure just the online computers are selected
-    const newSelection: RowSelectionState = {};
-    table.getSelectedRowModel().rows.forEach((row) => {
-      if (row.original.online) newSelection[row.id] = true;
-    });
-    setRowSelection(newSelection);
-  }, [data]);
-
   const table = useReactTable({
     data,
     columns,
@@ -80,7 +71,6 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnFiltersChange: setColumnFilters,
-    enableRowSelection: (row) => row.original.online,
     autoResetPageIndex: false,
     state: {
       sorting,
@@ -104,6 +94,22 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
       },
     },
   });
+
+  // remove room filter when there is no computer in this room
+  useEffect(() => {
+    const facets = table.getColumn("Raum")!.getFacetedUniqueValues();
+    setColumnFilters((prev) =>
+      prev
+        .map((filter) => {
+          if (filter.id !== "Raum") return filter;
+          return {
+            ...filter,
+            value: (filter.value as string[]).filter((value) => facets.has(value)),
+          };
+        })
+        .filter((filter) => (filter.value as string[]).length > 0),
+    );
+  }, [data]);
 
   return (
     <>

@@ -2,12 +2,13 @@ import useComputers from "@/hooks/use-computers";
 import type { Computer } from "@/types/Computer";
 
 import type { ComputerCommand } from "@/types/ComputerCommand";
-import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { flexRender, type Row, type Table } from "@tanstack/react-table";
-import { LogOut, Power, RotateCcw } from "lucide-react";
+import { LogOut, Power, RotateCcw, School } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import RoomAssignment, { type RoomAssignmentProps } from "../RoomAssignment";
 import {
+  AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -31,9 +32,16 @@ const Body = ({ table }: { table: Table<Computer> }) => {
     isOpen: boolean;
     description?: string;
     label?: string;
+    someOffline?: boolean;
     action?: () => void;
   }>({
     isOpen: false,
+  });
+
+  const [roomAssignment, setRoomAssignment] = useState<RoomAssignmentProps>({
+    isOpen: false,
+    onOpenChange: (isOpen) => setRoomAssignment((prev) => ({ ...prev, isOpen })),
+    table,
   });
 
   const {
@@ -51,7 +59,10 @@ const Body = ({ table }: { table: Table<Computer> }) => {
     const action = () => {
       sendCommand(
         hasSelectedRows
-          ? selectedComputers.map((computer) => ({ computerId: computer.computerId, command }))
+          ? selectedComputers.map((computer) => ({
+              computerId: computer.computerId,
+              command,
+            }))
           : [{ computerId: computer.computerId, command }],
       );
       table.resetRowSelection();
@@ -62,14 +73,19 @@ const Body = ({ table }: { table: Table<Computer> }) => {
       return;
     }
 
+    const someOffline =
+      hasSelectedRows &&
+      selectedComputers.filter((c) => c.online).length < selectedComputers.length;
+
     switch (command) {
       case "shutdown":
         setCommandAlert({
           isOpen: true,
           description: hasSelectedRows
-            ? `Die ${selectedComputers.length} ausgewählten Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
+            ? `${selectedComputers.length === 1 ? "Der ausgewählte" : `Die ${selectedComputers.length} ausgewählten`} Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} ${selectedComputers.length === 1 ? "wird" : "werden"} sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
             : `Der Computer ${computer.name} wird sofort heruntergefahren. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
           label: "Herunterfahren",
+          someOffline,
           action,
         });
         break;
@@ -77,9 +93,10 @@ const Body = ({ table }: { table: Table<Computer> }) => {
         setCommandAlert({
           isOpen: true,
           description: hasSelectedRows
-            ? `Die ${selectedComputers.length} ausgewählten Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
+            ? `${selectedComputers.length === 1 ? "Der ausgewählte" : `Die ${selectedComputers.length} ausgewählten`} Computer ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} ${selectedComputers.length === 1 ? "wird" : "werden"} sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`
             : `Der Computer ${computer.name} wird sofort neu gestartet. Ungespeicherte Änderungen oder Dokumente gehen dabei verloren!`,
           label: "Neustarten",
+          someOffline,
           action,
         });
         break;
@@ -87,13 +104,24 @@ const Body = ({ table }: { table: Table<Computer> }) => {
         setCommandAlert({
           isOpen: true,
           description: hasSelectedRows
-            ? `Alle Benutzer an den ${selectedComputers.length} ausgewählten Computern ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`
-            : `Der Benutzer am Computer ${computer.name} wird sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`,
+            ? `Alle Benutzer an ${selectedComputers.length === 1 ? "dem ausgewählten" : `den ${selectedComputers.length} ausgewählten`} Computern ${selectedComputers.length <= 3 ? ` (${selectedComputers.map((computer) => computer.name).join(", ")})` : ""} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`
+            : `Alle Benutzer am Computer ${computer.name} werden sofort abgemeldet. Ungespeicherte Arbeiten gehen dabei verloren!`,
           label: "Abmelden",
+          someOffline,
           action,
         });
         break;
     }
+  };
+
+  const handleRoomAssign = ({ original: computer }: Row<Computer>) => {
+    setRoomAssignment((prev) => ({
+      ...prev,
+      isOpen: true,
+      computerIds: hasSelectedRows
+        ? selectedComputers.map((c) => c.computerId)
+        : [computer.computerId],
+    }));
   };
 
   const navigate = useNavigate();
@@ -133,25 +161,41 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                 )}
                 <ContextMenuSeparator />
                 <ContextMenuItem
-                  disabled={!row.original.online}
+                  disabled={
+                    hasSelectedRows
+                      ? selectedComputers.every((c) => !c.online)
+                      : !row.original.online
+                  }
                   onClick={(event) => handleCommand(event, "shutdown", row)}
                 >
                   <Power />
                   Herunterfahren
                 </ContextMenuItem>
                 <ContextMenuItem
-                  disabled={!row.original.online}
+                  disabled={
+                    hasSelectedRows
+                      ? selectedComputers.every((c) => !c.online)
+                      : !row.original.online
+                  }
                   onClick={(event) => handleCommand(event, "restart", row)}
                 >
                   <RotateCcw />
                   Neustarten
                 </ContextMenuItem>
                 <ContextMenuItem
-                  disabled={!row.original.online}
+                  disabled={
+                    hasSelectedRows
+                      ? selectedComputers.every((c) => !c.online)
+                      : !row.original.online
+                  }
                   onClick={(event) => handleCommand(event, "logoff", row)}
                 >
                   <LogOut />
                   Abmelden
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => handleRoomAssign(row)}>
+                  <School />
+                  Raum zuweisen
                 </ContextMenuItem>
                 <ContextMenuSeparator />
                 <ContextMenuItem
@@ -182,11 +226,16 @@ const Body = ({ table }: { table: Table<Computer> }) => {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Bist du dir sicher?</AlertDialogTitle>
+            <AlertDialogTitle>Sind Sie sich sicher?</AlertDialogTitle>
             <AlertDialogDescription>{commandAlert.description}</AlertDialogDescription>
             <AlertDialogDescription>
               Pro-Tipp: Shift + Klick um Bestätigung zu überspringen
             </AlertDialogDescription>
+            {commandAlert.someOffline === true && (
+              <AlertDialogDescription className="font-semibold">
+                Achtung: Manche Computer können den Befehl nicht empfangen, da sie offline sind.
+              </AlertDialogDescription>
+            )}
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
@@ -196,6 +245,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <RoomAssignment {...roomAssignment} />
     </>
   );
 };

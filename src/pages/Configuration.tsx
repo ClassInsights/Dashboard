@@ -169,10 +169,10 @@ const Configuration = () => {
         />
         <Separator className="mx-auto w-3/4!" />
         <div>
-          <h2>Möchtest du die Räume verwalten?</h2>
+          <h2>Möchten Sie die Räume verwalten?</h2>
           <Spacing size="sm" />
           <p>
-            Hier kannst du die Zuweisung von Räumen und Computern vornehmen und ClassInsights
+            Hier können Sie die Zuweisung von Räumen und Computern vornehmen und ClassInsights
             raumweit anpassen.
           </p>
           <Link to="../raumverwaltung">
