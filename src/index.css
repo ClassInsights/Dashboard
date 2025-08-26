@@ -203,4 +203,8 @@
   [role="button"]:not([disabled]) {
     cursor: pointer;
   }
+
+  a[data-slot="sidebar-menu-button"].active {
+    @apply font-medium;
+  }
 }
