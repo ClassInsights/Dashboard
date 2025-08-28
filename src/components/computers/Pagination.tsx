@@ -35,7 +35,7 @@ const ComputerTablePagination = ({ table }: { table: Table<Computer> }) => {
         <div className="flex items-center justify-between gap-3">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Seite {table.getState().pagination.pageIndex + 1} von{" "}
-            {Math.min(table.getPageCount(), 1)}
+            {Math.max(table.getPageCount(), 1)}
           </div>
           <div className="flex items-center space-x-2">
             <Button
