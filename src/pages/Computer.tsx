@@ -1,5 +1,6 @@
 import CommandButton from "@/components/computer/CommandButton";
 import LogArea from "@/components/computer/LogArea";
+import RoomHint from "@/components/computer/RoomHint";
 import Spacing from "@/components/Spacing";
 import Title from "@/components/Title";
 
@@ -134,6 +135,8 @@ const Computer = () => {
           </div>
         ))}
       </div>
+      {!room && <Spacing size="md" />}
+      <RoomHint computerId={computer.computerId} room={room} />
       <Spacing size="lg" />
       <LogArea computerId={computer.computerId} />
     </div>
