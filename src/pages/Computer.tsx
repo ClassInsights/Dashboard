@@ -122,7 +122,7 @@ const Computer = () => {
           },
           {
             icon: EthernetPort,
-            label: computer.macAddress,
+            label: computer.macAddress.formatAsMac(),
           },
           {
             icon: History,

@@ -50,7 +50,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     const filteredComputers = computers.filter((computer) => {
       const nameMatch = computer.name.includesIgnoreCase(searchTerm);
       const ipMatch = computer.ipAddress.includesIgnoreCase(searchTerm);
-      const macMatch = computer.macAddress.includesIgnoreCase(searchTerm);
+      const macMatch = computer.macAddress.formatAsMac().includesIgnoreCase(searchTerm);
       const userMatch = computer.lastUser.includesIgnoreCase(searchTerm);
 
       return nameMatch || ipMatch || macMatch || userMatch;
@@ -59,7 +59,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     const searchResults: SearchResult[] = filteredComputers.map((computer) => {
       const nameMatch = computer.name.toLowerCase().indexOf(searchTerm);
       const ipMatch = computer.ipAddress.toLowerCase().indexOf(searchTerm);
-      const macMatch = computer.macAddress.toLowerCase().indexOf(searchTerm);
+      const macMatch = computer.macAddress.formatAsMac().toLowerCase().indexOf(searchTerm);
       const userMatch = computer.lastUser.toLowerCase().indexOf(searchTerm);
 
       const matchStart = Math.min(
@@ -69,7 +69,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
       let text = "";
       if (nameMatch >= 0) text = computer.name;
       else if (ipMatch >= 0) text = computer.ipAddress;
-      else if (macMatch >= 0) text = computer.macAddress;
+      else if (macMatch >= 0) text = computer.macAddress.formatAsMac();
       else if (userMatch >= 0) text = computer.lastUser;
 
       const matchLength = searchTerm.length;

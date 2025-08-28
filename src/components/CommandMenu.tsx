@@ -52,7 +52,7 @@ const CommandMenu = () => {
             result.map((result) => (
               <CommandItem
                 key={result.computerId}
-                value={`${result.name},${result.room},${result.ipAddress},${result.macAddress},${result.lastUser}`}
+                value={`${result.name},${result.room},${result.ipAddress},${result.macAddress.formatAsMac()},${result.lastUser}`}
                 onSelect={() => {
                   closeSearch();
                   navigate(`/computer/${result.computerId}`);

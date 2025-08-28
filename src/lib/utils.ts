@@ -1,6 +1,7 @@
 declare global {
   interface String {
     includesIgnoreCase(searchString: string): boolean;
+    formatAsMac(): string;
   }
   interface Array<T> {
     shuffle(): this;
@@ -40,4 +41,8 @@ Date.prototype.formatToDay = function () {
     month: "2-digit",
     year: "numeric",
   });
+};
+
+String.prototype.formatAsMac = function () {
+  return this.match(/.{1,2}/g)?.join(":") ?? "???";
 };

@@ -67,6 +67,10 @@ export const columns: ColumnDef<Computer>[] = [
     id: "Mac-Adresse",
     accessorKey: "macAddress",
     header: ({ column }) => <ComputerTableColumnHeader column={column} title="Mac-Adresse" />,
+    cell: ({ getValue }) => {
+      const macAddress = getValue() as string;
+      return <span>{macAddress.formatAsMac()}</span>;
+    },
   },
   {
     id: "Zuletzt Online",
