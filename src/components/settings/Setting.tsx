@@ -1,6 +1,6 @@
+import Spacing from "../Spacing";
+import { Switch } from "../ui/switch";
 import MinutesInput from "./MinutesInput";
-import Spacing from "./Spacing";
-import { Switch } from "./ui/switch";
 
 type SettingProps = {
   title: string;

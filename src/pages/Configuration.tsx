@@ -1,4 +1,4 @@
-import Setting from "@/components/Setting";
+import Setting from "@/components/settings/Setting";
 import Spacing from "@/components/Spacing";
 import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
