@@ -65,7 +65,7 @@ const externItems = [
   },
   {
     title: "Dokumentation",
-    url: "https://github.com/ClassInsights/Installer/blob/main/readme.md",
+    url: "https://docs.classinsights.at",
     icon: BookOpen,
   },
   {
