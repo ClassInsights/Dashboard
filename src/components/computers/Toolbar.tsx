@@ -7,6 +7,7 @@ import { ArrowDownUp, RotateCcw, X } from "lucide-react";
 import { Button } from "../ui/button";
 import ComputerTableViewOptions from "./ColumnToggle";
 import ComputerTableFacetedFilter from "./FacetedFilter";
+import NameFilter from "./NameFilter";
 
 const Toolbar = ({ table }: { table: Table<Computer> }) => {
   const { data: rooms } = useRooms();
@@ -42,7 +43,7 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
     <div className="mb-4 flex items-end justify-between">
       <div>
         <p className="pb-1 font-medium">Verfügbare Filter</p>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col gap-x-2 gap-y-1.5 lg:flex-row lg:items-center">
           {table.getColumn("Raum") && (
             <ComputerTableFacetedFilter
               column={table.getColumn("Raum")}
@@ -59,6 +60,7 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
               table={table}
             />
           )}
+          <NameFilter table={table} />
         </div>
       </div>
       <div className="flex items-center space-x-2">

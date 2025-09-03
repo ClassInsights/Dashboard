@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { patternToRegex } from "@/lib/utils";
 import type { Computer } from "@/types/Computer";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router";
@@ -49,6 +50,10 @@ export const columns: ColumnDef<Computer>[] = [
     id: "Name",
     accessorKey: "name",
     header: ({ column }) => <ComputerTableColumnHeader column={column} title="Name" />,
+    filterFn: (row, id, value) => {
+      const regex = patternToRegex(value);
+      return regex.test(row.getValue(id));
+    },
   },
   {
     id: "Raum",

@@ -46,3 +46,15 @@ Date.prototype.formatToDay = function () {
 String.prototype.formatAsMac = function () {
   return this.match(/.{1,2}/g)?.join(":") ?? "???";
 };
+
+/**
+ * Converts a simple wildcard pattern to a regular expression.
+ * Supports * and ? as wildcard characters.
+ * @param pattern The wildcard pattern to convert.
+ * @returns The regular expression.
+ */
+export const patternToRegex = (pattern: string) => {
+  const escaped = pattern.replace(/[-\/\\^$+.()|[\]{}]/g, "\\$&");
+  const regexString = "^" + escaped.replace(/\*/g, ".*").replace(/\?/g, ".") + "$";
+  return new RegExp(regexString, "i");
+};
