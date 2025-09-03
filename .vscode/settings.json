@@ -2,7 +2,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
-  "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui"],
+  "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui", "cmdk"],
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
