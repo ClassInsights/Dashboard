@@ -24,9 +24,10 @@ import Toolbar from "./Toolbar";
 interface DataTableProps {
   columns: ColumnDef<Computer>[];
   data: Computer[];
+  initialFilter?: ColumnFiltersState;
 }
 
-const ComputerTable = ({ columns, data }: DataTableProps) => {
+const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "Status",
@@ -38,7 +39,7 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
     },
   ]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialFilter ?? []);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -92,6 +93,7 @@ const ComputerTable = ({ columns, data }: DataTableProps) => {
       columnVisibility: {
         "Zuletzt Online": false,
       },
+      columnFilters: initialFilter ?? [],
     },
   });
 
