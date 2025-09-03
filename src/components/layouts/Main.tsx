@@ -2,6 +2,7 @@ import AuthProvider from "@/contexts/AuthContext";
 import { SearchProvider } from "@/contexts/SearchContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { Computer, Forward, Home, Reply, RotateCcw, School, Settings } from "lucide-react";
+import { useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import { Fragment } from "react/jsx-runtime";
 import CommandMenu from "../CommandMenu";
@@ -52,6 +53,8 @@ const MainLayout = () => {
     },
     [{ path: "/", title: translatePath("/") }],
   );
+
+  useEffect(() => window.scrollTo(0, 0), [pathname]);
 
   return (
     <ToastProvider>
