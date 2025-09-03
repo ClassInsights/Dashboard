@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { isRoom, type Room } from "@/types/Room";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Custom hook to fetch rooms from the API.
@@ -12,7 +13,41 @@ const useRooms = () => {
     school: { apiUrl },
   } = useAuth();
 
-  return useQuery({
+  const { showMessage } = useToast();
+  const queryClient = useQueryClient();
+
+  const update = useMutation({
+    mutationFn: async (room: Room) => {
+      const response = await fetch(`${apiUrl}/rooms/${room.roomId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(room),
+      });
+
+      if (!response.ok) throw new Error("Failed to update room");
+    },
+    onMutate: async (newRoom: Room) => {
+      await queryClient.cancelQueries({ queryKey: ["rooms"] });
+      const previousRooms = queryClient.getQueryData(["rooms"]);
+
+      queryClient.setQueryData(["rooms"], (old: Room[]) =>
+        old.map((r) => (r.roomId === newRoom.roomId ? newRoom : r)),
+      );
+
+      return { previousRooms };
+    },
+    onSuccess: () => showMessage("Raum erfolgreich aktualisiert"),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["rooms"], context?.previousRooms);
+      showMessage("Fehler beim Aktualisieren des Raums", "error");
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["rooms"] }),
+  });
+
+  const query = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
       const response = await fetch(`${apiUrl}/rooms`, {
@@ -35,6 +70,8 @@ const useRooms = () => {
     refetchInterval: 1000 * 30,
     refetchIntervalInBackground: true,
   });
+
+  return { ...query, update };
 };
 
 export default useRooms;

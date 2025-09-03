@@ -31,6 +31,8 @@ const translatePath = (path: string) => {
   switch (path) {
     case "/":
       return "Startseite";
+    case "ad":
+      return "Active Directory";
     default:
       return path.charAt(0).toUpperCase() + path.slice(1);
   }
