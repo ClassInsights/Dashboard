@@ -141,7 +141,7 @@ const Computer = () => {
               <TooltipTrigger asChild>
                 <Icon size="16" />
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent side="left">
                 <p>{tip}</p>
               </TooltipContent>
             </Tooltip>
