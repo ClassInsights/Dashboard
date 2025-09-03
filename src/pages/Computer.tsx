@@ -6,6 +6,7 @@ import Title from "@/components/Title";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
 import {
@@ -100,6 +101,7 @@ const Computer = () => {
           {
             icon: ComputerIcon,
             label: computer.name,
+            tip: "Computername",
           },
           {
             icon: Clock,
@@ -111,26 +113,38 @@ const Computer = () => {
                 hour: "2-digit",
                 minute: "2-digit",
               }) + " Uhr",
+            tip: "Zuletzt online",
           },
           {
             icon: Globe,
             label: computer.ipAddress,
+            tip: "IP-Adresse",
           },
           {
             icon: CircleUserRound,
             label: computer.lastUser,
+            tip: "Letzter angemeldeter Benutzer",
           },
           {
             icon: EthernetPort,
             label: computer.macAddress.formatAsMac(),
+            tip: "MAC-Adresse",
           },
           {
             icon: History,
             label: computer.version,
+            tip: "Installierte ClassInsights Version",
           },
-        ].map(({ icon: Icon, label }) => (
+        ].map(({ icon: Icon, label, tip }) => (
           <div className="flex items-center gap-2" key={label}>
-            <Icon size="16" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Icon size="16" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{tip}</p>
+              </TooltipContent>
+            </Tooltip>
             {label}
           </div>
         ))}
