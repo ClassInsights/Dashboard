@@ -55,7 +55,11 @@ const useComputers = () => {
       query.refetch();
       showMessage("Computer erfolgreich aktualisiert");
     },
-    onError: () => showMessage("Fehler beim Aktualisieren der Computer", "error"),
+    onError: (_, computers) =>
+      showMessage(
+        `Fehler beim Aktualisieren ${computers.length > 1 ? "der Computer" : "des Computers"}`,
+        "error",
+      ),
   });
 
   const query = useQuery({
