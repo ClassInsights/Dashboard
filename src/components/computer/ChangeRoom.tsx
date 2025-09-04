@@ -41,7 +41,7 @@ const ChangeRoom = ({ computer, room }: ChangeRoomProps) => {
               </Button>
             </span>
           </TooltipTrigger>
-          {(isLoading || autoSyncEnabled) && (
+          {autoSyncEnabled && (
             <TooltipContent>
               <p>Nicht möglich da automatische Active Directory Synchronisierung aktiviert ist!</p>
             </TooltipContent>

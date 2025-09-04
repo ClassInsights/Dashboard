@@ -50,7 +50,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
     commands: { mutate: sendCommand },
   } = useComputers();
 
-  const { data: adCredentials } = useActiveDirectory();
+  const { data: adCredentials, isLoading: isADLoading } = useActiveDirectory();
 
   const autoSyncEnabled = adCredentials?.autoSync ?? false;
 
@@ -204,7 +204,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                     <span>
                       <ContextMenuItem
                         onClick={() => handleRoomAssign(row)}
-                        disabled={autoSyncEnabled}
+                        disabled={isADLoading || autoSyncEnabled}
                       >
                         <School />
                         Raum zuweisen
