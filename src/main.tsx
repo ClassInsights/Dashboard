@@ -1,7 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter, Route, Routes } from "react-router";
+import ErrorBoundaryFallback from "./components/ErrorBoundary";
 import MainLayout from "./components/layouts/Main";
 import "./index.css";
 import Error404 from "./pages/404";
@@ -16,20 +18,22 @@ const client = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={client}>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="computer" element={<Computers />} />
-            <Route path="konfiguration" element={<Configuration />} />
-            <Route path="raumverwaltung" element={<Rooms />} />
-            <Route path="raumverwaltung/ad" element={<AD />} />
-            <Route path="computer/:id" element={<Computer />} />
-            <Route path="*" element={<Error404 />} />
-          </Route>
-        </Routes>
-      </QueryClientProvider>
-    </BrowserRouter>
+    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+      <BrowserRouter>
+        <QueryClientProvider client={client}>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="computer" element={<Computers />} />
+              <Route path="konfiguration" element={<Configuration />} />
+              <Route path="raumverwaltung" element={<Rooms />} />
+              <Route path="raumverwaltung/ad" element={<AD />} />
+              <Route path="computer/:id" element={<Computer />} />
+              <Route path="*" element={<Error404 />} />
+            </Route>
+          </Routes>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 );
