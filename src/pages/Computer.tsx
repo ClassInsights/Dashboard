@@ -1,3 +1,4 @@
+import ChangeRoom from "@/components/computer/ChangeRoom";
 import CommandButton from "@/components/computer/CommandButton";
 import LogArea from "@/components/computer/LogArea";
 import RoomHint from "@/components/computer/RoomHint";
@@ -149,6 +150,7 @@ const Computer = () => {
           </div>
         ))}
       </div>
+      <ChangeRoom computer={computer} room={room} />
       {!room && <Spacing size="md" />}
       <RoomHint computerId={computer.computerId} room={room} />
       <Spacing size="lg" />

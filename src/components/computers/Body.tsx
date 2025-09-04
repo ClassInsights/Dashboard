@@ -1,6 +1,7 @@
 import useComputers from "@/hooks/use-computers";
 import type { Computer } from "@/types/Computer";
 
+import useActiveDirectory from "@/hooks/use-activeDirectory";
 import type { ComputerCommand } from "@/types/ComputerCommand";
 import { flexRender, type Row, type Table } from "@tanstack/react-table";
 import { LogOut, Power, RotateCcw, School } from "lucide-react";
@@ -25,6 +26,7 @@ import {
   ContextMenuTrigger,
 } from "../ui/context-menu";
 import { TableBody, TableCell, TableRow } from "../ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { columns } from "./Columns";
 
 const Body = ({ table }: { table: Table<Computer> }) => {
@@ -47,6 +49,10 @@ const Body = ({ table }: { table: Table<Computer> }) => {
   const {
     commands: { mutate: sendCommand },
   } = useComputers();
+
+  const { data: adCredentials } = useActiveDirectory();
+
+  const autoSyncEnabled = adCredentials?.autoSync ?? false;
 
   const selectedComputers = table.getSelectedRowModel().rows.map((row) => row.original);
   const hasSelectedRows = selectedComputers.length > 0;
@@ -193,10 +199,27 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                   <LogOut />
                   Abmelden
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => handleRoomAssign(row)}>
-                  <School />
-                  Raum zuweisen
-                </ContextMenuItem>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <ContextMenuItem
+                        onClick={() => handleRoomAssign(row)}
+                        disabled={autoSyncEnabled}
+                      >
+                        <School />
+                        Raum zuweisen
+                      </ContextMenuItem>
+                    </span>
+                  </TooltipTrigger>
+                  {autoSyncEnabled && (
+                    <TooltipContent>
+                      <p>
+                        Nicht möglich da automatische Active Directory Synchronisierung aktiviert
+                        ist!
+                      </p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
                 <ContextMenuSeparator />
                 <ContextMenuItem
                   inset
