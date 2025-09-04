@@ -1,7 +1,7 @@
 export type Room = {
   roomId: number;
   displayName: string;
-  regex: string | null;
+  organizationUnit: string | null;
   enabled: boolean;
   deviceCount: number;
 };
@@ -14,8 +14,8 @@ export function isRoom(obj: unknown): obj is Room {
     typeof obj.roomId === "number" &&
     "displayName" in obj &&
     typeof obj.displayName === "string" &&
-    "regex" in obj &&
-    (typeof obj.regex === "string" || obj.regex === null) &&
+    "organizationUnit" in obj &&
+    (typeof obj.organizationUnit === "string" || obj.organizationUnit === null) &&
     "enabled" in obj &&
     typeof obj.enabled === "boolean" &&
     "deviceCount" in obj &&

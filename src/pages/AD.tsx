@@ -4,8 +4,8 @@ const AD = () => {
   return (
     <>
       <Title
-        title="Automatische Raumzuweisung"
-        subtitle="Hier können Sie die Active Directory Integration konfigurieren und die automatische Synchronisierung aktivieren. (Empfohlen)"
+        title="Active Directory Integration"
+        subtitle="Hier können Sie eine Verbindung zum vorhandenen Active Directory herstellen und die automatische Computer Synchronisierung auf Basis der Organisationseinheiten aktivieren. (Empfohlen)"
         backLink="/raumverwaltung"
       />
     </>

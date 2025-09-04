@@ -15,7 +15,7 @@ const Title = ({ title, subtitle, backLink, titleBadge, actions }: TitleProps) =
       <h1>{title}</h1>
       {titleBadge}
     </div>
-    <p className="xl:w-3/5; md:w-3/4">{subtitle}</p>
+    <p className="md:w-3/4">{subtitle}</p>
     {actions && <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">{actions}</div>}
     {backLink && (
       <Link

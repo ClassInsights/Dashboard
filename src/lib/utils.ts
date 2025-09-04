@@ -2,6 +2,7 @@ declare global {
   interface String {
     includesIgnoreCase(searchString: string): boolean;
     formatAsMac(): string;
+    convertLDAP(): string;
   }
   interface Array<T> {
     shuffle(): this;
@@ -45,6 +46,15 @@ Date.prototype.formatToDay = function () {
 
 String.prototype.formatAsMac = function () {
   return this.match(/.{1,2}/g)?.join(":") ?? "???";
+};
+
+/** Convert an LDAP string to a human-readable organization unit format */
+String.prototype.convertLDAP = function () {
+  return this.split(",")
+    .filter((part) => part.startsWith("OU="))
+    .map((part) => part.replace("OU=", ""))
+    .reverse()
+    .join(" / ");
 };
 
 /**
