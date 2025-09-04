@@ -27,7 +27,8 @@ const useRooms = () => {
         body: JSON.stringify(room),
       });
 
-      if (!response.ok) throw new Error("Failed to update room");
+      if (!response.ok)
+        throw new Error(`Failed to update room ${room.roomId}, Status: ${response.status}`);
     },
     onMutate: async (newRoom: Room) => {
       await queryClient.cancelQueries({ queryKey: ["rooms"] });
@@ -56,7 +57,7 @@ const useRooms = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch rooms");
+      if (!response.ok) throw new Error(`Failed to fetch rooms, Status: ${response.status}`);
 
       const data = await response.json();
       if (Array.isArray(data) && data.every(isRoom)) {

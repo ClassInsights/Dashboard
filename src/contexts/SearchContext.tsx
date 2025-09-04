@@ -34,8 +34,6 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
   const closeSearch = () => {
     setIsOpen(false);
     setTimeout(() => setResult([]), 200);
-
-    // TODO: CHECK IF RESULT RESET WORKS, also check if the text input gets reset; MAYBE add a key with date to CommandDialog so it gets rebuild (reset input state; )
   };
 
   const generateResult = (value: string) => {

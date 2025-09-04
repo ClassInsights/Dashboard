@@ -36,7 +36,10 @@ const useLogs = (computerId: number, day: Date) => {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch logs");
+      if (!response.ok)
+        throw new Error(
+          `Failed to fetch logs for computer ${computerId}, Status: ${response.status}`,
+        );
 
       lastRefreshRef.current = new Date();
 

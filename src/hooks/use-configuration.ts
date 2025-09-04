@@ -21,7 +21,7 @@ const useConfiguration = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch settings");
+      if (!response.ok) throw new Error(`Failed to fetch settings, Status: ${response.status}`);
 
       const data = await response.json();
       if (isConfiguration(data)) return data;

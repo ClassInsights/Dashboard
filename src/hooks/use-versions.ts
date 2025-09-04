@@ -43,7 +43,7 @@ const useVersions = (): VersionResponse | undefined => {
         "https://api.github.com/repos/classinsights/api/releases/latest",
       );
 
-      if (!response.ok) throw new Error("Failed to fetch API version");
+      if (!response.ok) throw new Error(`Failed to fetch API version, Status: ${response.status}`);
 
       const data = await response.json();
       if (!isGitHubLatestResponse(data)) throw new Error("Invalid API version data");
@@ -61,7 +61,8 @@ const useVersions = (): VersionResponse | undefined => {
         "https://api.github.com/repos/classinsights/dashboard/releases/latest",
       );
 
-      if (!response.ok) throw new Error("Failed to fetch Dashboard version");
+      if (!response.ok)
+        throw new Error(`Failed to fetch Dashboard version, Status: ${response.status}`);
 
       const data = await response.json();
       if (!isGitHubLatestResponse(data)) throw new Error("Invalid Dashboard version data");
@@ -85,7 +86,8 @@ const useVersions = (): VersionResponse | undefined => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch current API version");
+      if (!response.ok)
+        throw new Error(`Failed to fetch current API version, Status: ${response.status}`);
 
       const data = await response.json();
       if (!isLocalApiMeta(data)) throw new Error("Invalid current API version data");

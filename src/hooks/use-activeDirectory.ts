@@ -20,7 +20,7 @@ const useActiveDirectory = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch AD user");
+      if (!response.ok) throw new Error(`Failed to fetch AD user, Status: ${response.status}`);
 
       const data = await response.json();
       if (!isADCredentials(data)) throw new Error("Invalid AD user data format");
@@ -43,7 +43,7 @@ const useActiveDirectory = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch AD units");
+      if (!response.ok) throw new Error(`Failed to fetch AD units, Status: ${response.status}`);
 
       const data = await response.json();
       if (Array.isArray(data) && data.every((unit) => typeof unit === "string")) return data;

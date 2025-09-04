@@ -29,7 +29,7 @@ const useComputers = () => {
         body: JSON.stringify(messages),
       });
 
-      if (!response.ok) throw new Error("Failed to send command");
+      if (!response.ok) throw new Error(`Failed to send command, Status: ${response.status}`);
     },
     onSuccess: (_, commands) =>
       showMessage(`${commands.length > 1 ? "Befehle" : "Befehl"} erfolgreich gesendet`),
@@ -51,7 +51,7 @@ const useComputers = () => {
         body: JSON.stringify(computers),
       });
 
-      if (!response.ok) throw new Error("Failed to update computers");
+      if (!response.ok) throw new Error(`Failed to update computers, Status: ${response.status}`);
     },
     onMutate: async (newComputers: Computer[]) => {
       await queryClient.cancelQueries({ queryKey: ["computers"] });
@@ -83,7 +83,7 @@ const useComputers = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch computers");
+      if (!response.ok) throw new Error(`Failed to fetch computers, Status: ${response.status}`);
 
       const data = await response.json();
       if (Array.isArray(data) && data.every(isComputer)) return data;
