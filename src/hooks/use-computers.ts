@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { isComputer, type Computer } from "@/types/Computer";
 import type { CommandMessage } from "@/types/ComputerCommand";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Custom hook to fetch computers from the API.
@@ -15,6 +15,8 @@ const useComputers = () => {
   } = useAuth();
 
   const { showMessage } = useToast();
+
+  const queryClient = useQueryClient();
 
   const commands = useMutation({
     mutationFn: async (messages: CommandMessage[]) => {
@@ -51,15 +53,25 @@ const useComputers = () => {
 
       if (!response.ok) throw new Error("Failed to update computers");
     },
-    onSuccess: () => {
-      query.refetch();
-      showMessage("Computer erfolgreich aktualisiert");
+    onMutate: async (newComputers: Computer[]) => {
+      await queryClient.cancelQueries({ queryKey: ["computers"] });
+      const previousComputers = queryClient.getQueryData(["computers"]);
+
+      queryClient.setQueryData(["computers"], (old: Computer[]) =>
+        old.map((c) => newComputers.find((nc) => nc.computerId === c.computerId) ?? c),
+      );
+
+      return { previousComputers };
     },
-    onError: (_, computers) =>
+    onSuccess: () => showMessage("Computer erfolgreich aktualisiert"),
+    onError: (_, computers, context) => {
+      queryClient.setQueryData(["computers"], context?.previousComputers);
       showMessage(
         `Fehler beim Aktualisieren ${computers.length > 1 ? "der Computer" : "des Computers"}`,
         "error",
-      ),
+      );
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["computers"] }),
   });
 
   const query = useQuery({

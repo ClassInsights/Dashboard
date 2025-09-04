@@ -47,22 +47,14 @@ const RoomCard = ({ room }: { room: Room }) => {
   /** Update the organization unit for this room */
   const handleUpdateRoom = () => {
     if (!selectedUnit) return;
-    updateRoom.mutate(
-      { ...room, organizationUnit: selectedUnit },
-      {
-        onSettled: () => handleOpenChange(false),
-      },
-    );
+    updateRoom.mutate({ ...room, organizationUnit: selectedUnit });
+    handleOpenChange(false);
   };
 
   /** Remove the organization unit from this room */
   const removeOrganizationUnit = () => {
-    updateRoom.mutate(
-      { ...room, organizationUnit: null },
-      {
-        onSettled: () => handleOpenChange(false),
-      },
-    );
+    updateRoom.mutate({ ...room, organizationUnit: null });
+    handleOpenChange(false);
   };
 
   return (

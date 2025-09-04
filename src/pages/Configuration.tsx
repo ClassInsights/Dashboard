@@ -36,9 +36,7 @@ const Configuration = () => {
     },
     onSuccess: () => showMessage("Änderungen erfolgreich gespeichert"),
     onError: () => showMessage("Fehler beim Speichern der Änderungen", "error"),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["configuration"] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["configuration"] }),
   });
 
   if (!config) return null;

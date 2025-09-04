@@ -48,10 +48,9 @@ const RoomAssignment = ({ isOpen, computerIds, onOpenChange, table }: RoomAssign
         ...computer,
         roomId: selectedRoom.roomId,
       })),
-      {
-        onSettled: () => handleOpenChange(false),
-      },
     );
+
+    handleOpenChange(false);
 
     if (table) table.resetRowSelection();
   };
@@ -62,10 +61,9 @@ const RoomAssignment = ({ isOpen, computerIds, onOpenChange, table }: RoomAssign
         ...computer,
         roomId: null,
       })),
-      {
-        onSettled: () => handleOpenChange(false),
-      },
     );
+
+    handleOpenChange(false);
 
     if (table) table.resetRowSelection();
   };

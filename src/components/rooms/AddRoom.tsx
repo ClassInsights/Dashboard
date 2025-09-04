@@ -47,12 +47,8 @@ const AddRoom = () => {
   /** Update the organization unit for this room */
   const handleUpdateRoom = () => {
     if (!room || !unit) return;
-    updateRoom.mutate(
-      { ...room, organizationUnit: unit },
-      {
-        onSettled: () => handleOpenChange(false),
-      },
-    );
+    updateRoom.mutate({ ...room, organizationUnit: unit });
+    handleOpenChange(false);
   };
 
   return (
