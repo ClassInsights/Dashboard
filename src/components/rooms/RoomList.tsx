@@ -10,10 +10,8 @@ const RoomList = () => {
   const { data: computers } = useComputers();
   const { isSuccess: isADSuccess } = useActiveDirectory();
 
-  if (!rooms) return <p className="font-medium">Es wurden keine Räume gefunden.</p>;
-
   /** Rooms that have an organization unit or at least one computer */
-  const filteredRooms = rooms.filter(
+  const filteredRooms = rooms?.filter(
     (room) =>
       !!computers?.find((computer) => computer.roomId === room.roomId) || !!room.organizationUnit,
   );
@@ -25,13 +23,21 @@ const RoomList = () => {
         Hier werden alle Räume aufgelistet, die entweder einer Active Directory Organisationseinheit
         zugewiesen sind oder mindestens einen Computer hinzugefügt bekommen haben.
       </p>
-      {isADSuccess && filteredRooms.length < rooms.length && <AddRoom />}
+      {isADSuccess && (filteredRooms?.length ?? 0) < (rooms?.length ?? 0) && <AddRoom />}
       <Spacing size="md" />
-      <div className="grid grid-cols-1 gap-x-8 gap-y-5 lg:grid-cols-2 2xl:grid-cols-3">
-        {filteredRooms.map((room) => (
-          <RoomCard key={room.roomId} room={room} />
-        ))}
-      </div>
+      {filteredRooms && filteredRooms?.length > 0 ? (
+        <div className="grid grid-cols-1 gap-x-8 gap-y-5 lg:grid-cols-2 2xl:grid-cols-3">
+          {filteredRooms?.map((room) => (
+            <RoomCard key={room.roomId} room={room} />
+          ))}
+        </div>
+      ) : (
+        <p className="font-medium">
+          {rooms && rooms.length === 0
+            ? "Es wurden keine Räume gefunden."
+            : "Keine Räume bisher registriert."}
+        </p>
+      )}
     </>
   );
 };
