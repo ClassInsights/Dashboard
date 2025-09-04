@@ -3,6 +3,7 @@ import useRooms from "@/hooks/use-rooms";
 import type { Computer } from "@/types/Computer";
 import type { Room } from "@/types/Room";
 import type { Table } from "@tanstack/react-table";
+import { Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "./ui/command";
@@ -32,6 +33,7 @@ const RoomAssignment = ({ isOpen, computerIds, onOpenChange, table }: RoomAssign
   if (!computerIds || computerIds.length === 0) return null;
 
   const targetComputers = computers.filter((computer) => computerIds.includes(computer.computerId));
+  const hasAnyComputerARoomAssigned = targetComputers.some((computer) => computer.roomId);
 
   const handleOpenChange = (open: boolean) => {
     onOpenChange(open);
@@ -45,6 +47,20 @@ const RoomAssignment = ({ isOpen, computerIds, onOpenChange, table }: RoomAssign
       targetComputers.map((computer) => ({
         ...computer,
         roomId: selectedRoom.roomId,
+      })),
+      {
+        onSettled: () => handleOpenChange(false),
+      },
+    );
+
+    if (table) table.resetRowSelection();
+  };
+
+  const handleRemove = () => {
+    updateComputers.mutate(
+      targetComputers.map((computer) => ({
+        ...computer,
+        roomId: null,
       })),
       {
         onSettled: () => handleOpenChange(false),
@@ -78,6 +94,14 @@ const RoomAssignment = ({ isOpen, computerIds, onOpenChange, table }: RoomAssign
                 ))}
               </CommandList>
             </Command>
+            {hasAnyComputerARoomAssigned && (
+              <DialogFooter>
+                <Button variant="outline" onClick={handleRemove}>
+                  <Trash />
+                  {computerIds.length === 1 ? "Aus Raum entfernen" : "Aus Räumen entfernen"}
+                </Button>
+              </DialogFooter>
+            )}
           </>
         ) : (
           <>

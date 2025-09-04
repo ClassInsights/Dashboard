@@ -1,3 +1,4 @@
+import useActiveDirectory from "@/hooks/use-activeDirectory";
 import type { Room } from "@/types/Room";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -11,7 +12,11 @@ type RoomHintProps = {
 
 const RoomHint = ({ computerId, room }: RoomHintProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  if (room) return null;
+  const { data: adCredentials } = useActiveDirectory();
+
+  const autoSyncEnabled = adCredentials?.autoSync ?? false;
+
+  if (room || autoSyncEnabled) return null;
 
   return (
     <>
@@ -19,14 +24,14 @@ const RoomHint = ({ computerId, room }: RoomHintProps) => {
       <div className="rounded-xl border border-amber-500 px-5 py-3 text-center">
         <p className="mx-auto lg:w-3/4">
           Dieser Computer ist noch keinem Raum zugewiesen. Richte für die Zuweisung entweder die
-          automatische Raumzuweisung bei der{" "}
-          <Link to="../raumverwaltung">
+          automatische Raumzuweisung mithilfe der{" "}
+          <Link to="../raumverwaltung/ad">
             <Button variant="link" className="px-0!">
-              Raumverwaltung
+              Active Directory Integration
             </Button>
           </Link>{" "}
-          ein oder{" "}
-          <Button variant="link" className="px-0!" onClick={() => setIsOpen(true)}>
+          für den entsprechenden Raum ein oder{" "}
+          <Button variant="link" className="p-0!" onClick={() => setIsOpen(true)}>
             weise den Computer manuell einem Raum zu
           </Button>
           .
