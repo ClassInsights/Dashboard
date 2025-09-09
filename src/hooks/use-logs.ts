@@ -59,7 +59,7 @@ const useLogs = (computerId: number, day: Date) => {
         );
 
         const diff = Date.now() - now;
-        if (diff < 500) await new Promise((resolve) => setTimeout(resolve, 500 - diff));
+        if (diff < 1000) await new Promise((resolve) => setTimeout(resolve, 1000 - diff));
 
         recentLogsRef.current = allLogs;
         return allLogs;
