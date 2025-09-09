@@ -38,6 +38,7 @@ const useComputers = () => {
         `Fehler beim Senden ${commands.length > 1 ? "der Befehle" : "des Befehls"}`,
         "error",
       ),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["computers"] }),
   });
 
   const update = useMutation({
