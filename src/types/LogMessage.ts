@@ -5,7 +5,7 @@ export type LogMessage = {
   level: string;
   category: string;
   message: string;
-  details?: string;
+  details?: string | null;
 };
 
 export const isLogMessage = (data: unknown): data is LogMessage => {
@@ -24,6 +24,6 @@ export const isLogMessage = (data: unknown): data is LogMessage => {
     typeof data.category === "string" &&
     "message" in data &&
     typeof data.message === "string" &&
-    (!("details" in data) || typeof data.details === "string")
+    (!("details" in data) || data.details === null || typeof data.details === "string")
   );
 };
