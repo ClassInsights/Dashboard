@@ -41,7 +41,7 @@ const useLogs = (computerId: number, day: Date) => {
           `Failed to fetch logs for computer ${computerId}, Status: ${response.status}`,
         );
 
-      lastRefreshRef.current = new Date();
+      lastRefreshRef.current = new Date(endTime);
 
       const data = await response.json();
       if (Array.isArray(data) && data.every(isLogMessage)) {
