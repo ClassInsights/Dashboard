@@ -24,7 +24,6 @@ export const isLogMessage = (data: unknown): data is LogMessage => {
     typeof data.category === "string" &&
     "message" in data &&
     typeof data.message === "string" &&
-    "details" in data &&
-    (typeof data.details === "string" || !data.details)
+    (!("details" in data) || typeof data.details === "string")
   );
 };

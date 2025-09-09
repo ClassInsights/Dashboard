@@ -55,12 +55,12 @@ const Rooms = () => {
               {[
                 {
                   icon: Network,
-                  value: data?.domain,
-                  label: "Domäne",
+                  value: data?.ldapServer,
+                  label: "Domaincontroller",
                 },
                 {
                   icon: User,
-                  value: data?.username,
+                  value: data?.ldapUser,
                   label: "Benutzername",
                 },
               ].map(({ icon: Icon, value, label }) => (

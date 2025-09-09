@@ -1,20 +1,23 @@
 export type ADCredentials = {
-  domain: string;
-  username: string;
-  password?: string | null;
-  autoSync: boolean;
+  ldapServer: string;
+  ldapPort: number;
+  ldapUser: string;
+  ldapPass?: string | null;
+  ldapAutoSync: boolean;
 };
 
 export const isADCredentials = (data: any): data is ADCredentials => {
   return (
     typeof data === "object" &&
     data !== null &&
-    "domain" in data &&
-    typeof data.domain === "string" &&
-    "username" in data &&
-    typeof data.username === "string" &&
-    ("password" in data ? typeof data.password === "string" || data.password === null : true) &&
-    "autoSync" in data &&
-    typeof data.autoSync === "boolean"
+    "ldapServer" in data &&
+    typeof data.ldapServer === "string" &&
+    "ldapPort" in data &&
+    typeof data.ldapPort === "number" &&
+    "ldapUser" in data &&
+    typeof data.ldapUser === "string" &&
+    (!("ldapPass" in data) || typeof data.ldapPass === "string" || data.ldapPass === null) &&
+    "ldapAutoSync" in data &&
+    typeof data.ldapAutoSync === "boolean"
   );
 };
