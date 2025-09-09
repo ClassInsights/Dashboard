@@ -15,7 +15,7 @@ const ChangeRoom = ({ computer, room }: ChangeRoomProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: adCredentials, isLoading } = useActiveDirectory();
 
-  const autoSyncEnabled = adCredentials?.autoSync ?? false;
+  const autoSyncEnabled = adCredentials?.ldapAutoSync ?? false;
 
   if (!room) return null;
 

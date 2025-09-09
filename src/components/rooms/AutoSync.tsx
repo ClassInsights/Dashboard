@@ -6,7 +6,6 @@ const AutoSync = () => {
 
   const handleChange = (isEnabled: boolean) => {
     if (!credentials) return;
-    console.log("Toggled AutoSync to:", isEnabled);
     updateAutoSync(isEnabled);
   };
 
