@@ -66,7 +66,7 @@ const Configuration = () => {
       )}
       <Title
         title="Konfiguration"
-        subtitle="Auf dieser Seite können Sie Änderungen am gesamten ClassInsights Ökosystem vornehmen. Um die Änderungen zu speichern, klicken Sie auf den Button unten."
+        subtitle="Auf dieser Seite können Sie Änderungen am gesamten ClassInsights Ökosystem vornehmen. Sobald Sie Änderungen vornehmen, können Sie diese unten rechts speichern."
         backLink="/"
       />
       <div className="flex flex-col gap-10">
@@ -97,7 +97,7 @@ const Configuration = () => {
         <Separator className="mx-auto w-3/4!" />
         <Setting
           title="Stundenlücken"
-          description="Bezieht sich auf die Zeit in Minuten zwischen zwei Unterrichtsstunden, die entscheidet, ob an einen Computer ein Shutdown-Befehl gesendet wird. (Standard: 20 Minuten)"
+          description="Bezieht sich auf die Zeit in Minuten zwischen zwei Unterrichtsstunden, die entscheidet, ob an einen Computer ein Herunterfahren-Befehl gesendet wird. (Standard: 20 Minuten)"
           toggleValue={currentConfig.checkGap}
           toggleAction={(value) => updateConfig("checkGap", value)}
           inputValue={currentConfig.lessonGapMinutes}
@@ -117,8 +117,9 @@ const Configuration = () => {
               ) : (
                 ""
               )}{" "}
-              ein Shutdown-Befehl an die Computer dieses Raumes gesendet. Wenn weniger als 30
-              Minuten zwischen zwei Stunden sind, wird kein Shutdown-Befehl gesendet.
+              ein Shutdown-Befehl an die Computer dieses Raumes gesendet. Wenn weniger als{" "}
+              <span className="text-primary">{currentConfig.lessonGapMinutes} Minuten</span>{" "}
+              zwischen zwei Stunden sind, wird kein Shutdown-Befehl gesendet.
             </p>
           }
           disabled={mutation.isPending}
@@ -134,7 +135,7 @@ const Configuration = () => {
           currentHint={
             <p>
               Nun wird <span className="text-primary">{currentConfig.shutdownDelay} Minuten</span>{" "}
-              nach Unterrichtsende für alle eingeschalteten Computer überprüft, ob sie eine eine
+              nach Unterrichtsende für alle eingeschalteten Computer überprüft, ob sie eine
               automatische Herunterfahren-Meldung erhalten sollten.
             </p>
           }
@@ -170,8 +171,8 @@ const Configuration = () => {
           <h2>Möchten Sie die Räume verwalten?</h2>
           <Spacing size="sm" />
           <p>
-            Hier können Sie die Zuweisung von Räumen und Computern vornehmen und ClassInsights
-            raumweit anpassen.
+            Hier können Sie die Automatische Raumzuweisung konfigurieren und ClassInsights für
+            einzelne Räume aktivieren/deaktivieren.
           </p>
           <Link to="../raumverwaltung">
             <Button variant="link" className="px-0!">

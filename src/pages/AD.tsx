@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import useActiveDirectory from "@/hooks/use-activeDirectory";
 import type { ADCredentials } from "@/types/ADCredentials";
 import { Save } from "lucide-react";
+import { Link } from "react-router";
 
 const AD = () => {
   const { adCredentials, data: credentials } = useActiveDirectory();
@@ -36,7 +37,7 @@ const AD = () => {
     <>
       <Title
         title="Active Directory Integration"
-        subtitle="Hier können Sie eine Verbindung zum vorhandenen Active Directory herstellen und die automatische Computer Synchronisierung auf Basis der Organisationseinheiten aktivieren. (Empfohlen)"
+        subtitle="Hier können Sie eine Verbindung zum vorhandenen Active Directory herstellen und die Automatische Raumzuweisung auf Basis der Organisationseinheiten aktivieren. (Empfohlen)"
         backLink="/raumverwaltung"
       />
       <h2 className="pb-1.5">Zugangsdaten</h2>
@@ -48,7 +49,7 @@ const AD = () => {
       <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3 lg:w-3/4 xl:w-1/2">
         <div>
           <Label htmlFor="ad-server" className="pb-1">
-            FQDN (Fully Qualified Domain Name) oder IP des Domaincontrollers
+            FQDN (Fully Qualified Domain Name) oder IP des Domain-Controllers
           </Label>
           <Input
             name="ldapServer"
@@ -60,7 +61,7 @@ const AD = () => {
         </div>
         <div>
           <Label htmlFor="ad-port" className="pb-1">
-            Port des Domaincontrollers (Standardmäßig 389 oder 3268 für Global Catalog)
+            Port des Domain-Controllers (Standardmäßig 389 oder 3268 für Global Catalog)
           </Label>
           <Input
             name="ldapPort"
@@ -72,14 +73,14 @@ const AD = () => {
           />
         </div>
         <p className="mt-5">
-          Zudem benötigt ClassInsights einen Active Directory Benutzer um auf die
+          Zudem benötigt ClassInsights einen Active Directory Benutzer, um auf die
           Organisationseinheiten zugreifen zu können. Erstellen Sie hierfür bitte einen neuen{" "}
           <span className="font-medium">Benutzer OHNE Administratorrechte</span> (aus
           Sicherheitsgründen) und geben Sie diese Zugangsdaten unten an.
         </p>
         <div>
           <Label htmlFor="ad-user" className="pb-1">
-            Benutzername (ohne Domainpräfix)
+            Benutzername (ohne Domain-Präfix; also nur "Benutzername" statt "SCHULE\Benutzername")
           </Label>
           <Input
             name="ldapUser"
@@ -95,6 +96,7 @@ const AD = () => {
           </Label>
           <Input
             type="password"
+            autoComplete="off"
             name="ldapPass"
             id="ad-password"
             placeholder="Benutzer Passwort"
@@ -117,6 +119,23 @@ const AD = () => {
       <Spacing size="md" />
       <AutoSync />
       {!!credentials && <Spacing size="md" />}
+      {!!credentials && (
+        <>
+          <div className="rounded-xl border border-primary px-5 py-3 text-center">
+            <p className="mx-auto lg:w-3/4">
+              Hinweis: Damit die Automatische Raumzuweisung funktioniert, müssen die Active
+              Directory Organisationseinheiten den Räumen bei der{" "}
+              <Link to="/raumverwaltung">
+                <Button variant="link" className="px-0!">
+                  Raumverwaltung
+                </Button>
+              </Link>{" "}
+              zugewiesen werden.
+            </p>
+          </div>
+          <Spacing size="md" />
+        </>
+      )}
     </>
   );
 };

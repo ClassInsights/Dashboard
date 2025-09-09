@@ -78,7 +78,7 @@ const RoomCard = ({ room }: { room: Room }) => {
             {onlineComputers?.length}/{computers.length} Computer online
           </p>
         ) : (
-          <p>Noch keine Computer zugewiesen.</p>
+          <p>Noch keine Computer zugewiesen</p>
         )}
       </CardHeader>
       <CardContent>

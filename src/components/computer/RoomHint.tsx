@@ -23,8 +23,8 @@ const RoomHint = ({ computerId, room }: RoomHintProps) => {
       <RoomAssignment isOpen={isOpen} onOpenChange={setIsOpen} computerIds={[computerId]} />
       <div className="rounded-xl border border-amber-500 px-5 py-3 text-center">
         <p className="mx-auto lg:w-3/4">
-          Dieser Computer ist noch keinem Raum zugewiesen. Richte für die Zuweisung entweder die
-          automatische Raumzuweisung mithilfe der{" "}
+          Dieser Computer ist noch keinem Raum zugewiesen. Richten Sie für die Zuweisung entweder
+          die automatische Raumzuweisung mithilfe der{" "}
           <Link to="../raumverwaltung/ad">
             <Button variant="link" className="px-0!">
               Active Directory Integration

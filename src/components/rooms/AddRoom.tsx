@@ -65,8 +65,8 @@ const AddRoom = () => {
             <DialogHeader>
               <DialogTitle>Neuen Raum auswählen</DialogTitle>
               <DialogDescription>
-                Wähle den Raum aus, für den du eine Active Directory Organisationseinheit festlegen
-                möchtest.
+                Wählen Sie den Raum aus, für den Sie eine Active Directory Organisationseinheit
+                festlegen möchten.
               </DialogDescription>
             </DialogHeader>
             <Command className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">

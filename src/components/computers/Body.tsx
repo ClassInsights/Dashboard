@@ -199,7 +199,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                   <LogOut />
                   Abmelden
                 </ContextMenuItem>
-                <Tooltip>
+                <Tooltip disableHoverableContent>
                   <TooltipTrigger asChild>
                     <span>
                       <ContextMenuItem

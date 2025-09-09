@@ -4,7 +4,7 @@ import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import useActiveDirectory from "@/hooks/use-activeDirectory";
-import { Network, RefreshCcwDot, User } from "lucide-react";
+import { Network, RefreshCcw, RefreshCcwDot, User } from "lucide-react";
 import { Link } from "react-router";
 
 const Rooms = () => {
@@ -14,7 +14,7 @@ const Rooms = () => {
     <>
       <Title
         title="Raumverwaltung"
-        subtitle="Hier können Sie die automatische Raumzuweisung mithilfe von Active Directory Organisationseinheiten einstellen und ClassInsights für bestimmte Räume verwalten verwalten."
+        subtitle="Hier können Sie ClassInsights für einzelne Räume aktivieren/deaktivieren. Um die Verknüpfung mit Active Directory zu konfigurieren, klicken Sie auf 'Active Directory Integration'."
         backLink="/"
         actions={
           <Link to="ad">
@@ -39,6 +39,9 @@ const Rooms = () => {
               <span className="mx-auto mt-2 animate-pulse rounded-md bg-accent text-accent">
                 .............................
               </span>
+              <span className="mx-auto mt-2 animate-pulse rounded-md bg-accent text-accent">
+                ..........................................................
+              </span>
             </div>
           ) : isError ? (
             <p>
@@ -55,13 +58,20 @@ const Rooms = () => {
               {[
                 {
                   icon: Network,
-                  value: data?.ldapServer,
+                  value: `${data?.ldapServer} | Port: ${data?.ldapPort}`,
                   label: "Domaincontroller",
                 },
                 {
                   icon: User,
                   value: data?.ldapUser,
                   label: "Benutzername",
+                },
+                {
+                  icon: RefreshCcw,
+                  value: data?.ldapAutoSync
+                    ? "Synchronisierung aktiviert"
+                    : "Synchronisierung deaktiviert",
+                  label: "Automatische Synchronisierung",
                 },
               ].map(({ icon: Icon, value, label }) => (
                 <div key={label} className="mx-auto mt-2 flex items-center gap-2">
@@ -73,7 +83,17 @@ const Rooms = () => {
                       <p>{label}</p>
                     </TooltipContent>
                   </Tooltip>
-                  <span>{value}</span>
+                  <span
+                    className={
+                      value?.includes("deaktiviert")
+                        ? "text-muted-foreground"
+                        : value?.includes("aktiviert")
+                          ? "text-primary"
+                          : ""
+                    }
+                  >
+                    {value}
+                  </span>
                 </div>
               ))}
             </>

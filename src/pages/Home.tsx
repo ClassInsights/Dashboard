@@ -20,7 +20,7 @@ const Home = () => {
     <>
       <Title
         title={`Wilkommen ${auth.name}.`}
-        subtitle="Willkommen beim ClassInsights Dashboard, Ihr zentrales Steuerungselement für das gesamte ClassInsights Ökosystem."
+        subtitle="Willkommen beim ClassInsights Dashboard, Ihr zentrales Steuerelement für das gesamte ClassInsights Ökosystem."
         actions={
           <>
             <Link to="computer">
