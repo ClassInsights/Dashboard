@@ -1,0 +1,9 @@
+FROM node:22-alpine
+WORKDIR /website
+
+COPY . .
+RUN npm ci
+
+EXPOSE 80
+
+CMD ["npx", "vite", "--port", "80"]

@@ -14,5 +14,5 @@ jobs:
     - name: Build and push the image
       run: |
         docker login --username classinsights --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-        docker build --tag ghcr.io/classinsights/dashboard:nightly .
+        docker build --tag ghcr.io/classinsights/dashboard:nightly -f Dockerfile.nightly .
         docker push ghcr.io/classinsights/dashboard --all-tags
