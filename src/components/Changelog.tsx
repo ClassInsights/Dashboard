@@ -15,7 +15,7 @@ const Changelog = ({ title, description, body, releaseUrl }: ChangelogProps) => 
   if (!body) return null;
 
   return (
-    <Card className="w-full grow">
+    <Card className="w-full grow overflow-hidden">
       <CardHeader>
         <CardTitle>
           <h3 className="text-2xl">{title}</h3>
