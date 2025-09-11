@@ -7,7 +7,7 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-COPY nginx.nightly.conf /etc/nginx/conf.d/default.conf
+COPY nginx.nightly.conf /etc/nginx/nginx.conf
 
 # Entrypoint: start Vite (background) + run nginx in foreground
 RUN printf '%s\n' \
