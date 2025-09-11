@@ -15,6 +15,6 @@ export default defineConfig({
   },
   server: {
     port: 5174,
-    allowedHosts: ["local.classinsights.dev"],
+    allowedHosts: true,
   },
 });
