@@ -43,7 +43,7 @@ const AutoSync = () => {
         variant="outline"
         className="mt-6"
         disabled={!credentials}
-        defaultValue={credentials?.ldapAutoSync ? "on" : "off"}
+        defaultValue={credentials?.autoSync ? "on" : "off"}
         onValueChange={(value) => handleChange(value === "on")}
       >
         <ToggleGroupItem value="off" size="lg">
@@ -57,12 +57,10 @@ const AutoSync = () => {
         Automatische Raumzuweisung mit Synchronisation ist{" "}
         <span
           className={
-            credentials?.ldapAutoSync
-              ? "font-medium text-primary"
-              : "font-medium text-muted-foreground"
+            credentials?.autoSync ? "font-medium text-primary" : "font-medium text-muted-foreground"
           }
         >
-          {credentials?.ldapAutoSync ? "aktiviert" : "deaktiviert"}.
+          {credentials?.autoSync ? "aktiviert" : "deaktiviert"}.
         </span>
       </p>
     </>

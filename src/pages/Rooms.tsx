@@ -58,17 +58,17 @@ const Rooms = () => {
               {[
                 {
                   icon: Network,
-                  value: `${data?.ldapServer} | Port: ${data?.ldapPort}`,
+                  value: `${data?.domain} | Port: ${data?.port}`,
                   label: "Domaincontroller",
                 },
                 {
                   icon: User,
-                  value: data?.ldapUser,
+                  value: data?.username,
                   label: "Benutzername",
                 },
                 {
                   icon: RefreshCcw,
-                  value: data?.ldapAutoSync
+                  value: data?.autoSync
                     ? "Synchronisierung aktiviert"
                     : "Synchronisierung deaktiviert",
                   label: "Automatische Synchronisierung",

@@ -18,7 +18,7 @@ const AD = () => {
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
-    let ldapUser = formData.get("ldapUser");
+    let ldapUser = formData.get("username");
     if (ldapUser && typeof ldapUser === "string" && ldapUser.includes("\\")) {
       const splittedUser = ldapUser.split("\\");
       data.ldapUser = splittedUser.length === 2 ? splittedUser[1] : ldapUser;
@@ -26,8 +26,8 @@ const AD = () => {
 
     const processedData = {
       ...data,
-      ldapPort: Number(data.ldapPort),
-      ldapAutoSync: credentials?.ldapAutoSync ?? true,
+      port: Number(data.port),
+      autoSync: credentials?.autoSync ?? true,
     } as ADCredentials;
 
     adCredentials.mutate(processedData);
@@ -52,10 +52,10 @@ const AD = () => {
             FQDN (Fully Qualified Domain Name) oder IP des Domain-Controllers
           </Label>
           <Input
-            name="ldapServer"
+            name="domain"
             id="ad-server"
             placeholder="FQDN oder IP"
-            defaultValue={credentials?.ldapServer}
+            defaultValue={credentials?.domain}
             required
           />
         </div>
@@ -64,11 +64,11 @@ const AD = () => {
             Port des Domain-Controllers (Standardmäßig 389 oder 3268 für Global Catalog)
           </Label>
           <Input
-            name="ldapPort"
+            name="port"
             id="ad-port"
             type="number"
             placeholder="389"
-            defaultValue={credentials?.ldapPort}
+            defaultValue={credentials?.port}
             required
           />
         </div>
@@ -83,10 +83,10 @@ const AD = () => {
             Benutzername (ohne Domain-Präfix; also nur "Benutzername" statt "SCHULE\Benutzername")
           </Label>
           <Input
-            name="ldapUser"
+            name="username"
             id="ad-user"
             placeholder="Benutzername"
-            defaultValue={credentials?.ldapUser}
+            defaultValue={credentials?.username}
             required
           />
         </div>
@@ -97,10 +97,10 @@ const AD = () => {
           <Input
             type="password"
             autoComplete="off"
-            name="ldapPass"
+            name="password"
             id="ad-password"
             placeholder="Benutzer Passwort"
-            defaultValue={credentials?.ldapPass ?? ""}
+            defaultValue={credentials?.password ?? ""}
             required
           />
         </div>

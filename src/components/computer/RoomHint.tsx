@@ -14,7 +14,7 @@ const RoomHint = ({ computerId, room }: RoomHintProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: adCredentials } = useActiveDirectory();
 
-  const autoSyncEnabled = adCredentials?.ldapAutoSync ?? false;
+  const autoSyncEnabled = adCredentials?.autoSync ?? false;
 
   if (room || autoSyncEnabled) return null;
 

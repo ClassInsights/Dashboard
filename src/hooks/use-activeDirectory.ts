@@ -65,7 +65,7 @@ const useActiveDirectory = () => {
       const credentials = { ...query.data };
       if (!credentials) throw new Error("No AD credentials available");
 
-      credentials.ldapPass = null;
+      credentials.password = null;
 
       const response = await fetch(`${apiUrl}/ad/credentials`, {
         method: "POST",
@@ -75,7 +75,7 @@ const useActiveDirectory = () => {
         },
         body: JSON.stringify({
           ...credentials,
-          ldapAutoSync: isEnabled,
+          autoSync: isEnabled,
         }),
       });
 
@@ -87,7 +87,7 @@ const useActiveDirectory = () => {
       const previousCredentials = queryClient.getQueryData(["activeDirectoryUser"]);
 
       queryClient.setQueryData(["activeDirectoryUser"], (old: ADCredentials) =>
-        old ? { ...old, ldapAutoSync: isEnabled } : old,
+        old ? { ...old, autoSync: isEnabled } : old,
       );
 
       return { previousCredentials };

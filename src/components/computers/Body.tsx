@@ -52,7 +52,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
 
   const { data: adCredentials, isLoading: isADLoading } = useActiveDirectory();
 
-  const autoSyncEnabled = adCredentials?.ldapAutoSync ?? false;
+  const autoSyncEnabled = adCredentials?.autoSync ?? false;
 
   const selectedComputers = table.getSelectedRowModel().rows.map((row) => row.original);
   const hasSelectedRows = selectedComputers.length > 0;
