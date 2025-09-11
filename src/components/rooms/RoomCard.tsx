@@ -157,7 +157,11 @@ const RoomCard = ({ room }: { room: Room }) => {
         )}
       </CardContent>
       <CardFooter>
-        <Button variant="link" className="p-0!">
+        <Button
+          variant="link"
+          className="p-0!"
+          disabled={!computers || computers.length < 1 || !room.organizationUnit}
+        >
           <Link to={`/computer?roomId=${room.roomId}`}>Liste der Computer</Link>
           <ChevronRight />
         </Button>
