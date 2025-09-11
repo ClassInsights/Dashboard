@@ -4,6 +4,6 @@ WORKDIR /website
 COPY . .
 RUN npm ci
 
-EXPOSE 80
+EXPOSE 443
 
-CMD ["npx", "vite", "--port", "80"]
+CMD ["npx", "vite", "--host", "0.0.0.0", "--port", "443"]
