@@ -14,7 +14,16 @@ import Configuration from "./pages/Configuration";
 import Home from "./pages/Home";
 import Rooms from "./pages/Rooms";
 
-const client = new QueryClient();
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
