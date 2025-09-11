@@ -2,7 +2,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { Prettify } from "@/lib/utils";
 import { isGitHubLatestResponse } from "@/types/GithubLatestResponse";
 import { isLocalApiMeta } from "@/types/LocalApiMeta";
-import { isVersionCache, type VersionCache } from "@/types/VersionCache";
+import {
+  isVersionCache,
+  type Release as GitHubRelease,
+  type VersionCache,
+} from "@/types/VersionCache";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -22,10 +26,8 @@ const useVersions = (): VersionResponse | undefined => {
   const [cachedVersion, _] = useState<VersionCache | undefined>(() => {
     const version = localStorage.getItem("versionCache");
     if (!version) return;
-
     const parsed = JSON.parse(version);
     if (!isVersionCache(parsed)) return;
-
     if (parsed.expiresAt < Date.now()) {
       localStorage.removeItem("versionCache");
       return;
@@ -48,7 +50,10 @@ const useVersions = (): VersionResponse | undefined => {
       const data = await response.json();
       if (!isGitHubLatestResponse(data)) throw new Error("Invalid API version data");
 
-      return data.tag_name.replace("v", "");
+      return {
+        version: data.tag_name.replace("v", ""),
+        changelog: data.body ?? null,
+      } as GitHubRelease;
     },
   });
 
@@ -67,7 +72,10 @@ const useVersions = (): VersionResponse | undefined => {
       const data = await response.json();
       if (!isGitHubLatestResponse(data)) throw new Error("Invalid Dashboard version data");
 
-      return data.tag_name.replace("v", "");
+      return {
+        version: data.tag_name.replace("v", ""),
+        changelog: data.body ?? null,
+      } as GitHubRelease;
     },
   });
 

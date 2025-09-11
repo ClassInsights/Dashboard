@@ -48,12 +48,12 @@ const Updater = () => {
   const hasApiUpdate =
     !!versions?.latestApiVersion &&
     !!versions?.currentApiVersion &&
-    versions.latestApiVersion !== versions.currentApiVersion;
+    versions.latestApiVersion.version !== versions.currentApiVersion;
 
   const hasDashboardUpdate =
     !!versions?.latestDashboardVersion &&
     !!versions?.currentDashboardVersion &&
-    versions.latestDashboardVersion !== versions.currentDashboardVersion;
+    versions.latestDashboardVersion.version !== versions.currentDashboardVersion;
 
   const isUpdateAvailable = hasApiUpdate || hasDashboardUpdate;
 
@@ -88,9 +88,9 @@ const Updater = () => {
           <DrawerDescription>
             {hasApiUpdate && (
               <span>
-                API: v{currentApiVersion} &#8594; v{latestApiVersion} &#124;{" "}
+                API: v{currentApiVersion} &#8594; v{latestApiVersion.version} &#124;{" "}
                 <a
-                  href={`https://github.com/ClassInsights/Api/compare/v${currentApiVersion}...v${latestApiVersion}`}
+                  href={`https://github.com/ClassInsights/Api/releases/tag/v${latestApiVersion.version}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-primary"
@@ -102,9 +102,10 @@ const Updater = () => {
             )}
             {hasDashboardUpdate && (
               <span>
-                Dashboard: v{currentDashboardVersion} &#8594; v{latestDashboardVersion} &#124;{" "}
+                Dashboard: v{currentDashboardVersion} &#8594; v{latestDashboardVersion.version}{" "}
+                &#124;{" "}
                 <a
-                  href={`https://github.com/ClassInsights/Dashboard/compare/v${currentDashboardVersion}...v${latestDashboardVersion}`}
+                  href={`https://github.com/ClassInsights/Dashboard/releases/tag/v${latestDashboardVersion.version}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-primary"
