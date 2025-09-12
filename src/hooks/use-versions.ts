@@ -13,6 +13,9 @@ import { useEffect, useState } from "react";
 type VersionResponse = Prettify<
   VersionCache & {
     isLoading: boolean;
+    currentApiVersion: string;
+    currentDashboardVersion: string;
+    platform: string;
   }
 >;
 
@@ -82,12 +85,6 @@ const useVersions = (): VersionResponse | undefined => {
   const { data: currentApi, isLoading: isLoadingCurrentApi } = useQuery({
     queryKey: ["currentApiVersion"],
     queryFn: async () => {
-      if (cachedVersion)
-        return {
-          version: cachedVersion.currentApiVersion,
-          platform: cachedVersion.platform,
-        };
-
       const response = await fetch(apiUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -106,14 +103,11 @@ const useVersions = (): VersionResponse | undefined => {
 
   // Cache the latest versions
   useEffect(() => {
-    if (cachedVersion || !latestApiVersion || !latestDashboardVersion || !currentApi) return;
+    if (cachedVersion || !latestApiVersion || !latestDashboardVersion) return;
 
     const newCache: VersionCache = {
       latestApiVersion,
-      currentApiVersion: currentApi?.version || "",
       latestDashboardVersion,
-      currentDashboardVersion: import.meta.env.PACKAGE_VERSION || "",
-      platform: currentApi?.platform || "",
       expiresAt: Date.now() + 1000 * 60 * 30,
     };
 
@@ -126,8 +120,7 @@ const useVersions = (): VersionResponse | undefined => {
     latestApiVersion,
     currentApiVersion: currentApi.version,
     latestDashboardVersion,
-    currentDashboardVersion:
-      cachedVersion?.currentDashboardVersion || import.meta.env.PACKAGE_VERSION,
+    currentDashboardVersion: import.meta.env.PACKAGE_VERSION,
     platform: currentApi.platform,
     expiresAt: Date.now() + 1000 * 60 * 30,
     isLoading: isLoadingLatestApiVersion || isLoadingDashboard || isLoadingCurrentApi,
