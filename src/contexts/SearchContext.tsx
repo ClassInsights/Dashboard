@@ -1,134 +1,104 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import type { Computer } from "../types/Computer";
-import { useData } from "./DataContext";
+import useComputers from "@/hooks/use-computers";
+import useRooms from "@/hooks/use-rooms";
+import type { Prettify } from "@/lib/utils";
+import type { Computer } from "@/types/Computer";
+import { createContext, useContext, useState } from "react";
 
 type SearchContextType = {
-	result: SearchResult[];
-	generateResult: (value: string) => void;
-	isVisible: boolean;
-	show: () => void;
-	hide: () => void;
+  isOpen: boolean;
+  openSearch: () => void;
+  closeSearch: () => void;
+  result: SearchResult[];
+  generateResult: (value: string) => void;
 };
 
-type SearchResult = Computer & {
-	room: string;
-	text: string;
-	matchStart: number;
-	matchLength: number;
-};
+type SearchResult = Prettify<
+  Computer & {
+    room: string;
+    text: string;
+    matchStart: number;
+    matchLength: number;
+  }
+>;
 
-const SearchContext = createContext<undefined | SearchContextType>(undefined);
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
-	const [result, setResult] = useState<SearchResult[]>([]);
-	const [isVisible, setIsVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [result, setResult] = useState<SearchResult[]>([]);
 
-	const { computers, rooms } = useData();
+  const { data: computers } = useComputers();
+  const { data: rooms } = useRooms();
 
-	const generateResult = useCallback(
-		(value: string) => {
-			const searchTerm = value.trim().toLowerCase();
-			if (searchTerm.length < 2) {
-				setResult([]);
-				return;
-			}
+  const openSearch = () => setIsOpen(true);
+  const closeSearch = () => {
+    setIsOpen(false);
+    setTimeout(() => setResult([]), 200);
+  };
 
-			if (!computers || computers.length === 0) return;
+  const generateResult = (value: string) => {
+    const searchTerm = value.trim().toLowerCase();
+    if (!computers || computers.length === 0) return;
 
-			if (!searchTerm) {
-				setResult([]);
-				return;
-			}
+    if (!searchTerm) {
+      setResult([]);
+      return;
+    }
 
-			const filteredComputers = computers.filter((computer) => {
-				const nameMatch = computer.name.toLowerCase().includes(searchTerm);
-				const ipMatch = computer.ipAddress.toLowerCase().includes(searchTerm);
-				const macMatch = computer.macAddress.toLowerCase().includes(searchTerm);
+    const filteredComputers = computers.filter((computer) => {
+      const nameMatch = computer.name.includesIgnoreCase(searchTerm);
+      const ipMatch = computer.ipAddress.includesIgnoreCase(searchTerm);
+      const macMatch = computer.macAddress.formatAsMac().includesIgnoreCase(searchTerm);
+      const userMatch = computer.lastUser.includesIgnoreCase(searchTerm);
 
-				return nameMatch || ipMatch || macMatch;
-			});
+      return nameMatch || ipMatch || macMatch || userMatch;
+    });
 
-			const searchResults: SearchResult[] = filteredComputers.map((computer) => {
-				const nameMatch = computer.name.toLowerCase().indexOf(searchTerm);
-				const ipMatch = computer.ipAddress.toLowerCase().indexOf(searchTerm);
-				const macMatch = computer.macAddress.toLowerCase().indexOf(searchTerm);
+    const searchResults: SearchResult[] = filteredComputers.map((computer) => {
+      const nameMatch = computer.name.toLowerCase().indexOf(searchTerm);
+      const ipMatch = computer.ipAddress.toLowerCase().indexOf(searchTerm);
+      const macMatch = computer.macAddress.formatAsMac().toLowerCase().indexOf(searchTerm);
+      const userMatch = computer.lastUser.toLowerCase().indexOf(searchTerm);
 
-				const matchStart = Math.min(...[nameMatch, ipMatch, macMatch].filter((match) => match >= 0));
+      const matchStart = Math.min(
+        ...[nameMatch, ipMatch, macMatch, userMatch].filter((match) => match >= 0),
+      );
 
-				let text = "";
-				if (nameMatch >= 0) text = computer.name;
-				else if (ipMatch >= 0) text = computer.ipAddress;
-				else if (macMatch >= 0) text = computer.macAddress;
+      let text = "";
+      if (nameMatch >= 0) text = computer.name;
+      else if (ipMatch >= 0) text = computer.ipAddress;
+      else if (macMatch >= 0) text = computer.macAddress.formatAsMac();
+      else if (userMatch >= 0) text = computer.lastUser;
 
-				const matchLength = searchTerm.length;
+      const matchLength = searchTerm.length;
 
-				const room = rooms?.find((room) => room.roomId === computer.roomId)?.displayName ?? "???";
+      const room = rooms?.find((room) => room.roomId === computer.roomId)?.displayName ?? "???";
 
-				return {
-					...computer,
-					room,
-					text,
-					matchStart,
-					matchLength,
-				};
-			});
+      return {
+        ...computer,
+        room,
+        text,
+        matchStart,
+        matchLength,
+      };
+    });
 
-			const sortedResults = searchResults.sort((a, b) => (a.matchLength > b.matchLength ? -1 : 1)).slice(0, 5);
-			setResult(sortedResults);
-		},
-		[computers, rooms],
-	);
+    const sortedResults = searchResults
+      .sort((a, b) => (a.matchLength > b.matchLength ? -1 : 1))
+      .slice(0, 5);
 
-	useEffect(() => {
-		const handleGlobalKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "k" && (event.ctrlKey || event.metaKey)) {
-				event.preventDefault();
-				setIsVisible((prev) => !prev);
-				return;
-			}
+    setResult(sortedResults);
+  };
 
-			if (event.key !== "Escape") return;
-
-			setIsVisible((prev) => {
-				if (prev) return false;
-				return prev;
-			});
-		};
-
-		window.addEventListener("keydown", handleGlobalKeyDown);
-		return () => {
-			window.removeEventListener("keydown", handleGlobalKeyDown);
-		};
-	}, []);
-
-	useEffect(() => {
-		if (isVisible) {
-			const scrollTop = document.scrollingElement?.scrollTop;
-			document.body.style.overflow = "hidden";
-			document.body.style.paddingRight = `${Math.abs(window.innerWidth - document.documentElement.clientWidth)}px`;
-			if (document.scrollingElement && scrollTop) document.scrollingElement.scrollTop = scrollTop;
-			return;
-		}
-
-		setResult([]);
-		document.body.style.overflow = "auto";
-		document.body.style.paddingRight = "";
-	}, [isVisible]);
-
-	const show = useCallback(() => setIsVisible(true), []);
-	const hide = useCallback(() => setIsVisible(false), []);
-
-	return (
-		<SearchContext.Provider value={{ result, generateResult, isVisible, show, hide }}>
-			{children}
-		</SearchContext.Provider>
-	);
+  return (
+    <SearchContext.Provider value={{ isOpen, openSearch, closeSearch, result, generateResult }}>
+      {children}
+    </SearchContext.Provider>
+  );
 };
 
 export const useSearch = () => {
-	const context = useContext(SearchContext);
-	if (context === undefined) {
-		throw new Error("useSearch must be used within a SearchProvider");
-	}
-	return context;
+  const context = useContext(SearchContext);
+  if (!context) throw new Error("useSearch must be used within a SearchProvider");
+  return context;
 };

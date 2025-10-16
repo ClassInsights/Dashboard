@@ -1,55 +1,48 @@
-import React, { useEffect } from "react";
-import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
+import { BrowserRouter, Route, Routes } from "react-router";
+import ErrorBoundaryFallback from "./components/ErrorBoundary";
+import MainLayout from "./components/layouts/Main";
 import "./index.css";
-import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom";
-import PageWrapper from "./components/PageWrapper";
-import Home from "./routes/Home";
-import Computer from "./routes/Computer";
-import Rooms from "./routes/Rooms";
-import Confgiguration from "./routes/Configuration";
+import Error404 from "./pages/404";
+import AD from "./pages/AD";
+import Computer from "./pages/Computer";
+import Computers from "./pages/Computers";
+import Configuration from "./pages/Configuration";
+import Home from "./pages/Home";
+import Rooms from "./pages/Rooms";
 
-const root = document.getElementById("root");
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 
-if (!root) throw new Error("No root element found");
-
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <PageWrapper />,
-		errorElement: (() => {
-			const ErrorHandler = () => {
-				const navigate = useNavigate();
-				useEffect(() => {
-					navigate("/");
-				}, [navigate]);
-
-				return <React.Fragment />;
-			};
-			return <ErrorHandler />;
-		})(),
-		children: [
-			{
-				path: "/",
-				element: <Home />,
-			},
-			{
-				path: "/computer",
-				element: <Computer />,
-			},
-			{
-				path: "/räume",
-				element: <Rooms />,
-			},
-			{
-				path: "/konfiguration",
-				element: <Confgiguration />,
-			},
-		],
-	},
-]);
-
-ReactDOM.createRoot(root).render(
-	<React.StrictMode>
-		<RouterProvider router={router} />
-	</React.StrictMode>,
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+      <BrowserRouter>
+        <QueryClientProvider client={client}>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="computer" element={<Computers />} />
+              <Route path="konfiguration" element={<Configuration />} />
+              <Route path="raumverwaltung" element={<Rooms />} />
+              <Route path="raumverwaltung/ad" element={<AD />} />
+              <Route path="computer/:id" element={<Computer />} />
+              <Route path="*" element={<Error404 />} />
+            </Route>
+          </Routes>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
+  </StrictMode>,
 );

@@ -1,0 +1,24 @@
+FROM node:20-alpine
+RUN apk add --no-cache nginx bash
+
+WORKDIR /website
+
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+COPY nginx.nightly.conf /etc/nginx/nginx.conf
+
+# Entrypoint: start Vite (background) + run nginx in foreground
+RUN printf '%s\n' \
+'#!/usr/bin/env sh' \
+'set -e' \
+'export CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING:-true}' \
+'# start Vite dev server on all interfaces' \
+'npx vite --host 0.0.0.0 --port 5173 & ' \
+'# keep nginx in the foreground' \
+'nginx -g "daemon off;"' \
+> /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+
+EXPOSE 443
+CMD ["/docker-entrypoint.sh"]
