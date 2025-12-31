@@ -90,7 +90,7 @@ const Updater = () => {
               <span>
                 API: v{currentApiVersion} &#8594; v{latestApiVersion.version} &#124;{" "}
                 <a
-                  href={`https://github.com/ClassInsights/Api/releases/tag/v${latestApiVersion.version}`}
+                  href={`https://github.com/ClassInsights/Api/releases/tag/${latestApiVersion.version}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-primary"
