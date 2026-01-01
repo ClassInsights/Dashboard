@@ -87,7 +87,18 @@ const useComputers = () => {
       if (!response.ok) throw new Error(`Failed to fetch computers, Status: ${response.status}`);
 
       const data = await response.json();
-      if (Array.isArray(data) && data.every(isComputer)) return data;
+      if (Array.isArray(data) && data.every(isComputer)) {
+        data.sort((a, b) => {
+          if (a.online !== b.online) return a.online ? -1 : 1;
+
+          return a.name.localeCompare(b.name, undefined, {
+            sensitivity: "base",
+            numeric: true,
+          });
+        });
+
+        return data;
+      }
 
       throw new Error("Invalid computer data format");
     },

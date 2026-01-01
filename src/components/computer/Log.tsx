@@ -123,7 +123,7 @@ const Log = ({ computerId, currentDate, logsPerPage, setLogsPerPage }: LogProps)
                     <span className="pt-[0.0625rem]">{log.message}</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-3 overflow-x-scroll text-balance lg:ml-24">
+                <AccordionContent className="flex flex-col gap-3 overflow-x-auto text-balance lg:ml-24">
                   <div>
                     <div className="flex items-center gap-2">
                       <Layers2 size={14} />

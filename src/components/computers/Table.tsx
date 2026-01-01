@@ -41,18 +41,7 @@ const parseFilters = (value: string | null): ColumnFiltersState | null => {
 };
 
 const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: "Status",
-      desc: true,
-    },
-    {
-      id: "Name",
-      desc: false,
-    },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
@@ -121,16 +110,6 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
       pagination,
     },
     initialState: {
-      sorting: [
-        {
-          id: "Status",
-          desc: true,
-        },
-        {
-          id: "Name",
-          desc: false,
-        },
-      ],
       columnVisibility: {
         "Zuletzt Online": false,
       },

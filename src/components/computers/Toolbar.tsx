@@ -3,7 +3,7 @@ import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
 import type { Computer } from "@/types/Computer";
 import type { Table } from "@tanstack/react-table";
-import { ArrowDownUp, RotateCcw, X } from "lucide-react";
+import { RotateCcw, X } from "lucide-react";
 import { Button } from "../ui/button";
 import ComputerTableViewOptions from "./ColumnToggle";
 import ComputerTableFacetedFilter from "./FacetedFilter";
@@ -19,11 +19,6 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
   const removeSorting = () => {
     table.setSorting([]);
     showMessage("Sortierung entfernt");
-  };
-
-  const resetSorting = () => {
-    table.resetSorting();
-    showMessage("Sortierung zurückgesetzt");
   };
 
   const refetchComputers = () =>
@@ -64,16 +59,12 @@ const Toolbar = ({ table }: { table: Table<Computer> }) => {
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        {table.getState().sorting.length === table.initialState.sorting.length ? (
+        {table.getState().sorting.length > 0 && (
           <Button variant="outline" size="sm" className="flex h-8" onClick={removeSorting}>
             <X />
             <span className="hidden lg:block">Sortierung entfernen</span>
           </Button>
-        ) : (
-          <Button variant="outline" size="sm" className="flex h-8" onClick={resetSorting}>
-            <ArrowDownUp />
-            <span className="hidden lg:block">Sortierung zurücksetzen</span>
-          </Button>
+
         )}
         <ComputerTableViewOptions table={table} />
         <Button size="sm" onClick={refetchComputers} disabled={isRefetching}>
