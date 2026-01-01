@@ -6,7 +6,7 @@ import type { ComputerCommand } from "@/types/ComputerCommand";
 import { flexRender, type Row, type Table } from "@tanstack/react-table";
 import { LogOut, Power, RotateCcw, School } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import RoomAssignment, { type RoomAssignmentProps } from "../RoomAssignment";
 import {
   AlertDialog,
@@ -131,6 +131,7 @@ const Body = ({ table }: { table: Table<Computer> }) => {
   };
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <>
@@ -225,8 +226,8 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                   inset
                   onClick={() =>
                     hasSelectedRows
-                      ? navigate(`/computer/${selectedComputers[0].computerId}`)
-                      : navigate(`/computer/${row.original.computerId}`)
+                      ? navigate(`/computers/${selectedComputers[0].computerId}${location.search}`)
+                      : navigate(`/computers/${row.original.computerId}${location.search}`)
                   }
                   disabled={selectedComputers.length > 1}
                 >

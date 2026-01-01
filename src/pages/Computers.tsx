@@ -3,8 +3,21 @@ import ComputerTable from "@/components/computers/Table";
 import Title from "@/components/Title";
 import useComputers from "@/hooks/use-computers";
 import useRooms from "@/hooks/use-rooms";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
+
+const parseFilters = (value: string | null): ColumnFiltersState | undefined => {
+  if (!value) return undefined;
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return undefined;
+    return parsed as ColumnFiltersState;
+  } catch {
+    return undefined;
+  }
+};
 
 const Computers = () => {
   const { data: computers } = useComputers();
@@ -12,13 +25,16 @@ const Computers = () => {
   const [searchParams] = useSearchParams();
 
   const roomId = searchParams.get("roomId");
-
-  // remove parameters from url
-  window.history.replaceState({}, "", window.location.pathname);
+  const filtersParam = searchParams.get("filters");
 
   const room = rooms?.find((room) => room.roomId === Number(roomId ?? -1));
 
-  const initialFilter = room ? [{ id: "Raum", value: [room.displayName] }] : undefined;
+  const urlFilters = parseFilters(filtersParam);
+  const roomFilter: ColumnFiltersState | undefined = room
+    ? [{ id: "Raum", value: [room.displayName] }]
+    : undefined;
+
+  const initialFilter = urlFilters ?? roomFilter;
 
   if (!computers || !rooms) return null;
 

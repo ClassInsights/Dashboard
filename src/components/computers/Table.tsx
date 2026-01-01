@@ -17,6 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import Body from "./Body";
 import ComputerTablePagination from "./Pagination";
 import Toolbar from "./Toolbar";
@@ -27,7 +28,21 @@ interface DataTableProps {
   initialFilter?: ColumnFiltersState;
 }
 
+const parseFilters = (value: string | null): ColumnFiltersState | null => {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return null;
+    return parsed as ColumnFiltersState;
+  } catch {
+    return null;
+  }
+};
+
 const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "Status",
@@ -39,13 +54,19 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
     },
   ]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialFilter ?? []);
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
+    const fromUrl = parseFilters(searchParams.get("filters"));
+    return fromUrl ?? initialFilter ?? [];
+  });
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const prevDataRef = useRef(data);
+  const lastSyncedFiltersRef = useRef<string | null>(null);
 
   const { showMessage } = useToast();
 
@@ -58,6 +79,26 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
 
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
+
+  // Persist filter state in the URL, so navigating to details and back keeps the current view.
+  useEffect(() => {
+    const serialized = columnFilters.length > 0 ? JSON.stringify(columnFilters) : null;
+
+    if (lastSyncedFiltersRef.current === serialized) return;
+    lastSyncedFiltersRef.current = serialized;
+
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (serialized) {
+      nextParams.set("filters", serialized);
+      // legacy: roomId prefilter is now represented via filters
+      nextParams.delete("roomId");
+    } else {
+      nextParams.delete("filters");
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  }, [columnFilters, searchParams, setSearchParams]);
 
   const table = useReactTable({
     data,
