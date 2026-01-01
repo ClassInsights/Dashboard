@@ -41,7 +41,8 @@ const Computer = () => {
   const room = rooms?.find((room) => room.roomId === computer?.roomId);
 
   useEffect(() => {
-    if (!computer) navigate("/computers");
+    // list route is "/computer" (singular)
+    if (!computer) navigate("/computer");
   }, [computer, navigate]);
 
   if (!computer) return null;
@@ -51,7 +52,7 @@ const Computer = () => {
       <Title
         title={`${computer.name} ${room?.displayName ? `(${room.displayName})` : ""}`}
         subtitle="Hier finden Sie alle gesammelten Daten und Logs für diesen Computer."
-        backLink={`/computers${location.search}`}
+        backLink={`/computer${location.search}`}
         titleBadge={
           <Badge variant={computer.online ? "success" : "destructive"}>
             {computer.online ? "Online" : "Offline"}

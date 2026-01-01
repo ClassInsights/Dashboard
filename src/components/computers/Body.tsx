@@ -226,8 +226,8 @@ const Body = ({ table }: { table: Table<Computer> }) => {
                   inset
                   onClick={() =>
                     hasSelectedRows
-                      ? navigate(`/computers/${selectedComputers[0].computerId}${location.search}`)
-                      : navigate(`/computers/${row.original.computerId}${location.search}`)
+                      ? navigate(`/computer/${selectedComputers[0].computerId}${location.search}`)
+                      : navigate(`/computer/${row.original.computerId}${location.search}`)
                   }
                   disabled={selectedComputers.length > 1}
                 >
