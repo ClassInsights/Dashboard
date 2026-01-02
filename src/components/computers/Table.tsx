@@ -40,9 +40,26 @@ const parseFilters = (value: string | null): ColumnFiltersState | null => {
   }
 };
 
+const parseSorting = (value: string | null): SortingState | null => {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return null;
+    return parsed as SortingState;
+  } catch {
+    return null;
+  }
+};
+
 const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const [sorting, setSorting] = useState<SortingState>(() => {
+    const fromUrl = parseSorting(searchParams.get("sorting"));
+    return fromUrl ?? [];
+  });
+
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
@@ -57,6 +74,7 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
 
   const prevDataRef = useRef(data);
   const lastSyncedFiltersRef = useRef<string | null>(null);
+  const lastSyncedSortingRef = useRef<string | null>(null);
 
   const { showMessage } = useToast();
 
@@ -70,25 +88,37 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
 
-  // Persist filter state in the URL, so navigating to details and back keeps the current view.
+  // Persist filter + sorting state in the URL, so navigating to details and back keeps the current view.
   useEffect(() => {
-    const serialized = columnFilters.length > 0 ? JSON.stringify(columnFilters) : null;
+    const serializedFilters = columnFilters.length > 0 ? JSON.stringify(columnFilters) : null;
+    const serializedSorting = sorting.length > 0 ? JSON.stringify(sorting) : null;
 
-    if (lastSyncedFiltersRef.current === serialized) return;
-    lastSyncedFiltersRef.current = serialized;
+    const isFiltersSynced = lastSyncedFiltersRef.current === serializedFilters;
+    const isSortingSynced = lastSyncedSortingRef.current === serializedSorting;
+
+    if (isFiltersSynced && isSortingSynced) return;
+
+    lastSyncedFiltersRef.current = serializedFilters;
+    lastSyncedSortingRef.current = serializedSorting;
 
     const nextParams = new URLSearchParams(searchParams);
 
-    if (serialized) {
-      nextParams.set("filters", serialized);
+    if (serializedFilters) {
+      nextParams.set("filters", serializedFilters);
       // legacy: roomId prefilter is now represented via filters
       nextParams.delete("roomId");
     } else {
       nextParams.delete("filters");
     }
 
+    if (serializedSorting) {
+      nextParams.set("sorting", serializedSorting);
+    } else {
+      nextParams.delete("sorting");
+    }
+
     setSearchParams(nextParams, { replace: true });
-  }, [columnFilters, searchParams, setSearchParams]);
+  }, [columnFilters, sorting, searchParams, setSearchParams]);
 
   const table = useReactTable({
     data,
