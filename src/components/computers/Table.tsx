@@ -52,6 +52,11 @@ const parseSorting = (value: string | null): SortingState | null => {
   }
 };
 
+const serializeState = (value: unknown[] | null | undefined): string | null => {
+  if (!value || value.length === 0) return null;
+  return JSON.stringify(value);
+};
+
 const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -88,10 +93,38 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
 
+  // Sync URL -> state (important when navigating to the same route without query params,
+  // e.g. via sidebar, because the component won't remount).
+  useEffect(() => {
+    const hasFiltersParam = searchParams.has("filters");
+    const hasSortingParam = searchParams.has("sorting");
+
+    const desiredFilters = hasFiltersParam
+      ? parseFilters(searchParams.get("filters")) ?? []
+      : (initialFilter ?? []);
+
+    const desiredSorting = hasSortingParam
+      ? parseSorting(searchParams.get("sorting")) ?? []
+      : [];
+
+    const desiredFiltersSerialized = serializeState(desiredFilters);
+    const desiredSortingSerialized = serializeState(desiredSorting);
+
+    if (lastSyncedFiltersRef.current !== desiredFiltersSerialized) {
+      lastSyncedFiltersRef.current = desiredFiltersSerialized;
+      setColumnFilters(desiredFilters);
+    }
+
+    if (lastSyncedSortingRef.current !== desiredSortingSerialized) {
+      lastSyncedSortingRef.current = desiredSortingSerialized;
+      setSorting(desiredSorting);
+    }
+  }, [searchParams, initialFilter]);
+
   // Persist filter + sorting state in the URL, so navigating to details and back keeps the current view.
   useEffect(() => {
-    const serializedFilters = columnFilters.length > 0 ? JSON.stringify(columnFilters) : null;
-    const serializedSorting = sorting.length > 0 ? JSON.stringify(sorting) : null;
+    const serializedFilters = serializeState(columnFilters);
+    const serializedSorting = serializeState(sorting);
 
     const isFiltersSynced = lastSyncedFiltersRef.current === serializedFilters;
     const isSortingSynced = lastSyncedSortingRef.current === serializedSorting;
