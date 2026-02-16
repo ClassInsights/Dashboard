@@ -17,6 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import Body from "./Body";
 import ComputerTablePagination from "./Pagination";
 import Toolbar from "./Toolbar";
@@ -24,19 +25,61 @@ import Toolbar from "./Toolbar";
 interface DataTableProps {
   columns: ColumnDef<Computer>[];
   data: Computer[];
-  initialFilter?: ColumnFiltersState;
 }
 
-const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
+const parseFilters = (value: string | null): ColumnFiltersState | null => {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return null;
+    return parsed as ColumnFiltersState;
+  } catch {
+    return null;
+  }
+};
+
+const parseSorting = (value: string | null): SortingState | null => {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return null;
+    return parsed as SortingState;
+  } catch {
+    return null;
+  }
+};
+
+const serializeState = (value: unknown[] | null | undefined): string | null => {
+  if (!value || value.length === 0) return null;
+  return JSON.stringify(value);
+};
+
+const ComputerTable = ({ columns, data }: DataTableProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [sorting, setSorting] = useState<SortingState>(() => {
+    return parseSorting(searchParams.get("sorting")) ?? [];
+  });
+
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialFilter ?? []);
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
+    return parseFilters(searchParams.get("filters")) ?? [];
+  });
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const prevDataRef = useRef(data);
+
+  // Track what we last wrote to the URL so we can distinguish our own writes
+  // from external navigation (e.g. sidebar click clearing the params).
+  const lastWrittenFilters = useRef<string | null>(serializeState(columnFilters));
+  const lastWrittenSorting = useRef<string | null>(serializeState(sorting));
 
   const { showMessage } = useToast();
 
@@ -49,6 +92,47 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
 
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
+
+  useEffect(() => {
+    const urlFilters = searchParams.get("filters");
+    const urlSorting = searchParams.get("sorting");
+
+    if (urlFilters === lastWrittenFilters.current && urlSorting === lastWrittenSorting.current)
+      return;
+
+    const nextFilters = parseFilters(urlFilters) ?? [];
+    const nextSorting = parseSorting(urlSorting) ?? [];
+
+    lastWrittenFilters.current = urlFilters;
+    lastWrittenSorting.current = urlSorting;
+
+    setColumnFilters(nextFilters);
+    setSorting(nextSorting);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const serializedFilters = serializeState(columnFilters);
+    const serializedSorting = serializeState(sorting);
+
+    if (
+      serializedFilters === lastWrittenFilters.current &&
+      serializedSorting === lastWrittenSorting.current
+    )
+      return;
+
+    lastWrittenFilters.current = serializedFilters;
+    lastWrittenSorting.current = serializedSorting;
+
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (serializedFilters) nextParams.set("filters", serializedFilters);
+    else nextParams.delete("filters");
+
+    if (serializedSorting) nextParams.set("sorting", serializedSorting);
+    else nextParams.delete("sorting");
+
+    setSearchParams(nextParams, { replace: true });
+  }, [columnFilters, sorting, searchParams, setSearchParams]);
 
   const table = useReactTable({
     data,
@@ -74,11 +158,9 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
       columnVisibility: {
         "Zuletzt Online": false,
       },
-      columnFilters: initialFilter ?? [],
     },
   });
 
-  // remove room filter when there is no computer in this room
   useEffect(() => {
     const facets = table.getColumn("Raum")!.getFacetedUniqueValues();
     setColumnFilters((prev) =>

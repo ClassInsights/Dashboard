@@ -22,7 +22,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 const Computer = () => {
   const { id } = useParams();
@@ -35,11 +35,13 @@ const Computer = () => {
   const { data: rooms } = useRooms();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const computer = computers?.find((computer) => computer.computerId.toString() === id);
   const room = rooms?.find((room) => room.roomId === computer?.roomId);
 
   useEffect(() => {
+    // list route is "/computer" (singular)
     if (!computer) navigate("/computer");
   }, [computer, navigate]);
 
@@ -50,7 +52,7 @@ const Computer = () => {
       <Title
         title={`${computer.name} ${room?.displayName ? `(${room.displayName})` : ""}`}
         subtitle="Hier finden Sie alle gesammelten Daten und Logs für diesen Computer."
-        backLink="/computer"
+        backLink={`/computer${location.search}`}
         titleBadge={
           <Badge variant={computer.online ? "success" : "destructive"}>
             {computer.online ? "Online" : "Offline"}

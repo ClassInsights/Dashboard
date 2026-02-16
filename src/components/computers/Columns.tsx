@@ -2,8 +2,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { patternToRegex } from "@/lib/utils";
 import type { Computer } from "@/types/Computer";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import ComputerTableColumnHeader from "./ColumnHeader";
+
+const DetailsLink = ({ computerId }: { computerId: number | string }) => {
+  const location = useLocation();
+
+  return (
+    <Link to={`${computerId}${location.search}`}>
+      <span className="font-medium text-primary">Details</span>
+    </Link>
+  );
+};
 
 export const columns: ColumnDef<Computer>[] = [
   {
@@ -99,11 +109,7 @@ export const columns: ColumnDef<Computer>[] = [
     id: "Details",
     cell: ({ row }) => {
       const computerId = row.original.computerId;
-      return (
-        <Link to={`${computerId}`}>
-          <span className="font-medium text-primary">Details</span>
-        </Link>
-      );
+      return <DetailsLink computerId={computerId} />;
     },
   },
 ];
