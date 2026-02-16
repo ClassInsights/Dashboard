@@ -9,8 +9,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 
 const NameFilter = ({ table }: { table: Table<Computer> }) => {
-  const [filter, setFilter] = useState<string>("");
-  const [appliedFilter, setAppliedFilter] = useState<string>("");
+  const initialNameFilter = (table.getColumn("Name")?.getFilterValue() as string) ?? "";
+  const [filter, setFilter] = useState<string>(initialNameFilter);
+  const [appliedFilter, setAppliedFilter] = useState<string>(initialNameFilter);
 
   const applyFilter = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

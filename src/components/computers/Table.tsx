@@ -25,7 +25,6 @@ import Toolbar from "./Toolbar";
 interface DataTableProps {
   columns: ColumnDef<Computer>[];
   data: Computer[];
-  initialFilter?: ColumnFiltersState;
 }
 
 const parseFilters = (value: string | null): ColumnFiltersState | null => {
@@ -57,19 +56,17 @@ const serializeState = (value: unknown[] | null | undefined): string | null => {
   return JSON.stringify(value);
 };
 
-const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
+const ComputerTable = ({ columns, data }: DataTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [sorting, setSorting] = useState<SortingState>(() => {
-    const fromUrl = parseSorting(searchParams.get("sorting"));
-    return fromUrl ?? [];
+    return parseSorting(searchParams.get("sorting")) ?? [];
   });
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
-    const fromUrl = parseFilters(searchParams.get("filters"));
-    return fromUrl ?? initialFilter ?? [];
+    return parseFilters(searchParams.get("filters")) ?? [];
   });
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -78,8 +75,11 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
   });
 
   const prevDataRef = useRef(data);
-  const lastSyncedFiltersRef = useRef<string | null>(null);
-  const lastSyncedSortingRef = useRef<string | null>(null);
+
+  // Track what we last wrote to the URL so we can distinguish our own writes
+  // from external navigation (e.g. sidebar click clearing the params).
+  const lastWrittenFilters = useRef<string | null>(serializeState(columnFilters));
+  const lastWrittenSorting = useRef<string | null>(serializeState(sorting));
 
   const { showMessage } = useToast();
 
@@ -93,62 +93,43 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
     prevDataRef.current = data;
   }, [data.length, pagination.pageIndex]);
 
-  // Sync URL -> state (important when navigating to the same route without query params,
-  // e.g. via sidebar, because the component won't remount).
   useEffect(() => {
-    const hasFiltersParam = searchParams.has("filters");
-    const hasSortingParam = searchParams.has("sorting");
+    const urlFilters = searchParams.get("filters");
+    const urlSorting = searchParams.get("sorting");
 
-    const desiredFilters = hasFiltersParam
-      ? parseFilters(searchParams.get("filters")) ?? []
-      : (initialFilter ?? []);
+    if (urlFilters === lastWrittenFilters.current && urlSorting === lastWrittenSorting.current)
+      return;
 
-    const desiredSorting = hasSortingParam
-      ? parseSorting(searchParams.get("sorting")) ?? []
-      : [];
+    const nextFilters = parseFilters(urlFilters) ?? [];
+    const nextSorting = parseSorting(urlSorting) ?? [];
 
-    const desiredFiltersSerialized = serializeState(desiredFilters);
-    const desiredSortingSerialized = serializeState(desiredSorting);
+    lastWrittenFilters.current = urlFilters;
+    lastWrittenSorting.current = urlSorting;
 
-    if (lastSyncedFiltersRef.current !== desiredFiltersSerialized) {
-      lastSyncedFiltersRef.current = desiredFiltersSerialized;
-      setColumnFilters(desiredFilters);
-    }
+    setColumnFilters(nextFilters);
+    setSorting(nextSorting);
+  }, [searchParams]);
 
-    if (lastSyncedSortingRef.current !== desiredSortingSerialized) {
-      lastSyncedSortingRef.current = desiredSortingSerialized;
-      setSorting(desiredSorting);
-    }
-  }, [searchParams, initialFilter]);
-
-  // Persist filter + sorting state in the URL, so navigating to details and back keeps the current view.
   useEffect(() => {
     const serializedFilters = serializeState(columnFilters);
     const serializedSorting = serializeState(sorting);
 
-    const isFiltersSynced = lastSyncedFiltersRef.current === serializedFilters;
-    const isSortingSynced = lastSyncedSortingRef.current === serializedSorting;
+    if (
+      serializedFilters === lastWrittenFilters.current &&
+      serializedSorting === lastWrittenSorting.current
+    )
+      return;
 
-    if (isFiltersSynced && isSortingSynced) return;
-
-    lastSyncedFiltersRef.current = serializedFilters;
-    lastSyncedSortingRef.current = serializedSorting;
+    lastWrittenFilters.current = serializedFilters;
+    lastWrittenSorting.current = serializedSorting;
 
     const nextParams = new URLSearchParams(searchParams);
 
-    if (serializedFilters) {
-      nextParams.set("filters", serializedFilters);
-      // legacy: roomId prefilter is now represented via filters
-      nextParams.delete("roomId");
-    } else {
-      nextParams.delete("filters");
-    }
+    if (serializedFilters) nextParams.set("filters", serializedFilters);
+    else nextParams.delete("filters");
 
-    if (serializedSorting) {
-      nextParams.set("sorting", serializedSorting);
-    } else {
-      nextParams.delete("sorting");
-    }
+    if (serializedSorting) nextParams.set("sorting", serializedSorting);
+    else nextParams.delete("sorting");
 
     setSearchParams(nextParams, { replace: true });
   }, [columnFilters, sorting, searchParams, setSearchParams]);
@@ -177,11 +158,9 @@ const ComputerTable = ({ columns, data, initialFilter }: DataTableProps) => {
       columnVisibility: {
         "Zuletzt Online": false,
       },
-      columnFilters: initialFilter ?? [],
     },
   });
 
-  // remove room filter when there is no computer in this room
   useEffect(() => {
     const facets = table.getColumn("Raum")!.getFacetedUniqueValues();
     setColumnFilters((prev) =>
